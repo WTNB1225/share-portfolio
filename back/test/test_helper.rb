@@ -4,6 +4,10 @@ require "rails/test_help"
 
 module ActiveSupport
   class TestCase
+
+    def is_logged_in?
+      !session[:user_id].nil?
+    end
     # Run tests in parallel with specified workers
     parallelize(workers: :number_of_processors)
 
@@ -12,4 +16,5 @@ module ActiveSupport
 
     # Add more helper methods to be used by all tests here...
   end
+
 end
