@@ -1,10 +1,14 @@
 class SessionController < ApplicationController
   include SessionHelper
 
+  def index
+  end
+
   def create
     @user = User.find_by(email:params[:session][:email].downcase)
     if @user && @user.authenticate(params[:session][:password])
       reset_session
+      remember @user
       log_in @user
       render json: @user, status: :created
     else
@@ -13,6 +17,8 @@ class SessionController < ApplicationController
   end
 
   def destroy
-    log_out
+    log_out if logged_in?
   end
+
+  
 end

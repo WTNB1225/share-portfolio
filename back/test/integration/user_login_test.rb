@@ -46,7 +46,6 @@ class LogoutTest < Logout
   test "successful logout" do
     assert_not is_logged_in?
   end
-
 end
 
 #class RememberingTest < UsersLogin

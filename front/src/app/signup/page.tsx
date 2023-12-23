@@ -38,7 +38,10 @@ export default function Signup() {
     try{
       const response = await axios.post(
         "http://localhost:3000/users",
-        formData
+        formData,
+        {
+          withCredentials: true
+        }
       );
       console.log(response)
       router.push("/")
