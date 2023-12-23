@@ -9,6 +9,7 @@ export default function Login() {
   const router = useRouter();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [remember, setRemember] = useState<number>(-1);
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -18,11 +19,16 @@ export default function Login() {
     setPassword(e.target.value);
   }
 
+  const handleCheckboxChange = (e:ChangeEvent<HTMLInputElement>) => {
+    setRemember(remember * -1);
+  }
+
   const handleSubmit = async(e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("session[email]", email);
     formData.append("session[password]", password);
+    formData.append("session[remember_me]", remember.toString());
 
     try {
         const response = await axios.post(
@@ -44,12 +50,16 @@ export default function Login() {
     <div>
       <form onSubmit={handleSubmit}>
         <label>
-          email
+          Email
           <input type="text" onChange={handleEmailChange}/>
         </label>
         <label>
-          password
+          Password
           <input type="text" onChange={handlePasswordChange}/>
+        </label>
+        <label>
+          Remember
+          <input type="checkbox" onChange={handleCheckboxChange}/>
         </label>
         <button type="submit">ログイン</button>
       </form>
