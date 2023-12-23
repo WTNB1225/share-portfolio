@@ -25,12 +25,15 @@ export default function Login() {
     formData.append("session[password]", password);
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/login",
-        formData
-      );
-      console.log(response)
-      router.push("/")
+        const response = await axios.post(
+          "http://localhost:3000/login",
+          formData,
+          {
+            withCredentials: true
+          }
+        );
+        console.log(response);
+        router.push("/");
     } catch(e) {
       alert(e);
       console.log(e);
