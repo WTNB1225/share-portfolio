@@ -10,7 +10,7 @@ class SessionController < ApplicationController
       reset_session
       params[:session][:remember_me] == "1" ? remember(@user) : forget(@user)
       log_in @user
-      render json: @user, status: :created
+      render json: {is_logged_in: true , user: @user}, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -20,5 +20,8 @@ class SessionController < ApplicationController
     log_out if logged_in?
   end
 
-  
+  def get_current_user
+    render json: current_user
+  end
+
 end
