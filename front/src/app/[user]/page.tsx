@@ -42,7 +42,7 @@ export default function User() {
 
   return(
     <>
-      <h1>{userData && userData.data && userData.data.name}</h1>
+      <h1>{username}</h1>
     </>
   )
 }
