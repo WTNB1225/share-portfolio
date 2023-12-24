@@ -39,7 +39,7 @@ export default function Login() {
           }
         );
         console.log(response);
-        router.push("/");
+        router.push("/home");
     } catch(e) {
       alert(e);
       console.log(e);
