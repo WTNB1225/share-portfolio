@@ -3,6 +3,7 @@
 import axios, { AxiosResponse } from "axios";
 import { usePathname } from "next/navigation";
 import {useEffect, useState} from "react";
+import Header from "../../../components/Header";
 
 
 export default function User() {
@@ -42,6 +43,7 @@ export default function User() {
 
   return(
     <>
+      <Header/>
       <h1>{username}</h1>
     </>
   )

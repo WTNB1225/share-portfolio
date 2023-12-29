@@ -3,14 +3,15 @@
 import axios from "axios";
 import { ChangeEvent, FormEvent, useState} from "react"
 import { useRouter } from "next/navigation";
+import Header from "../../../components/Header";
 
 export default function Signup() {
 
   const router = useRouter();
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState<string>("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
   
   const handleNameChange = (e:ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -51,6 +52,8 @@ export default function Signup() {
   }
 
   return (
+    <>
+    <Header/>
     <div>
       <form onSubmit={handleSubmit}>
         <label>
@@ -72,5 +75,6 @@ export default function Signup() {
         <button type="submit">登録</button>
       </form>
     </div>
+    </>
   )
 }

@@ -1,0 +1,15 @@
+/* page.module.scss */
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem; /* ラベル間のスペースを追加 */
+}
+
+.form{
+  display: flex;
+  flex-flow: column;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
