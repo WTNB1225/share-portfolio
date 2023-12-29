@@ -1,15 +1,16 @@
 "use client";
-
+import style from "./page.module.scss"
 import axios from "axios";
 import {useState, ChangeEvent, FormEvent} from "react"
 import { useRouter } from "next/navigation";
+import Header from "../../../components/Header";
 
 export default function Login() {
 
   const router = useRouter();
-  const [email, setEmail] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [remember, setRemember] = useState<number>(-1);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [remember, setRemember] = useState(-1);
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -47,22 +48,25 @@ export default function Login() {
   }
 
   return (
+    <>
+    <Header/>
     <div>
-      <form onSubmit={handleSubmit}>
-        <label>
+      <form className={`${style.form}`} onSubmit={handleSubmit}>
+        <label className={style.label}>
           Email
-          <input type="text" onChange={handleEmailChange}/>
+          <input type="text" onChange={handleEmailChange} />
         </label>
-        <label>
+        <label className={style.label}>
           Password
-          <input type="text" onChange={handlePasswordChange}/>
+          <input type="password" onChange={handlePasswordChange} />
         </label>
         <label>
           Remember
-          <input type="checkbox" onChange={handleCheckboxChange}/>
+          <input type="checkbox" onChange={handleCheckboxChange} />
         </label>
         <button type="submit">ログイン</button>
       </form>
     </div>
-  )
+    </>
+  );
 }
