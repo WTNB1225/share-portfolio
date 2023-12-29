@@ -3,6 +3,7 @@
 import axios from "axios";
 import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import Header from "../../../components/Header";
 
 export default function Logout() {
 
@@ -22,10 +23,13 @@ export default function Logout() {
   }
 
   return(
-    <div>
-      <form onSubmit={handleSubmit}>
-        <button type="submit">ログアウト</button>
-      </form>
-    </div>
+    <>
+    <Header/>
+      <div>
+        <form onSubmit={handleSubmit}>
+          <button type="submit">ログアウト</button>
+        </form>
+      </div>
+    </>
   )
 }

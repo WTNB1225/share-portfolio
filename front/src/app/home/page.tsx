@@ -1,9 +1,10 @@
 "use client";
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import Header from '../../../components/Header';
 
 export default function App() {
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState("");
   const checkLoginStatus = async() => {
     try{
       const response = await axios.get("http://localhost:3000/logged_in_user", 
@@ -25,6 +26,7 @@ export default function App() {
 
   return(
     <>
+      <Header/>
       <h1>Hello {name}</h1>
     </>
   )
