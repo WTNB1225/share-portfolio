@@ -5,4 +5,5 @@ Rails.application.routes.draw do
   resources :users
   resources :posts
   get "/post/:id", to: "posts#show_by_id"
+  get "/csrf_token", to: "session#get_token"
 end

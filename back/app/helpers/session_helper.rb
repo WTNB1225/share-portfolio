@@ -12,6 +12,10 @@ module SessionHelper
     cookies.permanent[:remember_token] ={ value: user.remember_token, http_only: true, secure: true }
   end
 
+  #def csrf_token
+  #  cookies.permanent[:token] = {value: form_authenticity_token, http_only:true, secure: true}
+  #end
+
   #ログインuserを返す いない場合はnil
   def current_user
     if(user_id = session[:user_id])

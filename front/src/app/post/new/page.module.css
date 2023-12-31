@@ -1,0 +1,26 @@
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem; /* ラベル間のスペースを追加 */
+}
+
+.form {
+  display: flex;
+  flex-flow: column;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+.file {
+  display: none;
+}
+
+.width {
+  width: 20em;
+}
+
+.height {
+  height: 30em;
+}
