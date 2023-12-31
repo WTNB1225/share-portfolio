@@ -1,4 +1,5 @@
 class PostsController < ApplicationController
+  protect_from_forgery with: :exception
   
   def index
     @posts = Post.all.order(created_at: :desc)
@@ -23,14 +24,13 @@ class PostsController < ApplicationController
   end
 
   def show_by_id
-    @post = Post.find_by(id:params[:id])
-    render json: @post.as_json(include: :images).merge(
-      images_url: @post.images.map do |image| 
-        url_for(image)
-      end
-    )
+    @post = Post.find_by(id: params[:id])
+    if @post
+      post = @post.as_json(include: :images).merge(images_url: @post.images.map { |image| url_for(image) })
+    end
+    render json: post
   end
-
+  
   def create
     @post = Post.new(post_params)
     if @post.save
@@ -45,4 +45,5 @@ class PostsController < ApplicationController
   def post_params
     params.require(:post).permit(:title, :content, :user_id, :username, images:[])
   end
+
 end

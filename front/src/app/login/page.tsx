@@ -1,5 +1,5 @@
 "use client";
-import style from "./page.module.scss"
+import style from "./page.module.css"
 import axios from "axios";
 import {useState, ChangeEvent, FormEvent} from "react"
 import { useRouter } from "next/navigation";
