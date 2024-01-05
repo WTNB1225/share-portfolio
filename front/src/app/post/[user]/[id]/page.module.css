@@ -1,0 +1,13 @@
+.h1 {
+  text-align: center;
+  margin-top: 15px;
+}
+.content {
+  text-align: center;
+  font-size: xx-large;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+.img {
+  display: inline-block;
+}

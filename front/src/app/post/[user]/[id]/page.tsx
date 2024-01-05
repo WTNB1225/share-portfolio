@@ -4,47 +4,49 @@ import axios from "axios"
 import { useState, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Header from "../../../../../components/Header"
+import style from "./page.module.css"
 import Image from "next/image"
 
-type Data = {
-  images_url:string[]
-  title:string,
-  content:string,
-  id:string,
-  username:string
-}                        
+const getPostById = async(id:string) => {
+  try{
+    const response = await axios.get(`http://localhost:3000/post/${id}`,{withCredentials:true});
+    const title = response.data.title;
+    const content = response.data.content;
+    const images_url = response.data.images_url;
+    return {title, content, images_url}
+  } catch(e){
+    alert(e);
+  }
+}
 
 export default function PostId() {
   const pathname = usePathname();
-  const splitpathname = pathname.split("/")
-  const id = splitpathname[splitpathname.length - 1]
-  const [data, setData] = useState<Data[]>([]);
+  const splitpathname = pathname.split("/");
+  const id = splitpathname[splitpathname.length - 1];
+  const [title, setTitle] = useState("");
+  const [content, setContent] = useState("");
   const [url, setUrl] = useState<string[]>([]);
   //console.log(id)
 
-  const getPostById = async(id:string) => {
-    try{
-      const response = await axios.get(`http://localhost:3000/post/${id}`);
-      setData(response.data)
-      setUrl(response.data.images_url)
-      console.log(response.data)
-    } catch(e){
-      alert(e);
-    }
-  }
 
   useEffect(() => {
-    getPostById(id);
+    getPostById(id).then((p) => {
+      setTitle(p?.title);
+      setContent(p?.content);
+      setUrl(p?.images_url);
+    })
   },[]);
-
-  console.log(data)
 
   return(
     <>
       <Header/>
+      <h1 className={`${style.h1}`}>{title}</h1>
+      <p className={`${style.content}`}>{content}</p>
       {url.map((image, index) => {
         return(
-          <Image key={index} alt="" src={image} width={400} height={300}/>          
+          <div className={`${style.img}`}>
+            <Image key={index} alt="" src={image} width={400} height={300}/>
+          </div>
         )
       })}
     </>
