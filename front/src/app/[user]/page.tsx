@@ -11,12 +11,12 @@ export default function User() {
   const pathname = usePathname();
   const splitpath = pathname.split("/");
   const username = splitpath[splitpath.length - 1]
-  //console.log(username)
-  const [name, setName] = useState<string>("");
+  const [name, setName] = useState("");
   const getUserInfo = async() => {
     try{
       const response = await axios.get(`http://localhost:3000/users/${username}`);
-      //console.log(response);
+      console.log(response.data.name)
+      setName(response.data.name)
     } catch(e){
       //console.log(e);
     }
@@ -26,7 +26,6 @@ export default function User() {
       const response = await axios.get("http://localhost:3000/logged_in_user", 
       {withCredentials: true});
       if(response.data.name != null){
-        setName(response.data.name);
         setUserData(response);
       } else {
         setName("guest")
@@ -44,7 +43,7 @@ export default function User() {
   return(
     <>
       <Header/>
-      <h1>{username}</h1>
+      <h1>{name}</h1>
     </>
   )
 }

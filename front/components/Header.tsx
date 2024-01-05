@@ -6,22 +6,28 @@ import { useState, useEffect } from "react";
 
 export default function Header(){
   const [name, setName] = useState<string | null>(null);
-  //const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
+  const [loading, setLoading] = useState(true);
 
   const checkLoginStatus = async() => {
     try{
       const response = await axios.get("http://localhost:3000/logged_in_user", 
       {withCredentials: true});
       if(response.data.name != null){
+        setIsLoggedIn(true);
         setName(response.data.name);
       } else {
+        setIsLoggedIn(false);
         setName("")
       }
-      //setIsLoading(false)
+      setLoading(false);
     }catch(e) {
+      setLoading(false);
       console.log(e);
     }
   }
+
+
 
   useEffect(() => {
     checkLoginStatus()
@@ -51,6 +57,14 @@ export default function Header(){
             <li>
               <a className="nav-link" href={`/post/new`}>新規投稿</a>
             </li>
+            {
+              loading == false &&
+              <li className="nav-item">
+                <a className="nav-link" href={isLoggedIn ? `/logout` : '/login'}>
+                {isLoggedIn ? "ログアウト" : "ログイン"}
+                </a>
+              </li>
+          }
           </ul>
         </div>
       </div>

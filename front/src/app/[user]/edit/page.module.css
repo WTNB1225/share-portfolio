@@ -1,15 +1,13 @@
-/* page.module.scss */
 .label {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin-bottom: 1rem; 
+  width: 300px;
+  margin-bottom: 16px;
+  text-align: center;
 }
-
-.form{
+.div {
   display: flex;
-  flex-flow: column;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  margin: auto;
 }

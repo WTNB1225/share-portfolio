@@ -53,28 +53,28 @@ export default function Signup() {
 
   return (
     <>
-    <Header/>
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label>
-          name
-          <input type="text" onChange={handleNameChange}/>
-        </label>
-        <label>
-          email
-          <input type="text" onChange={handleEmailChange}/>
-        </label>
-        <label>
-          password
-          <input type="text" onChange={handlePasswordChange}/>
-        </label>
-        <label>
-          password confirmation
-          <input type="text" onChange={handlePasswordConfirmation}/>
-        </label>   
-        <button type="submit">登録</button>
-      </form>
-    </div>
+      <Header/>
+        <div>
+          <form onSubmit={handleSubmit}>
+            <label>
+              name
+              <input type="text" onChange={handleNameChange}/>
+            </label>
+            <label>
+              email
+              <input type="text" onChange={handleEmailChange}/>
+            </label>
+            <label>
+              password
+              <input type="text" onChange={handlePasswordChange}/>
+            </label>
+            <label>
+              password confirmation
+              <input type="text" onChange={handlePasswordConfirmation}/>
+            </label>   
+            <button type="submit">登録</button>
+          </form>
+        </div>
     </>
   )
 }

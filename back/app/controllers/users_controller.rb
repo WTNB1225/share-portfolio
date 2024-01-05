@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-  before_action :logged_in_user, only: [:edit, :update]
 
   def index
     @users = User.all
@@ -30,6 +29,12 @@ class UsersController < ApplicationController
   end
 
   def update
+    @user = User.find_by(name: params[:id])
+    if @user.update(user_params)
+      render json:@user
+    else
+      render json:@user.errors, status: :unprocessable_entity
+    end
   end
 
   private
