@@ -12,6 +12,7 @@ type Data = {
   content:string,
   id:string,
   username:string
+  avatar_url:string
 }
 
 
@@ -20,6 +21,7 @@ export default function PostUser() {
   const pathname = usePathname();
   const splitPathname = pathname.split("/");
   const name = splitPathname[splitPathname.length - 1];
+  const [avatar, setAvatar] = useState("");
 
   const getUsersPosts = async(name:string) => {
     try{
@@ -31,8 +33,18 @@ export default function PostUser() {
     }
   }
 
+  const getUsersAvatar = async(name:string) => {
+    try{
+      const response = await axios.get(`http://localhost:3000/users/${name}`)
+      setAvatar(response.data.avatar_url)
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
   useEffect(() => {
     getUsersPosts(name);
+    getUsersAvatar(name);
   },[]);
 
   return(
@@ -41,7 +53,7 @@ export default function PostUser() {
       {data.map((d, index) => {
         const thumbnail = d.images_url[0];
         return(
-          <UserWork key={index} title={d.title} id={d.id} name={d.username} image={thumbnail}/>
+          <UserWork key={index} title={d.title} id={d.id} name={d.username} image={thumbnail} avatar={d.avatar_url}/>
         )
       })}
     </>

@@ -7,7 +7,10 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find_by(name:params[:id])
-    render json: @user
+    if @user
+      user = @user.as_json(include: :avatar).merge(avatar_url: url_for(@user.avatar))
+    end
+    render json: user
   end
 
   def new
@@ -40,12 +43,6 @@ class UsersController < ApplicationController
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation)
-    end
-
-    def logged_in_user
-      unless logged_in?
-        redirect_to "http://localhost:8080/login", status: :see_other
-      end
+      params.require(:user).permit(:name, :email, :password, :password_confirmation, :avatar)
     end
 end
