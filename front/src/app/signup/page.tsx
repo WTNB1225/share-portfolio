@@ -12,6 +12,7 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [avatar, setAvatar] = useState<File[]>([]);
   
   const handleNameChange = (e:ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -29,6 +30,12 @@ export default function Signup() {
     setPasswordConfirmation(e.target.value);
   }
 
+  const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files){
+      setAvatar(Array.from(e.target.files))
+    }
+  }
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -36,12 +43,18 @@ export default function Signup() {
     formData.append("user[email]", email);
     formData.append("user[password]", password);
     formData.append("user[password_confirmation]", passwordConfirmation)
+    avatar.forEach((img) => {
+      formData.append("user[avatar]", img);
+    })
     try{
       const response = await axios.post(
         "http://localhost:3000/users",
         formData,
         {
-          withCredentials: true
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
         }
       );
       console.log(response)
@@ -63,6 +76,10 @@ export default function Signup() {
             <label>
               email
               <input type="text" onChange={handleEmailChange}/>
+            </label>
+            <label>
+              avatar 
+              <input type="file" onChange={handleAvatarChange} />
             </label>
             <label>
               password

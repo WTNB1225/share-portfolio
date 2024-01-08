@@ -6,7 +6,7 @@ class PostsController < ApplicationController
     posts_with_images = @posts.map do |post|
       post_data = post.as_json(include: :images)
       post_data.merge(
-        images_url: post.images.map { |image| url_for(image) }
+        images_url: post.images.map { |image| url_for(image) },
       )
     end
     render json: posts_with_images
@@ -17,7 +17,7 @@ class PostsController < ApplicationController
     post_with_images = @post.map do |post|
       post_data = post.as_json(include: :images)
       post_data.merge(
-        images_url: post.images.map { |image| url_for(image)}
+        images_url: post.images.map { |image| url_for(image)},
       )
     end
     render json: post_with_images
@@ -43,7 +43,7 @@ class PostsController < ApplicationController
   private
 
   def post_params
-    params.require(:post).permit(:title, :content, :user_id, :username, images:[])
+    params.require(:post).permit(:title, :content, :user_id, :username, :avatar_url, images:[])
   end
 
 end

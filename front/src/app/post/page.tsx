@@ -12,6 +12,7 @@ type Data = {
   image:string
   images_url:string
   username:string
+  avatar_url:string
 }
 
 export default function Post() {
@@ -36,7 +37,7 @@ export default function Post() {
       {postData.map((d, index) => {
         const thumbnail = d.images_url[0];
         return(
-          <UserWork key={index} title={d.title} id={d.id} name={d.username} image={thumbnail} />
+          <UserWork key={index} title={d.title} id={d.id} name={d.username} image={thumbnail} avatar={d.avatar_url} />
         )
       })}
     </>

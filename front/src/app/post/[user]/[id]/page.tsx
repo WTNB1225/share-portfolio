@@ -37,18 +37,21 @@ export default function PostId() {
     })
   },[]);
 
-  return(
+  return (
     <>
-      <Header/>
-      <h1 className={`${style.h1}`}>{title}</h1>
-      <p className={`${style.content}`}>{content}</p>
-      {url.map((image, index) => {
-        return(
-          <div className={`${style.img}`}>
-            <Image key={index} alt="" src={image} width={400} height={300}/>
-          </div>
-        )
-      })}
+      <Header />
+      <div className={style.postContainer}>
+        <h1 className={style.h1}>{title}</h1>
+        <p className={style.content}>{content}</p>
+        <div className={style.imageContainer}>
+          {url.map((image, index) => (
+            <div key={index} className={style.img}>
+              <Image alt="" src={image} width={400} height={300}  layout="responsive"/>
+            </div>
+          ))}
+        </div>
+      </div>
     </>
-  )
+  );
+  
 }

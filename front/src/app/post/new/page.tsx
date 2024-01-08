@@ -16,17 +16,20 @@ export default function PostNew() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true); 
   const [csrfToken, setCsrfToken] = useState(""); // CSRFトークンをstateに追加
+  const [avatar, setAvatar] = useState("");
 
   const checkLoginStatus = async() => {
     try{
       const response = await axios.get("http://localhost:3000/logged_in_user", {withCredentials: true,});
       setId(response.data.id)
       setName(response.data.name)
+      const res = await axios.get(`http://localhost:3000/users/${response.data.name}`);
+      console.log(res.data.avatar_url)
+      setAvatar(res.data.avatar_url)
       setLoading(false);
-
-      // CSRFトークンを取得
       const csrfResponse = await axios.get("http://localhost:3000/csrf_token", {withCredentials: true,});
       setCsrfToken(csrfResponse.data.csrfToken);
+      // CSRFトークンを取得
     } catch(e){
       console.log(e)
       setLoading(false)
@@ -39,6 +42,7 @@ export default function PostNew() {
 
   const handleContentChange = (e:ChangeEvent<HTMLTextAreaElement>) => {
     setContent(e.target.value)
+    console.log(avatar)
   }
 
   const handleFileChange = (e:ChangeEvent<HTMLInputElement>) => {
@@ -54,6 +58,7 @@ export default function PostNew() {
     formData.append("post[content]", content);
     formData.append("post[user_id]", id);
     formData.append("post[username]",name);
+    formData.append("post[avatar_url]", avatar)
     images.forEach((image) => {
       formData.append("post[images][]", image)
     })
@@ -78,7 +83,7 @@ export default function PostNew() {
   }
 
   useEffect(() => {
-    checkLoginStatus()
+    checkLoginStatus();
   },[])
 
 
