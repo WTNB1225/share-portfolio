@@ -6,3 +6,21 @@
 .img {
   border-radius: 50%;
 }
+.a {
+  display: inline-block;
+  padding: 10px 20px;
+  height: 50px;
+  font-size: 16px;
+  text-align: center;
+  text-decoration: none;
+  border: 2px solid #3498db; /* ボーダーの色は変更可能 */
+  color: #3498db; /* テキストの色は変更可能 */
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+/* マウスオーバー時のスタイル */
+.a:hover {
+  background-color: #3498db; /* マウスオーバー時の背景色は変更可能 */
+  color: #fff; /* マウスオーバー時のテキスト色は変更可能 */
+}

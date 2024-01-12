@@ -4,6 +4,8 @@ import Header from "../../../../components/Header";
 import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
 import style from "./page.module.css";
+import { useCheckLoginStatus } from "../../../../hook/useCheckLoginStatus";
+import { useGetCsrfToken } from "../../../../hook/useGetCsrfToken";
 
 export default function Edit() {
   const [name, setName] = useState("");
@@ -13,34 +15,29 @@ export default function Edit() {
   const [loginUser, setLoginUser] = useState("");
   const [loading, setLoading] = useState(true);
   const [csrfToken, setCsrfToken] = useState("")
+
   const router = useRouter();
   const pathname = usePathname();
   const splitPathname = pathname.split("/");
   const username = splitPathname[splitPathname.length - 2];
 
-  const checkLoginStatus = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/logged_in_user", {
-        withCredentials: true,
-      });
-      setName(response.data.name)
-      const csrfResponse = await axios.get("http://localhost:3000/csrf_token", {withCredentials: true,});
-      setCsrfToken(csrfResponse.data.csrfToken);
-      if (response.data.name != null) {
-        setLoginUser(response.data.name);
-      } else {
-        setName("guest");
-      }
-    } catch (e) {
-      console.log(e);
+
+  useCheckLoginStatus().then((d) => {
+    if(d){
+      setLoginUser(d.name);
     }
-    setLoading(false)
-  };
+  })
+  
+  useGetCsrfToken().then((token) => {
+    if(token) {
+      setCsrfToken(token);
+      setLoading(false);
+    }
+  })
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
-  console.log(name)
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -127,10 +124,6 @@ export default function Edit() {
       router.push("/401");
     }
   };
-
-  useEffect(() => {
-    checkLoginStatus();
-  }, []);
 
   if(loading) {
     return;

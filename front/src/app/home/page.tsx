@@ -2,28 +2,19 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import Header from '../../../components/Header';
+import {useCheckLoginStatus} from "/Users/watanabeyuki/portfolio-service/front/hook/useCheckLoginStatus"
+
 
 export default function App() {
+
   const [name, setName] = useState("");
-  const checkLoginStatus = async() => {
-    try{
-      const response = await axios.get("http://localhost:3000/logged_in_user", 
-      {withCredentials: true});
-      console.log(response.data.name);
-      if(response.data.name != null){
-        setName(response.data.name);
-      } else {
-        setName("guest")
-      }
-    }catch(e) {
-      console.log(e);
+
+  useCheckLoginStatus().then((d) => {
+    console.log(d)
+    if(d){
+      setName(d.name)
     }
-  }
-
-  useEffect(() => {
-    checkLoginStatus()
-  },[]);
-
+  });
   return(
     <>
       <Header/>
