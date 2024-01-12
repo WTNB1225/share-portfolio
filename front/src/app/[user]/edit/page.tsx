@@ -29,6 +29,7 @@ export default function Edit() {
   })
   
   useGetCsrfToken().then((token) => {
+    console.log(token)
     if(token) {
       setCsrfToken(token);
       setLoading(false);
