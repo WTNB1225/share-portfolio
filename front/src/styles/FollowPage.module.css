@@ -1,0 +1,11 @@
+.img {
+  border-radius: 50%;
+}
+
+.user {
+  font-size: 22px;
+  display: flex;
+  color: black;
+  text-decoration: none;
+  margin-bottom: 16px;
+}

@@ -137,6 +137,8 @@ export default function User() {
           alt="avatar"
         />
         <h1>{username}</h1>
+        <a className={style.a} href={`/${username}/followings`}>フォロー中</a>
+        <a className={style.a} href={`/${username}/followers`}>フォロワー</a>
         {userData && username === userData.name && (
           <a className={style.a} href={`/${username}/edit`}>
             プロフィールを編集
