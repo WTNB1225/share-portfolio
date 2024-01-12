@@ -4,9 +4,9 @@ import axios from "axios";
 import { ChangeEvent, FormEvent, useState} from "react"
 import { useRouter } from "next/navigation";
 import Header from "../../../components/Header";
+import style from "./page.module.css"
 
 export default function Signup() {
-
   const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -68,24 +68,24 @@ export default function Signup() {
     <>
       <Header/>
         <div>
-          <form onSubmit={handleSubmit}>
-            <label>
+          <form className={style.form} onSubmit={handleSubmit}>
+            <label className={style.label}>
               name
               <input type="text" onChange={handleNameChange}/>
             </label>
-            <label>
+            <label className={style.label}>
               email
               <input type="text" onChange={handleEmailChange}/>
             </label>
-            <label>
+            <label className={`${style.label}`}>
               avatar 
-              <input type="file" onChange={handleAvatarChange} />
+              <input className={style.file} type="file" onChange={handleAvatarChange} />
             </label>
-            <label>
+            <label className={style.label}>
               password
               <input type="text" onChange={handlePasswordChange}/>
             </label>
-            <label>
+            <label className={style.label}>
               password confirmation
               <input type="text" onChange={handlePasswordConfirmation}/>
             </label>   

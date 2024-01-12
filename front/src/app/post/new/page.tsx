@@ -6,6 +6,8 @@ import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Header from "../../../../components/Header";
 import style from "./page.module.css";
+import { useCheckLoginStatus } from "../../../../hook/useCheckLoginStatus";
+import { useGetCsrfToken } from "../../../../hook/useGetCsrfToken";
 
 export default function PostNew() {
   const router = useRouter()
@@ -18,23 +20,24 @@ export default function PostNew() {
   const [csrfToken, setCsrfToken] = useState(""); // CSRFトークンをstateに追加
   const [avatar, setAvatar] = useState("");
 
-  const checkLoginStatus = async() => {
-    try{
-      const response = await axios.get("http://localhost:3000/logged_in_user", {withCredentials: true,});
-      setId(response.data.id)
-      setName(response.data.name)
-      const res = await axios.get(`http://localhost:3000/users/${response.data.name}`);
-      console.log(res.data.avatar_url)
-      setAvatar(res.data.avatar_url)
+  useCheckLoginStatus().then(async (d) => {
+    if(d){
+      setId(d.id);
+      setName(d.name)
+      const res = await axios.get(`http://localhost:3000/users/${name}`);
+      console.log(res.data.avatar_url);
+      setAvatar(res.data.avatar_url);
       setLoading(false);
-      const csrfResponse = await axios.get("http://localhost:3000/csrf_token", {withCredentials: true,});
-      setCsrfToken(csrfResponse.data.csrfToken);
-      // CSRFトークンを取得
-    } catch(e){
-      console.log(e)
-      setLoading(false)
     }
-  }
+  })
+
+
+  useGetCsrfToken().then((token) => {
+    if(token){
+      setCsrfToken(token);
+      setLoading(false);
+    }
+  });
 
   const handleTitleChange = (e:ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
@@ -81,11 +84,6 @@ export default function PostNew() {
       alert(error);
     }
   }
-
-  useEffect(() => {
-    checkLoginStatus();
-  },[])
-
 
   if (loading) {
     return (
