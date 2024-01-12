@@ -32,11 +32,10 @@ export default function Post() {
   return (
     <>
       <Header />
-
       {postData.map((d, index) => {
         const thumbnail = d.images_url[0];
         return (
-          <div className={style.posts}>
+          <div className={style.posts} key={index}>
             <UserWork
               key={index}
               title={d.title}

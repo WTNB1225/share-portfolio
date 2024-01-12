@@ -25,7 +25,6 @@ export default function PostNew() {
       setId(d.id);
       setName(d.name)
       const res = await axios.get(`http://localhost:3000/users/${name}`);
-      console.log(res.data.avatar_url);
       setAvatar(res.data.avatar_url);
       setLoading(false);
     }
@@ -38,6 +37,8 @@ export default function PostNew() {
       setLoading(false);
     }
   });
+
+  console.log(csrfToken)
 
   const handleTitleChange = (e:ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
