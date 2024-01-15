@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
-import Header from "../../../../components/Header";
-import FollowPage from "../../../../components/FollowPage";
+import Header from "../../../components/Header";
+import FollowPage from "../../../components/FollowPage";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -19,7 +19,9 @@ export default function Followings() {
 
   const getFollowings = async (name: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/followings/${name}`);
+      const response = await axios.get(
+        `http://localhost:3000/followings/${name}`
+      );
       setData(response.data);
       return response.data;
     } catch (e) {
@@ -39,11 +41,13 @@ export default function Followings() {
   useEffect(() => {
     getFollowings(username).then((followings) => {
       if (followings) {
-        const avatarPromises = followings.map(async (following:{name:string}) => {
-          const avatarUrl = await getUsersAvatar(following.name);
-          return avatarUrl;
-        });
-  
+        const avatarPromises = followings.map(
+          async (following: { name: string }) => {
+            const avatarUrl = await getUsersAvatar(following.name);
+            return avatarUrl;
+          }
+        );
+
         Promise.all(avatarPromises).then((avatarUrls) => {
           setAvatars(avatarUrls.filter((url) => url)); // フィルターを追加してnullでないものだけを追加
         });

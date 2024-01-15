@@ -1,11 +1,11 @@
 "use client";
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import Header from "../../../../components/Header";
+import Header from "../../../components/Header";
 import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
 import style from "./page.module.css";
-import { useCheckLoginStatus } from "../../../../hook/useCheckLoginStatus";
-import { useGetCsrfToken } from "../../../../hook/useGetCsrfToken";
+import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
+import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
 
 export default function Edit() {
   const [name, setName] = useState("");
@@ -14,27 +14,26 @@ export default function Edit() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [loginUser, setLoginUser] = useState("");
   const [loading, setLoading] = useState(true);
-  const [csrfToken, setCsrfToken] = useState("")
+  const [csrfToken, setCsrfToken] = useState("");
 
   const router = useRouter();
   const pathname = usePathname();
   const splitPathname = pathname.split("/");
   const username = splitPathname[splitPathname.length - 2];
 
-
   useCheckLoginStatus().then((d) => {
-    if(d){
+    if (d) {
       setLoginUser(d.name);
     }
-  })
-  
+  });
+
   useGetCsrfToken().then((token) => {
-    console.log(token)
-    if(token) {
+    console.log(token);
+    if (token) {
       setCsrfToken(token);
       setLoading(false);
     }
-  })
+  });
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -63,10 +62,10 @@ export default function Edit() {
           `http://localhost:3000/users/${username}`,
           formData,
           {
-            headers:{
-              "X-CSRF-Token": csrfToken
+            headers: {
+              "X-CSRF-Token": csrfToken,
             },
-            withCredentials:true
+            withCredentials: true,
           }
         );
         router.push(`/${name}`);
@@ -86,10 +85,10 @@ export default function Edit() {
           `http://localhost:3000/users/${username}`,
           formData,
           {
-            headers:{
-              "X-CSRF-Token": csrfToken
+            headers: {
+              "X-CSRF-Token": csrfToken,
             },
-            withCredentials:true
+            withCredentials: true,
           }
         );
         router.push(`/${name}`);
@@ -104,17 +103,17 @@ export default function Edit() {
   const handlePasswordSubmit = async (e: FormEvent) => {
     const formData = new FormData();
     formData.append("user[password]", password);
-    formData.append("user[password_confirmation]", passwordConfirmation)
+    formData.append("user[password_confirmation]", passwordConfirmation);
     if (loginUser == username) {
       try {
         const response = await axios.patch(
           `http://localhost:3000/users/${username}`,
           formData,
           {
-            headers:{
-              "X-CSRF-Token": csrfToken
+            headers: {
+              "X-CSRF-Token": csrfToken,
             },
-            withCredentials:true
+            withCredentials: true,
           }
         );
         router.push(`/${name}`);
@@ -126,7 +125,7 @@ export default function Edit() {
     }
   };
 
-  if(loading) {
+  if (loading) {
     return;
   }
 
