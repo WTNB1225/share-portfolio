@@ -3,10 +3,10 @@
 import axios from "axios";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import Header from "../../../components/Header";
+import Header from "../../components/Header";
 import Image from "next/image";
 import style from "./page.module.css";
-import UserWork from "../../../components/UserWork";
+import UserWork from "../../components/UserWork";
 
 type Data = {
   images_url: string;
@@ -33,7 +33,7 @@ export default function User() {
   const splitpath = pathname.split("/");
   const username = splitpath[splitpath.length - 1]; // urlからusernameを取得
 
-  const tmp = "test"
+  const tmp = "test";
 
   const checkLoginStatus = async () => {
     try {
@@ -137,8 +137,12 @@ export default function User() {
           alt="avatar"
         />
         <h1>{username}</h1>
-        <a className={style.a} href={`/${username}/followings`}>フォロー中</a>
-        <a className={style.a} href={`/${username}/followers`}>フォロワー</a>
+        <a className={style.a} href={`/${username}/followings`}>
+          フォロー中
+        </a>
+        <a className={style.a} href={`/${username}/followers`}>
+          フォロワー
+        </a>
         {userData && username === userData.name && (
           <a className={style.a} href={`/${username}/edit`}>
             プロフィールを編集

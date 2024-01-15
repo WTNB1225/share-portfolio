@@ -1,9 +1,9 @@
 "use client";
-import UserWork from "../../../components/UserWork";
+import UserWork from "../../components/UserWork";
 import style from "./page.module.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import Header from "../../../components/Header";
+import Header from "../../components/Header";
 
 type Data = {
   id: string;
