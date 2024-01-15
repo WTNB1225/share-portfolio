@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../../components/Header";
+import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 
 type Data = {
   images_url: string;
@@ -21,6 +22,13 @@ export default function PostUser() {
   const splitPathname = pathname.split("/");
   const name = splitPathname[splitPathname.length - 1];
   const [avatar, setAvatar] = useState("");
+  const [token, setToken] = useState<string>("");
+
+  useGetCsrfToken().then((token) => {
+    if (token) {
+      setToken(token);
+    }
+  });
 
   const getUsersPosts = async (name: string) => {
     try {
@@ -59,6 +67,7 @@ export default function PostUser() {
             name={d.username}
             image={thumbnail}
             avatar={d.avatar_url}
+            token={token}
           />
         );
       })}

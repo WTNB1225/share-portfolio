@@ -4,6 +4,7 @@ import style from "./page.module.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
+import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 
 type Data = {
   id: string;
@@ -17,6 +18,14 @@ type Data = {
 
 export default function Post() {
   const [postData, setPostData] = useState<Data[]>([]);
+  const [token, setToken] = useState<string>("");
+
+  useGetCsrfToken().then((token) => {
+    if(token) {
+      setToken(token);
+    }
+  })
+
   const getPosts = async () => {
     try {
       const response = await axios.get("http://localhost:3000/posts");
@@ -43,6 +52,7 @@ export default function Post() {
               name={d.username}
               image={thumbnail}
               avatar={d.avatar_url}
+              token={token}
             />
           </div>
         );
