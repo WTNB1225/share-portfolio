@@ -33,7 +33,6 @@ export default function User() {
   const splitpath = pathname.split("/");
   const username = splitpath[splitpath.length - 1]; // urlからusernameを取得
 
-  const tmp = "test";
 
   const checkLoginStatus = async () => {
     try {
@@ -119,7 +118,7 @@ export default function User() {
 
   useEffect(() => {
     checkLoginStatus().then(() => {
-      checkAlreadyFollowing(tmp);
+      checkAlreadyFollowing(username);
     });
     getUserInfo();
     getUsersPosts(username);
