@@ -37,8 +37,6 @@ export default function PostNew() {
     }
   });
 
-  console.log(csrfToken);
-
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
@@ -62,6 +60,7 @@ export default function PostNew() {
     formData.append("post[user_id]", id);
     formData.append("post[username]", name);
     formData.append("post[avatar_url]", avatar);
+    formData.append("post[like]", "0");
     images.forEach((image) => {
       formData.append("post[images][]", image);
     });

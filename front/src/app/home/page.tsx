@@ -8,7 +8,6 @@ export default function App() {
   const [loading, setLoading] = useState(true);
 
   useCheckLoginStatus().then((d) => {
-    console.log(d);
     if (d) {
       if (d.name) {
         setName(d.name);

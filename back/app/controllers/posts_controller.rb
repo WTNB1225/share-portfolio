@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   protect_from_forgery with: :exception
+  skip_before_action :verify_authenticity_token, only: [:update]
   
   def index
     @posts = Post.all.order(created_at: :desc)
@@ -40,10 +41,19 @@ class PostsController < ApplicationController
     end
   end
 
+  def update
+    @post = Post.find_by(id: params[:id])
+    if @post.update(post_params)
+      render json: @post, status: 200
+    else
+      render json: @post.errors, status: :unprocessable_entity
+    end
+  end
+
   private
 
   def post_params
-    params.require(:post).permit(:title, :content, :user_id, :username, :avatar_url, images:[])
+    params.require(:post).permit(:title, :content, :user_id, :like, :username, :avatar_url, images:[])
   end
 
 end

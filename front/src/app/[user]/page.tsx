@@ -7,6 +7,7 @@ import Header from "../../components/Header";
 import Image from "next/image";
 import style from "./page.module.css";
 import UserWork from "../../components/UserWork";
+import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 
 type Data = {
   images_url: string;
@@ -31,6 +32,7 @@ export default function User() {
   const [loading, setLoading] = useState(true);
   const [loading2, setLoading2] = useState(true);
   const [presence, setPresence] = useState<boolean>();
+  const [token, setToken] = useState<string>("");
 
   const pathname = usePathname();
   const splitpath = pathname.split("/");
@@ -44,14 +46,18 @@ export default function User() {
       if (response.data.name != null) {
         setParamName(response.data.name);
         setUserData(response.data);
-      } else {
-        setPresence(false);
       }
     } catch (e) {
       console.log(e);
     }
     setLoading2(false);
   };
+
+  useGetCsrfToken().then((token) => {
+    if (token) {
+      setToken(token);
+    }
+  });
 
   //nameのpostデータを取得する
   const getUsersPosts = async (name: string) => {
@@ -69,6 +75,11 @@ export default function User() {
       const response = await axios.get(
         `http://localhost:3000/users/${username}`
       );
+      if(response.data.name != null) {
+        setPresence(true);
+      } else {
+        setPresence(false);
+      }
       setAvatar(response.data.avatar_url);
     } catch (e) {
       console.log(e);
@@ -131,63 +142,68 @@ export default function User() {
   }, [paramName]);
 
   return (
-    <>
-      {loading == false && loading2 == false && (
-        <>
-          {presence == false && (
-            <p>ユーザーが存在しません</p>
+    <div>
+      {!loading2 && !loading && (
+        <div>
+          {!presence ? (
+            <>
+              <Header />
+              <p>ユーザーが存在しません</p>
+            </>
+          ) : (
+            <>
+              <Header />
+              <div className={style.avatar}>
+                <Image
+                  className={style.img}
+                  src={avatar}
+                  width={80}
+                  height={80}
+                  alt="avatar"
+                />
+                <h1>{username}</h1>
+                <a className={style.a} href={`/${username}/followings`}>
+                  フォロー中
+                </a>
+                <a className={style.a} href={`/${username}/followers`}>
+                  フォロワー
+                </a>
+                {userData && username === userData.name && (
+                  <a className={style.a} href={`/${username}/edit`}>
+                    プロフィールを編集
+                  </a>
+                )}
+                {userData && username !== paramName && isFollowed === true && (
+                  <button
+                    onClick={() => {
+                      handleUnfollow(userData.id);
+                    }}
+                    className={style.a}
+                  >
+                    フォロー解除
+                  </button>
+                )}
+                {userData && username !== paramName && isFollowed === false && (
+                  <button onClick={handleFollow} className={style.a}>
+                    フォロー
+                  </button>
+                )}
+              </div>
+              {postData.map((d, index) => (
+                <UserWork
+                  key={index}
+                  title={d.title}
+                  id={d.id}
+                  name={d.username}
+                  image={d.images_url[0]}
+                  avatar={avatar}
+                  token={token}
+                />
+              ))}
+            </>
           )}
-          <Header />
-          <div className={style.avatar}>
-            <Image
-              className={style.img}
-              src={avatar}
-              width={80}
-              height={80}
-              alt="avatar"
-            />
-            <h1>{username}</h1>
-            <a className={style.a} href={`/${username}/followings`}>
-              フォロー中
-            </a>
-            <a className={style.a} href={`/${username}/followers`}>
-              フォロワー
-            </a>
-            {userData && username === userData.name && (
-              <a className={style.a} href={`/${username}/edit`}>
-                プロフィールを編集
-              </a>
-            )}
-            {userData && username !== paramName && isFollowed === true && (
-              <>
-                <button
-                  onClick={() => {
-                    handleUnfollow(userData.id);
-                  }}
-                  className={style.a}
-                >
-                  フォロー解除
-                </button>
-              </>
-            )}
-            {userData && username !== paramName && isFollowed === false && (
-              <button onClick={handleFollow} className={style.a}>
-                フォロー
-              </button>
-            )}
-          </div>
-          {postData.map((d, index) => (
-            <UserWork
-              key={index}
-              title={d.title}
-              id={d.id}
-              name={d.username}
-              image={d.images_url[0]}
-              avatar={avatar}
-            />
-          ))}
-        </>
+        </div>
       )}
-    </>
+    </div>
   );
 }
