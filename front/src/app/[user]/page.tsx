@@ -28,11 +28,13 @@ export default function User() {
   const [avatar, setAvatar] = useState("");
   const [isFollowed, setIsFollowed] = useState<boolean | undefined>(undefined);
   const [paramName, setParamName] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
+  const [presence, setPresence] = useState<boolean>();
 
   const pathname = usePathname();
   const splitpath = pathname.split("/");
   const username = splitpath[splitpath.length - 1]; // urlからusernameを取得
-
 
   const checkLoginStatus = async () => {
     try {
@@ -42,10 +44,13 @@ export default function User() {
       if (response.data.name != null) {
         setParamName(response.data.name);
         setUserData(response.data);
+      } else {
+        setPresence(false);
       }
     } catch (e) {
       console.log(e);
     }
+    setLoading2(false);
   };
 
   //nameのpostデータを取得する
@@ -114,11 +119,12 @@ export default function User() {
     } catch (e) {
       console.log(e);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     checkLoginStatus().then(() => {
-      checkAlreadyFollowing(username);
+      checkAlreadyFollowing(paramName);
     });
     getUserInfo();
     getUsersPosts(username);
@@ -126,55 +132,62 @@ export default function User() {
 
   return (
     <>
-      <Header />
-      <div className={style.avatar}>
-        <Image
-          className={style.img}
-          src={avatar}
-          width={80}
-          height={80}
-          alt="avatar"
-        />
-        <h1>{username}</h1>
-        <a className={style.a} href={`/${username}/followings`}>
-          フォロー中
-        </a>
-        <a className={style.a} href={`/${username}/followers`}>
-          フォロワー
-        </a>
-        {userData && username === userData.name && (
-          <a className={style.a} href={`/${username}/edit`}>
-            プロフィールを編集
-          </a>
-        )}
-        {userData && username !== paramName && isFollowed === true && (
-          <>
-            <button
-              onClick={() => {
-                handleUnfollow(userData.id);
-              }}
-              className={style.a}
-            >
-              フォロー解除
-            </button>
-          </>
-        )}
-        {userData && username !== paramName && isFollowed === false && (
-          <button onClick={handleFollow} className={style.a}>
-            フォロー
-          </button>
-        )}
-      </div>
-      {postData.map((d, index) => (
-        <UserWork
-          key={index}
-          title={d.title}
-          id={d.id}
-          name={d.username}
-          image={d.images_url[0]}
-          avatar={avatar}
-        />
-      ))}
+      {loading == false && loading2 == false && (
+        <>
+          {presence == false && (
+            <p>ユーザーが存在しません</p>
+          )}
+          <Header />
+          <div className={style.avatar}>
+            <Image
+              className={style.img}
+              src={avatar}
+              width={80}
+              height={80}
+              alt="avatar"
+            />
+            <h1>{username}</h1>
+            <a className={style.a} href={`/${username}/followings`}>
+              フォロー中
+            </a>
+            <a className={style.a} href={`/${username}/followers`}>
+              フォロワー
+            </a>
+            {userData && username === userData.name && (
+              <a className={style.a} href={`/${username}/edit`}>
+                プロフィールを編集
+              </a>
+            )}
+            {userData && username !== paramName && isFollowed === true && (
+              <>
+                <button
+                  onClick={() => {
+                    handleUnfollow(userData.id);
+                  }}
+                  className={style.a}
+                >
+                  フォロー解除
+                </button>
+              </>
+            )}
+            {userData && username !== paramName && isFollowed === false && (
+              <button onClick={handleFollow} className={style.a}>
+                フォロー
+              </button>
+            )}
+          </div>
+          {postData.map((d, index) => (
+            <UserWork
+              key={index}
+              title={d.title}
+              id={d.id}
+              name={d.username}
+              image={d.images_url[0]}
+              avatar={avatar}
+            />
+          ))}
+        </>
+      )}
     </>
   );
 }

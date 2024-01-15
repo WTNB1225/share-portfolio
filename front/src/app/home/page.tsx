@@ -1,22 +1,31 @@
 "use client";
-import { useEffect, useState } from "react";
-import axios from "axios";
+import {  useState } from "react";
 import Header from "../../components/Header";
 import { useCheckLoginStatus } from "../../hook/useCheckLoginStatus";
 
 export default function App() {
   const [name, setName] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useCheckLoginStatus().then((d) => {
     console.log(d);
     if (d) {
-      setName(d.name);
+      if (d.name) {
+        setName(d.name);
+      } else {
+        setName("guest");
+      }
     }
+    setLoading(false);
   });
   return (
     <>
-      <Header />
-      <h1>Hello {name}</h1>
+      {loading == false && (
+        <>
+          <Header />
+          <h1>Hello {name}</h1>
+        </>
+      )}
     </>
   );
 }
