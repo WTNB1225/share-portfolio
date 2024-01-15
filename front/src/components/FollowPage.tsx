@@ -1,19 +1,27 @@
-"use client"
-import Image from "next/image"
-import Link from "next/link"
-import style from "@/styles/FollowPage.module.css"
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import style from "@/styles/FollowPage.module.css";
 
 export default function FollowPage({
   name,
-  img
+  img,
 }: {
-  name:string,
-  img:string
+  name: string;
+  img: string;
 }) {
-  return(
+  return (
     <div className={style.user}>
-      <Image className={style.img} src={img} width={40} height={40} alt="avatar"/>
-      {name}
+      <Link href={`/${name}`} className={style.user}>
+        <Image
+          className={style.img}
+          src={img}
+          width={40}
+          height={40}
+          alt="avatar"
+        />
+        {name}
+      </Link>
     </div>
-  )
+  );
 }

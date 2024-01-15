@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_08_134414) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_15_043751) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -47,6 +47,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_08_134414) do
     t.datetime "updated_at", null: false
     t.string "username"
     t.string "avatar_url"
+    t.integer "like"
+    t.index ["like"], name: "index_posts_on_like"
     t.index ["user_id"], name: "index_posts_on_user_id"
     t.index ["username"], name: "index_posts_on_username"
   end
