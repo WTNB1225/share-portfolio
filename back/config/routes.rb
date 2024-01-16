@@ -15,4 +15,5 @@ Rails.application.routes.draw do
   get "favorites_count/:id", to: "favorites#count"
   delete "favorites/:user_id/:post_id", to: "favorites#destroy"
   get "isFavorites/:user_id/:post_id", to: "favorites#favorite?"
+  get ":id/favorites", to: "favorites#users_favorite"
 end

@@ -37,6 +37,11 @@ class FavoritesController < ApplicationController
     end
   end
 
+  def users_favorite
+    @favorite = Favorite.where(user_id: params[:id])
+    render json:@favorite
+  end
+
   private
     def favorite_params
       params.require(:favorite).permit(:user_id, :post_id)
