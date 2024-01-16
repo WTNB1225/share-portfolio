@@ -39,3 +39,14 @@
   color: black;
   text-decoration: none;
 }
+
+.icon {
+  border-radius: 50%;
+  background-color: white;
+  border: none;
+}
+
+.icon svg path{
+  stroke: palevioletred;
+  width: 500px;
+}

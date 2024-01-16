@@ -21,10 +21,10 @@ export default function Post() {
   const [token, setToken] = useState<string>("");
 
   useGetCsrfToken().then((token) => {
-    if(token) {
+    if (token) {
       setToken(token);
     }
-  })
+  });
 
   const getPosts = async () => {
     try {
@@ -39,24 +39,26 @@ export default function Post() {
   }, []);
 
   return (
-    <>
+    <div>
       <Header />
+      <div className={style.center}>
       {postData.map((d, index) => {
         const thumbnail = d.images_url[0];
         return (
-          <div className={style.posts} key={index}>
-            <UserWork
-              key={index}
-              title={d.title}
-              id={d.id}
-              name={d.username}
-              image={thumbnail}
-              avatar={d.avatar_url}
-              token={token}
-            />
-          </div>
+            <div className={`${style.posts}`} key={index}>
+              <UserWork
+                key={index}
+                title={d.title}
+                id={d.id}
+                name={d.username}
+                image={thumbnail}
+                avatar={d.avatar_url}
+                token={token}
+              />
+            </div>
         );
       })}
-    </>
+      </div>
+    </div>
   );
 }
