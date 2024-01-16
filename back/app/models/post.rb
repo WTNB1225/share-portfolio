@@ -2,6 +2,7 @@ class Post < ApplicationRecord
   include Rails.application.routes.url_helpers
   belongs_to :user
   has_many_attached :images
+  has_many :favorites, dependent: :destroy
   validates :title, presence:true, length: {maximum: 50}
   validates :user_id, presence:true
   validates :content, presence:true, length: {maximum: 500}

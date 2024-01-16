@@ -11,4 +11,8 @@ Rails.application.routes.draw do
   resources :relationships, only:[:create, :destroy, :index]
   get "followings/:id", to: "relationships#followings"
   get "followers/:id", to: "relationships#followers"
+  resources :favorites
+  get "favorites_count/:id", to: "favorites#count"
+  delete "favorites/:user_id/:post_id", to: "favorites#destroy"
+  get "isFavorites/:user_id/:post_id", to: "favorites#favorite?"
 end
