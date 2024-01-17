@@ -1,10 +1,11 @@
 "use client";
 import UserWork from "../../components/UserWork";
-import style from "./page.module.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
+import style from "./page.module.css";
 
 type Data = {
   id: string;
@@ -41,23 +42,25 @@ export default function Post() {
   return (
     <div>
       <Header />
-      <div className={style.center}>
-      {postData.map((d, index) => {
-        const thumbnail = d.images_url[0];
-        return (
-            <div className={`${style.posts}`} key={index}>
-              <UserWork
-                key={index}
-                title={d.title}
-                id={d.id}
-                name={d.username}
-                image={thumbnail}
-                avatar={d.avatar_url}
-                token={token}
-              />
-            </div>
-        );
-      })}
+      <div className="container">
+        <div className="row">
+          {postData.map((d, index) => {
+            const thumbnail = d.images_url[0];
+            return (
+              <div className="col-sm-12 col-md-6 col-lg-4 col-rg-4" key={index}>
+                <UserWork
+                  key={index}
+                  title={d.title}
+                  id={d.id}
+                  name={d.username}
+                  image={thumbnail}
+                  avatar={d.avatar_url}
+                  token={token}
+                />
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

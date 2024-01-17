@@ -6,7 +6,7 @@ import style from "./page.module.css";
 import { useRouter, usePathname } from "next/navigation";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
-import { get } from "http";
+import UserWork from "@/components/UserWork";
 
 type Data = {
   name:string;
@@ -23,7 +23,9 @@ type Data = {
 export default function Bookmark() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState<boolean>(true);
-  const [data, setData] = useState<Data>({name:"", id:"", title:"", content:"", image:"", images_url:"", username:"", avatar_url:"", post_id:""});
+  const [data, setData] = useState<Data[]>([]);
+  const [token, setToken] = useState("");
+  const [postData, setPostData] = useState<Data[]>([]);
 
   const pathname = usePathname();
   const username = pathname.split("/").reverse()[1];
@@ -34,7 +36,7 @@ export default function Bookmark() {
         const response = await axios.get("http://localhost:3000/logged_in_user", {
           withCredentials: true,
         });
-        setData(response.data);
+        setName(response.data.name);
         getBookmark(response.data.id); 
       } catch (e) {
         console.log(e);
@@ -45,7 +47,12 @@ export default function Bookmark() {
     async function getBookmark(id: string) { 
       try{
         const response = await axios.get(`http://localhost:3000/${id}/bookmarks`);
-        console.log(response.data);
+        const tmpData = [];
+        for(let d of response.data) {
+          const response = await axios.get(`http://localhost:3000/post/${d.post_id}`);
+          tmpData.push(response.data);
+        }
+        setPostData(tmpData);
       } catch(e) {
         console.log(e);
       }
@@ -54,8 +61,15 @@ export default function Bookmark() {
     checkLoginStatus();
   }, []); 
 
+
+  useGetCsrfToken().then((token) => {
+    if (token) {
+      setToken(token);
+    }
+  });
+
   if(loading == false) {
-    if(data.name !== username){
+    if(name !== username){
       return (
         <div>
           <Header />
@@ -71,7 +85,22 @@ export default function Bookmark() {
     <div>
       <Header />
       <h1>ブックマーク</h1>
-
+      {postData.map((d, index) => {
+        const thumbnail = d.images_url[0];
+        return (
+          <div className={`${style.posts}`} key={index}>
+            <UserWork
+              key={index}
+              title={d.title}
+              id={d.id}
+              name={d.username}
+              image={thumbnail}
+              avatar={d.avatar_url}
+              token={token}
+            />
+          </div>
+        );
+      })}
     </div>
     )
   );

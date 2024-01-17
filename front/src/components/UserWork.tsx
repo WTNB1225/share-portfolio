@@ -5,9 +5,12 @@ import style from "@/styles/UserWork.module.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
-import { FaHeart } from "react-icons/fa";
-import { CiBookmark } from "react-icons/ci";
-import { CiBookmarkCheck } from "react-icons/ci";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBookmark as faBookmarkRegular } from "@fortawesome/free-regular-svg-icons";
+import {faBookmark as faBookmarkSolid} from "@fortawesome/free-solid-svg-icons"
+import {faHeart as faHartRegular} from "@fortawesome/free-regular-svg-icons"
+import {faHeart as faHeartSolid} from "@fortawesome/free-solid-svg-icons"
+
 export default function UserWork({
   id,
   name,
@@ -38,7 +41,6 @@ export default function UserWork({
   const checkBookmark = async () => {
     try{
       const response = await axios.get(`http://localhost:3000/isBookmarked/${currentUserId}/${id}`);
-      console.log(response)
       if(response.data == true){
         setIsBookmarked(true);
       } else {
@@ -66,7 +68,6 @@ export default function UserWork({
       )
       setIsBookmarked(true);
       checkBookmark();
-      console.log(response)
     } catch(e){
       console.log(e)
     }
@@ -141,7 +142,6 @@ export default function UserWork({
           },
         }
       );
-      console.log(response);
       setIsLiked(true);
       getAmountOfLikes();
     } catch (e) {
@@ -192,20 +192,20 @@ export default function UserWork({
         </Link>
         {isLiked ? (
           <button onClick={handleUnLike} className={style.icon}>
-            <FaHeart color="red" size={30} />
+            <FontAwesomeIcon icon={faHeartSolid} color="red" size="xl"/>
           </button>
         ) : (
           <button className={style.icon} onClick={handleLike}>
-            <FaHeart color="gray" size={30}/>
+            <FontAwesomeIcon icon={faHartRegular} size="xl"/>
           </button>
         )}
         {isBookmarked ? (
-          <button onClick={handleUnBookmark} className={style.icon}>
-            <CiBookmarkCheck  size={30} />
+          <button onClick={handleUnBookmark} className={style.bookmark}>
+            <FontAwesomeIcon icon={faBookmarkSolid} color="skyblue" size="xl"/>
           </button>
         ) : (
           <button className={style.icon} onClick={handleBookmark}>
-            <CiBookmark color="gray" size={30} />
+            <FontAwesomeIcon icon={faBookmarkRegular} size="xl"/>
           </button>
         )}
         <h3>{amountOfLikes} likes</h3>
