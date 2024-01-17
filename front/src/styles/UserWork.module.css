@@ -6,7 +6,7 @@
   border: 1px solid #ddd;
   border-radius: 8px;
   padding: 16px;
-  margin: 16px;
+  margin-top: 16px;
   width: 20em; /* 外枠の適切な幅 */
   text-align: center;
   display: inline-block;
@@ -46,7 +46,16 @@
   border: none;
 }
 
-.icon svg path{
-  stroke: palevioletred;
-  width: 500px;
+.iconColor svg.fill{
+  stroke: red;
+}
+
+.bookmark {
+  border-radius: 50%;
+  background-color: white;
+  border: none;
+}
+
+.bookmark svg path {
+  stroke: blue;
 }

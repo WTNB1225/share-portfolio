@@ -57,6 +57,7 @@ export default function PostUser() {
   return (
     <>
       <Header />
+      <div>
       {data.map((d, index) => {
         const thumbnail = d.images_url[0];
         return (
@@ -71,6 +72,7 @@ export default function PostUser() {
           />
         );
       })}
+      </div>
     </>
   );
 }

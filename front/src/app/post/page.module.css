@@ -2,3 +2,18 @@
   display: inline-block;
   text-align: center;
 }
+
+.center {
+  display: flex;
+  position: relative;
+  flex-wrap: wrap;
+}
+
+.container {
+  margin-left: 16px;
+  margin-right: 16px;
+}
+
+.margin {
+  margin:0 auto;
+}
