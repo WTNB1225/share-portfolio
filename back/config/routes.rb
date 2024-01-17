@@ -16,4 +16,8 @@ Rails.application.routes.draw do
   delete "favorites/:user_id/:post_id", to: "favorites#destroy"
   get "isFavorites/:user_id/:post_id", to: "favorites#favorite?"
   get ":id/favorites", to: "favorites#users_favorite"
+  resources :bookmarks
+  delete "bookmarks/:user_id/:post_id", to: "bookmarks#destroy"
+  get "/:id/bookmarks", to: "bookmarks#users_bookmark"
+  get "isBookmarked/:user_id/:post_id", to: "bookmarks#bookmark?"
 end

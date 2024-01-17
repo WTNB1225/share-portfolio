@@ -55,7 +55,6 @@ export default function UsersFavorite() {
         );
         if(response.data){
           setPostId(response.data);
-          console.log(response.data)
           const postDataTemp = [];
           for (const d of response.data) {
             const response = await axios.get(`http://localhost:3000/post/${d.post_id}`);

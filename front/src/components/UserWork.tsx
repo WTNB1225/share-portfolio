@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { FaHeart } from "react-icons/fa";
+import { CiBookmark } from "react-icons/ci";
+import { CiBookmarkCheck } from "react-icons/ci";
 export default function UserWork({
   id,
   name,
@@ -24,12 +26,71 @@ export default function UserWork({
   const [currentUserId, setCurrentUserId] = useState("");
   const [amountOfLikes, setAmountOfLikes] = useState<number | undefined>();
   const [isLiked, setIsLiked] = useState<boolean>();
+  const [isBookmarked, setIsBookmarked] = useState<boolean | undefined>();
+
 
   useCheckLoginStatus().then((data) => {
     if (data) {
       setCurrentUserId(data.id);
     }
   });
+
+  const checkBookmark = async () => {
+    try{
+      const response = await axios.get(`http://localhost:3000/isBookmarked/${currentUserId}/${id}`);
+      console.log(response)
+      if(response.data == true){
+        setIsBookmarked(true);
+      } else {
+        setIsBookmarked(false);
+      }
+    } catch(e){
+      console.log(e)
+    }
+  }
+
+  const handleBookmark = async () => {
+    const formData = new FormData();
+    formData.append("bookmark[user_id]", currentUserId);
+    formData.append("bookmark[post_id]", id);
+    try{
+      const response = await axios.post(
+        "http://localhost:3000/bookmarks",
+        formData,
+        {
+          headers:{
+            "X-CSRF-Token": token,
+          },
+          withCredentials: true,
+        }
+      )
+      setIsBookmarked(true);
+      checkBookmark();
+      console.log(response)
+    } catch(e){
+      console.log(e)
+    }
+  }
+
+  const handleUnBookmark = async () => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:3000/bookmarks/${currentUserId}/${id}`,
+        {
+          headers: {
+            "X-CSRF-Token": token,
+          },
+        }
+      );
+      console.log(response);
+      setIsBookmarked(false);
+      checkBookmark()
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  
 
   const getAmountOfLikes = async () => {
     try {
@@ -41,6 +102,7 @@ export default function UserWork({
       console.log(e);
     }
   };
+
 
   const isFavorite = async () => {
     try{
@@ -60,6 +122,7 @@ export default function UserWork({
     getAmountOfLikes();
     if(currentUserId) {
       isFavorite();
+      checkBookmark();
     }
   }, [currentUserId]);
 
@@ -104,7 +167,7 @@ export default function UserWork({
     }
   };
   return (
-    amountOfLikes !== undefined && (
+    amountOfLikes !== undefined  && isBookmarked !== undefined && (
       <div className={style.workContainer}>
         <Link className={style.user} href={`/${name}`}>
           <Image
@@ -134,6 +197,15 @@ export default function UserWork({
         ) : (
           <button className={style.icon} onClick={handleLike}>
             <FaHeart color="gray" size={30}/>
+          </button>
+        )}
+        {isBookmarked ? (
+          <button onClick={handleUnBookmark} className={style.icon}>
+            <CiBookmarkCheck  size={30} />
+          </button>
+        ) : (
+          <button className={style.icon} onClick={handleBookmark}>
+            <CiBookmark color="gray" size={30} />
           </button>
         )}
         <h3>{amountOfLikes} likes</h3>
