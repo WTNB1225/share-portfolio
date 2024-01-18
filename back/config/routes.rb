@@ -20,4 +20,6 @@ Rails.application.routes.draw do
   delete "bookmarks/:user_id/:post_id", to: "bookmarks#destroy"
   get "/:id/bookmarks", to: "bookmarks#users_bookmark"
   get "isBookmarked/:user_id/:post_id", to: "bookmarks#bookmark?"
+  resources :comments
+  get "/showPostComments/:post_id", to: "comments#show_post_comments"
 end

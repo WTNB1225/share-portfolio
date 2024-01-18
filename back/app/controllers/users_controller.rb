@@ -13,6 +13,9 @@ class UsersController < ApplicationController
     render json: user
   end
 
+  def show_by_id
+  end
+
   def new
   end
 

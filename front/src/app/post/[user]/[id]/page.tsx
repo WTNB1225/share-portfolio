@@ -1,11 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import axios from "axios";
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { usePathname } from "next/navigation";
 import Header from "../../../../components/Header";
 import style from "./page.module.css";
 import Image from "next/image";
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
+import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
+import Comment from "@/components/Comment";
+import { text } from "stream/consumers";
 
 const getPostById = async (id: string) => {
   try {
@@ -21,6 +25,12 @@ const getPostById = async (id: string) => {
   }
 };
 
+type Data = {
+  user_id: string;
+  post_id: string;
+  content: string;
+};
+
 export default function PostId() {
   const pathname = usePathname();
   const splitpathname = pathname.split("/");
@@ -28,11 +38,68 @@ export default function PostId() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [url, setUrl] = useState<string[]>([]);
+  const [comment, setComment] = useState("");
+  const [userId, setUserId] = useState("");
+  const [token, setToken] = useState("");
+  const [comments, setComments] = useState<Data[]>([]);
+  const [commentLoading, setCommentLoading] = useState(true);
   //console.log(id)
 
-  const handleCommentChange = (e:ChangeEvent) => {
-    
-  }
+  const getComment = async (id: string) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/showPostComments/${id}`
+      );
+      
+      console.log(response.data);
+      setComments(response.data);
+      setCommentLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  useCheckLoginStatus().then((data) => {
+    if (data) {
+      setUserId(data.id);
+    }
+  });
+
+  useGetCsrfToken().then((token) => {
+    if (token) {
+      setToken(token);
+    }
+  });
+
+  const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setComment(e.target.value);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("comment[content]", comment);
+    formData.append("comment[post_id]", id);
+    formData.append("comment[user_id]", userId);
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/comments",
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            "X-CSRF-Token": token,
+          },
+        }
+      );
+      setComment("");
+      getComment(id);
+      console.log(response.data);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     getPostById(id).then((p) => {
@@ -40,7 +107,10 @@ export default function PostId() {
       setContent(p?.content);
       setUrl(p?.images_url);
     });
+    getComment(id);
   }, []);
+
+  
 
   return (
     <>
@@ -63,11 +133,26 @@ export default function PostId() {
         </div>
       </div>
       <div className="comment">
-        <form onSubmit={handleSubmit}>
-          <label>
-            <textarea onChange={handleCommentChange} ></textarea>
-          </label>
-        </form>
+        <h3>コメント</h3>
+        {comments.map((comment, index) => {
+          return (
+            <div>
+              <Comment
+                key={index}
+                content={comment.content}
+
+              />
+            </div>
+          );
+        })}
+        {commentLoading == false && (
+          <form onSubmit={handleSubmit}>
+            <label>
+              <textarea value={comment}  onChange={handleCommentChange}></textarea>
+            </label>
+            <button type="submit">送信</button>
+          </form>
+        )}
       </div>
     </>
   );
