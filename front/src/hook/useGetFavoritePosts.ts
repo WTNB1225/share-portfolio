@@ -14,8 +14,8 @@ export const usePageData = () => {
   const [token, setToken] = useState(""); 
 
   useEffect(() => {
-    const useFetchData = () => {
-      const data = useCheckLoginStatus();
+    const useFetchData = async () => {
+      const data = await useCheckLoginStatus();
       if (data) {
         setName(data.name);
         setUserId(data.id);
@@ -24,7 +24,7 @@ export const usePageData = () => {
       }
       setLoading(false);
 
-      const token = useGetCsrfToken();
+      const token = await useGetCsrfToken();
       if (token) {
         setToken(token);
       }

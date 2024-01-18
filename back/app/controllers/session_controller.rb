@@ -1,6 +1,8 @@
 class SessionController < ApplicationController
   include SessionHelper
 
+  after_action :set_csrf_token_header
+
   def index
   end
 
@@ -25,6 +27,6 @@ class SessionController < ApplicationController
   end
 
   def get_token
-    render json: { csrfToken: form_authenticity_token }
+    render json: {csrf_token: form_authenticity_token}
   end
 end
