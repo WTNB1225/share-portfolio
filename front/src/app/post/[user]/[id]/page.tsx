@@ -9,7 +9,7 @@ import Image from "next/image";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import Comment from "@/components/Comment";
-import { text } from "stream/consumers";
+
 
 const getPostById = async (id: string) => {
   try {
@@ -29,6 +29,8 @@ type Data = {
   user_id: string;
   post_id: string;
   content: string;
+  avatar_url: string;
+  name: string;
 };
 
 export default function PostId() {
@@ -43,6 +45,7 @@ export default function PostId() {
   const [token, setToken] = useState("");
   const [comments, setComments] = useState<Data[]>([]);
   const [commentLoading, setCommentLoading] = useState(true);
+  const [userData, setUserData] = useState<Data[]>([]);
   //console.log(id)
 
   const getComment = async (id: string) => {
@@ -50,7 +53,14 @@ export default function PostId() {
       const response = await axios.get(
         `http://localhost:3000/showPostComments/${id}`
       );
-      
+      if(response.data != null){
+        const tmpData = [];
+        for(let d of response.data){
+          const response = await axios.get(`http://localhost:3000/user/${d.user_id}`);
+          tmpData.push(response.data);
+        }
+        setUserData(tmpData);
+      }
       console.log(response.data);
       setComments(response.data);
       setCommentLoading(false);
@@ -58,6 +68,8 @@ export default function PostId() {
       console.log(e);
     }
   };
+
+  console.log(userData);
 
   useCheckLoginStatus().then((data) => {
     if (data) {
@@ -115,45 +127,54 @@ export default function PostId() {
   return (
     <>
       <Header />
-      <div className={style.postContainer}>
-        <h1 className={style.h1}>{title}</h1>
-        <p className={style.content}>{content}</p>
-        <div className={style.imageContainer}>
-          {url.map((image, index) => (
-            <div key={index} className={style.img}>
-              <Image
-                alt=""
-                src={image}
-                width={400}
-                height={300}
-                layout="responsive"
-              />
-            </div>
-          ))}
+      <div className="container">
+  <h1 className={style.h1}>{title}</h1>
+  <p className={style.content}>{content}</p>
+  <div className={style.imageContainer}>
+    <div className="row">
+      {url.map((image, index) => (
+        <div key={index} className={`col-6 ${style.img}`}>
+          <Image
+            alt=""
+            src={image}
+            width={400}
+            height={300}
+            layout="responsive"
+          />
         </div>
-      </div>
-      <div className="comment">
-        <h3>コメント</h3>
-        {comments.map((comment, index) => {
-          return (
-            <div>
-              <Comment
-                key={index}
-                content={comment.content}
-
-              />
-            </div>
-          );
-        })}
-        {commentLoading == false && (
-          <form onSubmit={handleSubmit}>
-            <label>
-              <textarea value={comment}  onChange={handleCommentChange}></textarea>
-            </label>
-            <button type="submit">送信</button>
-          </form>
-        )}
-      </div>
+      ))}
+    </div>
+  </div>
+</div>
+<div className="container">
+  <div className="comment">
+    <h3>コメント</h3>
+    {comments.map((comment, index) => {
+      return (
+        <div className="row">
+          <Comment
+            key={index}
+            content={comment.content}
+            avatar={userData[index].avatar_url}
+            username={userData[index].name}
+          />
+        </div>
+      );
+    })}
+  </div>
+</div>
+{commentLoading == false && (
+  <div className="row">
+    <div className="col-12 col-md-10 offset-md-1">
+      <form onSubmit={handleSubmit}>
+        <label>
+          <textarea className="form-control" value={comment} onChange={handleCommentChange}></textarea>
+        </label>
+        <button className="btn btn-primary mt-2" type="submit">送信</button>
+      </form>
+    </div>
+  </div>
+)}
     </>
   );
 }

@@ -22,4 +22,5 @@ Rails.application.routes.draw do
   get "isBookmarked/:user_id/:post_id", to: "bookmarks#bookmark?"
   resources :comments
   get "/showPostComments/:post_id", to: "comments#show_post_comments"
+  get "user/:user_id", to:"users#show_by_id"
 end
