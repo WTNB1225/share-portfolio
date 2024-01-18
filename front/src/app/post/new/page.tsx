@@ -52,8 +52,12 @@ export default function PostNew() {
     }
   };
 
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if(!csrfToken) {
+      return;
+    }
     const formData = new FormData();
     formData.append("post[title]", title);
     formData.append("post[content]", content);

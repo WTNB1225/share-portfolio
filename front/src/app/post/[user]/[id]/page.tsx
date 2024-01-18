@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { usePathname } from "next/navigation";
 import Header from "../../../../components/Header";
 import style from "./page.module.css";
@@ -30,6 +30,10 @@ export default function PostId() {
   const [url, setUrl] = useState<string[]>([]);
   //console.log(id)
 
+  const handleCommentChange = (e:ChangeEvent) => {
+    
+  }
+
   useEffect(() => {
     getPostById(id).then((p) => {
       setTitle(p?.title);
@@ -57,6 +61,13 @@ export default function PostId() {
             </div>
           ))}
         </div>
+      </div>
+      <div className="comment">
+        <form onSubmit={handleSubmit}>
+          <label>
+            <textarea onChange={handleCommentChange} ></textarea>
+          </label>
+        </form>
       </div>
     </>
   );

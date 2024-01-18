@@ -4,7 +4,6 @@ import axios from "axios";
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Header from "../../components/Header";
-import flash from "next-flash";
 
 export default function Login() {
   const router = useRouter();
@@ -43,7 +42,6 @@ export default function Login() {
       console.log(response);
       router.push("/home");
     } catch (e) {
-      flash.set({ name: 'hoge123' })
       console.log(e);
     }
   };
