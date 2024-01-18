@@ -20,7 +20,7 @@ class CommentsController < ApplicationController
   end
 
   def show_post_comments
-    @comments = Comment.where(post_id: params[:id])
+    @comments = Comment.where(post_id: params[:post_id])
     if @comments
       render json: @comments
     else 
