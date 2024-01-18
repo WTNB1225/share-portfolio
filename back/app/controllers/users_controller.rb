@@ -1,5 +1,7 @@
 class UsersController < ApplicationController
 
+  include SessionHelper
+
   def index
     @users = User.all
     render json: @users
@@ -14,6 +16,13 @@ class UsersController < ApplicationController
   end
 
   def show_by_id
+    @user = User.find_by(id:params[:user_id])
+    if @user
+      user = @user.as_json(include: :avatar).merge(avatar_url: url_for(@user.avatar))
+      render json: user
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
   end
 
   def new
@@ -22,6 +31,8 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
     if @user.save
+      reset_session
+      log_in @user
       render json:@user, status: :created
     else
       render json:@user.errors, status: :unprocessable_entity

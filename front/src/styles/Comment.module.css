@@ -1,0 +1,19 @@
+.img {
+  border-radius: 50%;
+}
+
+.user {
+  font-size: 22px;
+  display: flex;
+  color: black;
+  text-decoration: none;
+  margin-bottom: 16px;
+}
+
+.comment {
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
