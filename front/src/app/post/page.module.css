@@ -17,3 +17,9 @@
 .margin {
   margin:0 auto;
 }
+
+.userWork {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
