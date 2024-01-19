@@ -2,28 +2,15 @@
 "use client";
 import axios from "axios";
 import { useState, useEffect, ChangeEvent, FormEvent } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Header from "../../../../components/Header";
 import style from "./page.module.css";
 import Image from "next/image";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import Comment from "@/components/Comment";
-
-
-const getPostById = async (id: string) => {
-  try {
-    const response = await axios.get(`http://localhost:3000/post/${id}`, {
-      withCredentials: true,
-    });
-    const title = response.data.title;
-    const content = response.data.content;
-    const images_url = response.data.images_url;
-    return { title, content, images_url };
-  } catch (e) {
-    alert(e);
-  }
-};
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons"
 
 type Data = {
   user_id: string;
@@ -31,12 +18,11 @@ type Data = {
   content: string;
   avatar_url: string;
   name: string;
+  id:string;
 };
 
+
 export default function PostId() {
-  const pathname = usePathname();
-  const splitpathname = pathname.split("/");
-  const id = splitpathname[splitpathname.length - 1];
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [url, setUrl] = useState<string[]>([]);
@@ -46,22 +32,45 @@ export default function PostId() {
   const [comments, setComments] = useState<Data[]>([]);
   const [commentLoading, setCommentLoading] = useState(true);
   const [userData, setUserData] = useState<Data[]>([]);
-  //console.log(id)
+  const [postAuthor, setPostAuthor] = useState("");
+  const [currentUserName, setCurrentUserName] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [render, setRender] = useState(1);
+
+  const pathname = usePathname();
+  const id = pathname.split("/").reverse()[0];
+  const router = useRouter();
+
+  const getPostById = async (id: string) => {
+    try {
+      const response = await axios.get(`http://localhost:3000/post/${id}`, {
+        withCredentials: true,
+      });
+      setTitle(response.data.title);
+      setContent(response.data.content);
+      setUrl(response.data.images_url);
+      setPostAuthor(response.data.username);
+      setLoading(false);
+    } catch (e) {
+      alert(e);
+    }
+  };
 
   const getComment = async (id: string) => {
     try {
       const response = await axios.get(
         `http://localhost:3000/showPostComments/${id}`
       );
-      if(response.data != null){
+      if (response.data != null) {
         const tmpData = [];
-        for(let d of response.data){
-          const response = await axios.get(`http://localhost:3000/user/${d.user_id}`);
+        for (let d of response.data) {
+          const response = await axios.get(
+            `http://localhost:3000/user/${d.user_id}`
+          );
           tmpData.push(response.data);
         }
         setUserData(tmpData);
       }
-      console.log(response.data);
       setComments(response.data);
       setCommentLoading(false);
     } catch (e) {
@@ -69,14 +78,15 @@ export default function PostId() {
     }
   };
 
-  console.log(userData);
-
+  //ログインしているユーザーのidを取得 idは投稿時に使うので非同期で取得
   useCheckLoginStatus().then((data) => {
     if (data) {
       setUserId(data.id);
+      setCurrentUserName(data.name);
     }
   });
 
+  //csrfトークンを取得 トークンは投稿時に使うので非同期で取得
   useGetCsrfToken().then((token) => {
     if (token) {
       setToken(token);
@@ -85,6 +95,25 @@ export default function PostId() {
 
   const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
+  };
+
+  const handleDelete = async () => {
+    try {
+      const response = await axios.delete(`http://localhost:3000/posts/${id}`, {
+        withCredentials: true,
+        headers: {
+          "X-CSRF-Token": token,
+        },
+      });
+      console.log(response.data);
+      router.push(`/post`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const handleDeleteResult = (id:string) => {
+    setComments(comments.filter(comment => comment.id !== id));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -107,74 +136,124 @@ export default function PostId() {
       );
       setComment("");
       getComment(id);
-      console.log(response.data);
     } catch (e) {
       console.log(e);
     }
   };
 
   useEffect(() => {
-    getPostById(id).then((p) => {
-      setTitle(p?.title);
-      setContent(p?.content);
-      setUrl(p?.images_url);
-    });
+    getPostById(id);
     getComment(id);
   }, []);
-
-  
 
   return (
     <>
       <Header />
       <div className="container">
-  <h1 className={style.h1}>{title}</h1>
-  <p className={style.content}>{content}</p>
-  <div className={style.imageContainer}>
-    <div className="row">
-      {url.map((image, index) => (
-        <div key={index} className={`col-6 ${style.img}`}>
+        <h1 className={style.h1}>{title}</h1>
+        <p className={style.content}>{content}</p>
+        <div className={style.imageContainer}>
+          <div className="row">
+            {url.map((image, index) => (
+                      <div key={index} className={`col-4 ${style.img}`}>
           <Image
             alt=""
             src={image}
-            width={400}
-            height={300}
+            width={200}
+            height={200}
             layout="responsive"
           />
         </div>
-      ))}
-    </div>
-  </div>
-</div>
-<div className="container">
-  <div className="comment">
-    <h3>コメント</h3>
-    {comments.map((comment, index) => {
-      return (
-        <div className="row">
-          <Comment
-            key={index}
-            content={comment.content}
-            avatar={userData[index].avatar_url}
-            username={userData[index].name}
-          />
+            ))}
+          </div>
         </div>
-      );
-    })}
-  </div>
-</div>
-{commentLoading == false && (
-  <div className="row">
-    <div className="col-12 col-md-10 offset-md-1">
-      <form onSubmit={handleSubmit}>
-        <label>
-          <textarea className="form-control" value={comment} onChange={handleCommentChange}></textarea>
-        </label>
-        <button className="btn btn-primary mt-2" type="submit">送信</button>
-      </form>
-    </div>
-  </div>
-)}
+        {postAuthor == currentUserName && loading == false && (
+          <div className="delete">
+            <button className={`btn btn-danger ${style.icon}`} onClick={handleDelete}>
+              <FontAwesomeIcon icon={faTrash}/>
+            </button>
+          </div>
+        )}
+      </div>
+      {loading == false && (
+        <>
+          <div className="container">
+            <h3 className={style.h3}>コメント一覧</h3>
+            {comments.map((commentData, index) => {
+              return (
+                <div className={`row ${style.comment}`} key={index}>
+                  <Comment
+                    key={index}
+                    id={commentData.id}
+                    content={commentData.content}
+                    avatar={userData[index].avatar_url}
+                    username={userData[index].name}
+                    currentUser={currentUserName}
+                    postAuthor={postAuthor}
+                    onDelete={handleDeleteResult}
+                  />
+                  {index === comments.length - 1 && (
+                    <div className={style.border}></div>
+                  )}
+                  {index === comments.length - 1 && commentLoading == false && (
+                    <>
+                      <h3 style={{marginTop:"16px"}}>コメントする</h3>
+                      <textarea
+                        className={`form-control ${style.textarea}`}
+                        style={{ width: "100%" }}
+                        value={comment}
+                        onChange={handleCommentChange}
+                      ></textarea>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <button
+                          className="btn btn-primary mt-2"
+                          type="submit"
+                          onClick={handleSubmit}
+                        >
+                          
+                        </button>
+                      </div>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          {comments.length == 0 && (
+            <>
+            <div className="container">
+            <h3 style={{marginTop:"16px"}}>コメントする</h3>
+                      <textarea
+                        className={`form-control ${style.textarea}`}
+                        style={{ width: "100%" }}
+                        value={comment}
+                        onChange={handleCommentChange}
+                      ></textarea>
+                      <div
+                        style={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                        }}
+                      >
+                        <button
+                          className="btn btn-primary mt-2"
+                          type="submit"
+                          onClick={handleSubmit}
+                        >
+                          送信
+                        </button>
+                      </div>
+            </div>
+                      </>
+          )}
+
+        </>
+      )}
     </>
   );
 }

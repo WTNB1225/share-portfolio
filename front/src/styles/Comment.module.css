@@ -7,13 +7,34 @@
   display: flex;
   color: black;
   text-decoration: none;
-  margin-bottom: 16px;
+  margin-top: 8px;
 }
 
 .comment {
-  border-bottom: 1px solid #ccc;
-  padding-bottom: 10px;
-  margin-bottom: 10px;
   display: flex;
   flex-direction: column;
+}
+
+.content {
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.trash {
+  width: 40px;
+  height: 40px;
+}
+
+.icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: white;
+  border: none;
+  display: flex;
+  justify-content: right;
+}
+
+.inline {
+  display: flex;
 }

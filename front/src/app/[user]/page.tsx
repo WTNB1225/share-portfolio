@@ -140,70 +140,76 @@ export default function User() {
     getUserInfo();
     getUsersPosts(username);
   }, [paramName]);
-
   return (
-    <div>
-      {!loading2 && !loading && (
-        <div>
-          {!presence ? (
-            <>
-              <Header />
-              <p>ユーザーが存在しません</p>
-            </>
-          ) : (
-            <>
-              <Header />
-              <div className={style.avatar}>
-                <Image
-                  className={style.img}
-                  src={avatar}
-                  width={80}
-                  height={80}
-                  alt="avatar"
-                />
-                <h1>{username}</h1>
-                <a className={style.a} href={`/${username}/followings`}>
-                  フォロー中
-                </a>
-                <a className={style.a} href={`/${username}/followers`}>
-                  フォロワー
-                </a>
-                {userData && username === userData.name && (
-                  <a className={style.a} href={`/${username}/edit`}>
-                    プロフィールを編集
+    <>
+    {!loading2 && !loading && (
+      <>
+      <Header/>
+        <div className="container">
+        {!loading2 && !loading && (
+          <div className="row">
+            {!presence ? (
+              <>
+                <p className="col-12">ユーザーが存在しません</p>
+              </>
+            ) : (
+              <>
+                <div className={`col-12 ${style.avatar}`}>
+                  <Image
+                    className={style.img}
+                    src={avatar}
+                    width={80}
+                    height={80}
+                    alt="avatar"
+                  />
+                  <h1>{username}</h1>
+                  <a style={{marginRight:"8px", marginLeft:"8px"}} className={style.a} href={`/${username}/followings`}>
+                    フォロー中
                   </a>
-                )}
-                {userData && username !== paramName && isFollowed === true && (
-                  <button
-                    onClick={() => {
-                      handleUnfollow(userData.id);
-                    }}
-                    className={style.a}
-                  >
-                    フォロー解除
-                  </button>
-                )}
-                {userData && username !== paramName && isFollowed === false && (
-                  <button onClick={handleFollow} className={style.a}>
-                    フォロー
-                  </button>
-                )}
-              </div>
-              {postData.map((d, index) => (
-                <UserWork
-                  key={index}
-                  title={d.title}
-                  id={d.id}
-                  name={d.username}
-                  image={d.images_url[0]}
-                  avatar={avatar}
-                  token={token}
-                />
-              ))}
-            </>
-          )}
-        </div>
-      )}
-    </div>
+                  <a style={{marginRight:"8px"}} className={style.a} href={`/${username}/followers`}>
+                    フォロワー
+                  </a>
+                  {userData && username === userData.name && (
+                    <a style={{marginRight:"8px"}} className={style.a} href={`/${username}/edit`}>
+                      プロフィールを編集
+                    </a>
+                  )}
+                  {userData && username !== paramName && isFollowed === true && (
+                    <button
+                      onClick={() => {
+                        handleUnfollow(userData.id);
+                      }}
+                      className={style.a}
+                    >
+                      フォロー解除
+                    </button>
+                  )}
+                  {userData && username !== paramName && isFollowed === false && (
+                    <button onClick={handleFollow} className={style.a}>
+                      フォロー
+                    </button>
+                  )}
+                </div>
+                {postData.map((d, index) => (
+                  <div className="col-sm-12 col-md-6 col-lg-4">
+                    <UserWork
+                      key={index}
+                      title={d.title}
+                      id={d.id}
+                      name={d.username}
+                      image={d.images_url[0]}
+                      avatar={avatar}
+                      token={token}
+                    />
+                  </div>
+                ))}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+      </>
+    )}
+    </>
   );
 }

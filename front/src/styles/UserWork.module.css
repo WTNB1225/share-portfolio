@@ -7,10 +7,15 @@
   border-radius: 8px;
   padding: 16px;
   margin-top: 16px;
+  margin-left: 20px;
   width: 20em; /* 外枠の適切な幅 */
   text-align: center;
   display: inline-block;
   font-size: 1em; /* コンテナのフォントサイズを基準にする */
+}
+
+.center {
+  justify-content: center;
 }
 
 .workImage {
@@ -27,7 +32,6 @@
 
 .workTitle {
   font-size: 1.2rem;
-  margin: 0;
 }
 
 .img {
