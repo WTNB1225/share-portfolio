@@ -2,26 +2,57 @@ import Image from "next/image";
 import Link from "next/link";
 import style from "@/styles/Comment.module.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {faTrash} from "@fortawesome/free-solid-svg-icons"
+import axios from "axios";
+
 
 export default function Comment({
+  id,
   content,
   avatar,
   username,
+  postAuthor,
+  currentUser,
+  onDelete,
 }: {
+  id: string;
   content: string;
   avatar: string;
   username: string;
+  postAuthor: string;
+  currentUser: string;
+  onDelete: (id:string) => void; 
 }){
+
+  const handleDelete = async () => {
+    if(postAuthor == currentUser){
+      try{
+        const response = await axios.delete(`http://localhost:3000/comments/${id}`);
+        if(response.status == 200){
+          onDelete(id)
+        }
+      } catch(e){
+        console.log(e)
+      }
+    }
+  }
+
   return(
     <div className={`row ${style.comment}`}>
-      <div className="col-12 col-md-2">
+      <div className="">
         <Link className={`${style.user}`} href={`/${username}`}>
           <Image className={style.img} src={avatar} width={40} height={40} alt="avatar" />
           <p>{username}</p>
         </Link>
       </div>
-      <div className="col-10 col-md-10">
-        <p>{content}</p>
+      <div className={style.inline}>
+        <p className={style.content}>{content}</p>
+        {postAuthor == currentUser && (
+          <button onClick={handleDelete} className={style.icon} style={{ width: '40px', height: '40px' }}>
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        )}
       </div>
     </div>
   )

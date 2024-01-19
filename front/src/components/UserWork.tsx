@@ -168,8 +168,8 @@ export default function UserWork({
   };
   return (
     amountOfLikes !== undefined  && isBookmarked !== undefined && (
-      <div className={style.workContainer}>
-        <Link className={style.user} href={`/${name}`}>
+      <div className={`${style.workContainer}`}>
+        <Link className={`${style.user} ${style.center}`} href={`/${name}`} >
           <Image
             className={style.img}
             src={avatar}

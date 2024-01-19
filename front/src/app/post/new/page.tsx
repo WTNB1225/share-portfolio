@@ -17,7 +17,7 @@ export default function PostNew() {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
-  const [csrfToken, setCsrfToken] = useState(""); // CSRFトークンをstateに追加
+  const [csrfToken, setCsrfToken] = useState(""); 
   const [avatar, setAvatar] = useState("");
 
   useCheckLoginStatus().then(async (d) => {
@@ -36,6 +36,8 @@ export default function PostNew() {
       setLoading(false);
     }
   });
+
+  console.log(csrfToken)
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
