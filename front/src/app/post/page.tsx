@@ -47,7 +47,7 @@ export default function Post() {
           {postData.map((d, index) => {
             const thumbnail = d.images_url[0];
             return (
-              <div className="col-sm-12 col-md-6 col-lg-4" key={index}>
+              <div className={`col-sm-12 col-md-6 col-lg-4 ${style.userWork}`}  key={index}>
                 <UserWork
                   key={index}
                   title={d.title}
