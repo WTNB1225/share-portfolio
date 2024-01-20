@@ -7,6 +7,12 @@ class UserTest < ActiveSupport::TestCase
                     password: "foobar", password_confirmation: "foobar")
   end
 
+  test "name should be unique" do
+    deprecate_user = @user.dup
+    @user.save
+    assert_not deprecate_user.valid?
+  end
+
   test "should be valid" do
     assert @user.valid?
   end
@@ -71,5 +77,46 @@ class UserTest < ActiveSupport::TestCase
     @user.password = @user.password_confirmation = "a" * 5
     assert_not @user.valid?
   end
-  
+
+  test "authenticated? should return false for a user with nil digest" do
+    assert_not @user.authenticated?("")
+  end
+
+  test "avatar should be less than 10MB" do
+    @user.avatar.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    assert @user.avatar.attached?
+  end
+
+  test "avatar should not be too large" do
+    @user.avatar.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/100MB.jpg"), filename: "test_large.jpg", content_type: "image/jpg")
+    assert @user.avatar.attached?
+  end
+
+  test "avatar should accept valid file format" do
+    @user.avatar.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    assert @user.avatar.attached?
+  end
+
+  test "avatar should not accept invalid file format" do
+    @user.avatar.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/app/controllers/users_controller.rb"), filename: "users_controller.rb", content_type: "text/plain")
+    assert_not @user.valid?
+  end
+
+  test "user should have one post" do
+    @user.save
+    assert_difference '@user.posts.count', 1 do
+      @post = @user.posts.build(title: "test", content: "test", username: @user.name, user_id: @user.id)
+      @post.save
+    end
+  end
+
+  test "user should have many posts" do
+    @user.save
+    assert_difference '@user.posts.count', 2 do
+      @post = @user.posts.build(title: "test", content: "test", username: @user.name, user_id: @user.id)
+      @post.save
+      @post2 = @user.posts.build(title: "test2", content: "test2", username: @user.name, user_id: @user.id)
+      @post2.save
+    end
+  end
 end

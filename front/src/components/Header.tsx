@@ -13,12 +13,12 @@ export default function Header(){
     try{
       const response = await axios.get("http://localhost:3000/logged_in_user", 
       {withCredentials: true});
-      if(response.data.name != null){
+      if(response.data != null){
         setIsLoggedIn(true);
         setName(response.data.name);
       } else {
         setIsLoggedIn(false);
-        setName("")
+        setName("guest")
       }
       setLoading(false);
     }catch(e) {
@@ -26,6 +26,7 @@ export default function Header(){
       console.log(e);
     }
   }
+
 
 
 
@@ -49,10 +50,7 @@ export default function Header(){
               <a className="nav-link" href={`/${name}`}>プロフィール</a>
             </li>
             <li className="nav-item">
-              <a className="nav-link" href={`/post/${name}`}>自分の投稿</a>
-            </li>
-            <li className="nav-item">
-              <a className="nav-link" href={`/post`}>みんなの投稿</a>
+              <a className="nav-link" href={`/post`}>タイムライン</a>
             </li>
             <li>
               <a className="nav-link" href={`/post/new`}>新規投稿</a>
