@@ -52,6 +52,9 @@ export default function UserWork({
   }
 
   const handleBookmark = async () => {
+    if(!currentUserId) {
+      alert("ログインしてください")
+    }
     const formData = new FormData();
     formData.append("bookmark[user_id]", currentUserId);
     formData.append("bookmark[post_id]", id);
@@ -128,6 +131,9 @@ export default function UserWork({
   }, [currentUserId]);
 
   const handleLike = async () => {
+    if(!currentUserId) {
+      alert("ログインしてください")
+    }
     const formData = new FormData();
     formData.append("favorite[user_id]", currentUserId);
     formData.append("favorite[post_id]", id);
@@ -167,7 +173,6 @@ export default function UserWork({
     }
   };
   return (
-    amountOfLikes !== undefined  && isBookmarked !== undefined && (
       <div className={`${style.workContainer}`}>
         <Link className={`${style.user} ${style.center}`} href={`/${name}`} >
           <Image
@@ -211,5 +216,4 @@ export default function UserWork({
         <h3>{amountOfLikes} likes</h3>
       </div>
     )
-  );
 }
