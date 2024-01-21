@@ -23,20 +23,11 @@ export default function Post() {
   const [token, setToken] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
 
-  useEffect(() => {
-    async function checkLoginStatus() {
-      try {
-        const response = await axios.get("http://localhost:3000/logged_in_user", {
-          withCredentials: true,
-        });
-        setToken(response.data.csrfToken);
-      } catch (e) {
-        console.log(e);
-      }
-      setLoading(false);
-      }
-    checkLoginStatus();
-    },[])
+  useGetCsrfToken().then((token) => {
+    if (token) {
+      setToken(token);
+    }
+  });
   
 
   const getPosts = async () => {

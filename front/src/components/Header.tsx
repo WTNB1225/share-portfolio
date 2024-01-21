@@ -5,7 +5,7 @@ import axios from "axios"
 import { useState, useEffect } from "react";
 
 export default function Header(){
-  const [name, setName] = useState<string | null>(null);
+  const [name, setName] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +18,6 @@ export default function Header(){
         setName(response.data.name);
       } else {
         setIsLoggedIn(false);
-        setName("guest")
       }
       setLoading(false);
     }catch(e) {
@@ -46,9 +45,11 @@ export default function Header(){
             <li className="nav-item">
               <a className="nav-link active" aria-current="page" href="/home">ホーム</a>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href={`/${name}`}>プロフィール</a>
-            </li>
+            {isLoggedIn && (
+              <li className="nav-item">
+                <a className="nav-link" href={`/${name}`}>プロフィール</a>
+              </li>
+            )}
             <li className="nav-item">
               <a className="nav-link" href={`/post`}>タイムライン</a>
             </li>
