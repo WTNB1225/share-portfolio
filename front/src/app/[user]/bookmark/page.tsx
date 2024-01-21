@@ -43,6 +43,7 @@ export default function Bookmark() {
       }
       setLoading(false);
     }
+    
   
     async function getBookmark(id: string) { 
       try{
@@ -68,6 +69,7 @@ export default function Bookmark() {
     }
   });
 
+  // ログインしていない場合
   if(loading == false) {
     if(name !== username){
       return (

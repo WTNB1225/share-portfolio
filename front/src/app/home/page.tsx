@@ -9,21 +9,26 @@ export default function App() {
 
   useCheckLoginStatus().then((d) => {
     if (d) {
-      if (d.name) {
-        setName(d.name);
-      } else {
-        setName("guest");
-      }
+      setName(d.name);
+    } else {
+      setName("guest");
     }
     setLoading(false);
   });
+
   return (
     <>
-      {loading == false && (
-        <>
+      {loading === false && (
+        <div>
           <Header />
-          <h1>Hello {name}</h1>
-        </>
+          {name === "guest" ? (
+            <p>ログインしてください</p>
+          ) : (
+            <>
+              <h1>Hello {name}</h1>
+            </>
+          )}
+        </div>
       )}
     </>
   );

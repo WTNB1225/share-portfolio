@@ -11,10 +11,11 @@ export const useGetCsrfToken = async() => {
         setToken(response.headers["x-csrf-token"]);
       } catch(e) {
         console.log(e)
+        fetchData();
       }
     }
     fetchData();
   } ,[]);
 
-  return token
+  return token 
 }
