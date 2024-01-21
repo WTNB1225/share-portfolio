@@ -3,6 +3,7 @@ class BookmarksController < ApplicationController
     @bookmark = Bookmark.all
     render json: @bookmark
   end
+  
   def create
     @bookmark = Bookmark.new(bookmark_params)
     if @bookmark.save

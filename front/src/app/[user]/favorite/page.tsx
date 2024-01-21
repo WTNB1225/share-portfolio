@@ -39,6 +39,7 @@ export default function UsersFavorite() {
     }
     setLoading(false);
   });
+  
 
   useGetCsrfToken().then((token) => {
     if (token) {
@@ -71,13 +72,16 @@ export default function UsersFavorite() {
       getFavorite();
     }
   },[userId]);
-
-  return(
-    <div>
-      <Header/>
-      {loading == false && (
-        <div>
-          <h1>{username}のいいね一覧</h1>
+  return (
+  <div>
+    <Header />
+    {loading === false && (
+      <div>
+        {username === 'guest' ? (
+          <p>ログインしてください</p>
+        ) : (
+          <>
+            <h1>{username}のいいね一覧</h1>
             {postData.map((d, index) => {
               const thumbnail = d.images_url[0];
               return (
@@ -94,8 +98,10 @@ export default function UsersFavorite() {
                 </div>
               );
             })}
-        </div>
-      )}
-    </div>
-  )
+          </>
+        )}
+      </div>
+    )}
+  </div>
+);
 }

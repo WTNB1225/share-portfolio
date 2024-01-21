@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import style from "./page.module.css";
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 
 type Data = {
   id: string;
@@ -20,12 +21,23 @@ type Data = {
 export default function Post() {
   const [postData, setPostData] = useState<Data[]>([]);
   const [token, setToken] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
-  useGetCsrfToken().then((token) => {
-    if (token) {
-      setToken(token);
-    }
-  });
+  useEffect(() => {
+    async function checkLoginStatus() {
+      try {
+        const response = await axios.get("http://localhost:3000/logged_in_user", {
+          withCredentials: true,
+        });
+        setToken(response.data.csrfToken);
+      } catch (e) {
+        console.log(e);
+      }
+      setLoading(false);
+      }
+    checkLoginStatus();
+    },[])
+  
 
   const getPosts = async () => {
     try {
