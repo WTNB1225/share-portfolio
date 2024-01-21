@@ -15,20 +15,23 @@ export default function Edit() {
   const [loginUser, setLoginUser] = useState("");
   const [loading, setLoading] = useState(true);
   const [csrfToken, setCsrfToken] = useState("");
+  const [userLoading, setUserLoading] = useState(true);
 
   const router = useRouter();
   const pathname = usePathname();
   const splitPathname = pathname.split("/");
   const username = splitPathname[splitPathname.length - 2];
 
+
   useCheckLoginStatus().then((d) => {
     if (d) {
       setLoginUser(d.name);
     }
+    setUserLoading(false);
+
   });
 
   useGetCsrfToken().then((token) => {
-    console.log(token);
     if (token) {
       setCsrfToken(token);
       setLoading(false);
