@@ -28,6 +28,7 @@ export default function Post() {
       setToken(token);
     }
   });
+
   
 
   const getPosts = async () => {

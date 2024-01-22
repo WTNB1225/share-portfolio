@@ -1,5 +1,4 @@
 "use client";
-import style from "./page.module.css";
 import axios from "axios";
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useRouter } from "next/navigation";
@@ -49,22 +48,34 @@ export default function Login() {
   return (
     <>
       <Header />
-      <div>
-        <form className={`${style.form}`} onSubmit={handleSubmit}>
-          <label className={style.label}>
-            Email
-            <input type="text" onChange={handleEmailChange} />
-          </label>
-          <label className={style.label}>
-            Password
-            <input type="password" onChange={handlePasswordChange} />
-          </label>
-          <label>
-            Remember
-            <input type="checkbox" onChange={handleCheckboxChange} />
-          </label>
-          <button type="submit">ログイン</button>
-        </form>
+      <div className="container d-flex justify-content-center" style={{marginTop:"32px"}}>
+        <div className="row">
+          <div className="col-12 col-lg-8">
+            <form className="mb-3" onSubmit={handleSubmit}>
+              <div>
+                <label className="form-label" style={{width: '300px'}}>
+                  Email
+                  <input type="text" onChange={handleEmailChange} className="form-control" />
+                </label>
+              </div>
+              <div>
+                <label className="form-label" style={{width: '300px'}}>
+                  Password
+                  <input type="password" onChange={handlePasswordChange} className="form-control" />
+                </label>
+              </div>
+              <div>
+                <label className="form-check-label" style={{width: '300px'}}>
+                  Remember
+                  <input type="checkbox" onChange={handleCheckboxChange} className="form-check-input mb-3" />
+                </label>
+              </div>
+              <div>
+                <button type="submit" className="btn btn-primary">ログイン</button>
+              </div>
+            </form>
+          </div>
+        </div>
       </div>
     </>
   );
