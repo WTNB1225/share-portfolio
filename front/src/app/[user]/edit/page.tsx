@@ -143,26 +143,36 @@ export default function Edit() {
 
   return (
     <>
-      <Header />
-      <div className={`${style.div}`}>
-        <label className={`${style.label}`}>
-          name
-          <input type="text" onChange={handleNameChange} />
-          <button onClick={handleNameSubmit}>変更</button>
-        </label>
-        <label className={`${style.label}`}>
-          email
-          <input type="text" onChange={handleEmailChange} />
-          <button onClick={handleEmailSubmit}>変更</button>
-        </label>
-        <label className={`${style.label}`}>
-          password
-          <input type="text" onChange={handlePasswordChange} />
-          password confirmation
-          <input type="text" onChange={handlePasswordConfirmationChange} />
-          <button onClick={handlePasswordSubmit}>変更</button>
-        </label>
+    <Header />
+    <div className="container d-flex justify-content-center vh-100 " style={{marginTop:"32px"}}>
+      <div className="row">
+        <div className="col-12 col-lg-8">
+          <form className="mb-3">
+            <label style={{width: '300px'}}>
+              name
+              <input type="text" onChange={handleNameChange} className="form-control" />
+              <button onClick={handleNameSubmit} className="btn btn-primary mt-2">変更</button>
+            </label>
+          </form>
+          <form className="mb-3">
+            <label style={{width: '300px'}}>
+              email
+              <input type="text" onChange={handleEmailChange} className="form-control" />
+              <button onClick={handleEmailSubmit} className="btn btn-primary mt-2">変更</button>
+            </label>
+          </form>
+          <form className="mb-3">
+            <label style={{width: '300px'}}>
+              password
+              <input type="text" onChange={handlePasswordChange} className="form-control mb-3" />
+              password confirmation
+              <input type="text" onChange={handlePasswordConfirmationChange} className="form-control" />
+              <button onClick={handlePasswordSubmit} className="btn btn-primary mt-2">変更</button>
+            </label>
+          </form>
+        </div>
       </div>
-    </>
+    </div>
+  </>
   );
 }

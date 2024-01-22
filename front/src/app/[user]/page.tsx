@@ -190,19 +190,6 @@ export default function User() {
                     </button>
                   )}
                 </div>
-                {postData.map((d, index) => (
-                  <div className="col-sm-12 col-md-6 col-lg-4">
-                    <UserWork
-                      key={index}
-                      title={d.title}
-                      id={d.id}
-                      name={d.username}
-                      image={d.images_url[0]}
-                      avatar={avatar}
-                      token={token}
-                    />
-                  </div>
-                ))}
               </>
             )}
           </div>
