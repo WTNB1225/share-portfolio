@@ -97,6 +97,7 @@ export default function PostNew() {
     formData.append("post[username]", name);
     formData.append("post[avatar_url]", avatar);
     formData.append("post[like]", "0");
+    formData.append("post[userid]", String(id));
     if (image) {
       formData.append("post[images][]", image);
     }

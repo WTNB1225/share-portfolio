@@ -26,6 +26,7 @@ export default function Bookmark() {
   const [data, setData] = useState<Data[]>([]);
   const [token, setToken] = useState("");
   const [postData, setPostData] = useState<Data[]>([]);
+  const [userId, setUserId] = useState("");
 
   const pathname = usePathname();
   const username = pathname.split("/").reverse()[1];
@@ -37,7 +38,8 @@ export default function Bookmark() {
           withCredentials: true,
         });
         setName(response.data.name);
-        getBookmark(response.data.id); 
+        getBookmark(response.data.id);
+        setUserId(response.data.id); 
       } catch (e) {
         console.log(e);
       }

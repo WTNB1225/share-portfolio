@@ -11,6 +11,7 @@ class Post < ApplicationRecord
   validates :user_id, presence:true
   validates :content, presence:true, length: {maximum: 500}
   validates :username, presence:true
+  validates :userid, presence:true
   validates :images, content_type: { in: %w[image/jpeg image/gif image/png],
   message: "must be a valid image format" },
   size:         { less_than: 30.megabytes,

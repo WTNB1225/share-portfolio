@@ -22,6 +22,7 @@ export default function Post() {
   const [postData, setPostData] = useState<Data[]>([]);
   const [token, setToken] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
+  const [name, setName] = useState("");
 
   useGetCsrfToken().then((token) => {
     if (token) {
@@ -29,7 +30,6 @@ export default function Post() {
     }
   });
 
-  
 
   const getPosts = async () => {
     try {
