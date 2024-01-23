@@ -34,6 +34,7 @@ export default function PostId() {
   const [postAuthor, setPostAuthor] = useState("");
   const [currentUserName, setCurrentUserName] = useState("");
   const [loading, setLoading] = useState(true);
+  const [avatar, setAvatar] = useState("");
 
   const pathname = usePathname();
   const id = pathname.split("/").reverse()[0];
@@ -49,10 +50,24 @@ export default function PostId() {
       setUrl(response.data.images_url);
       setPostAuthor(response.data.username);
       setLoading(false);
+      try{
+        const authorRes = await axios.get(
+          `http://localhost:3000/user/${response.data.username}`,
+          {
+            withCredentials: true,
+          }
+        )
+        setAvatar(authorRes.data.avatar_url);
+      } catch(e) {
+        console.log(e)
+      }
     } catch (e) {
       alert(e);
     }
   };
+
+  console.log(postAuthor)
+  console.log(avatar)
 
   const getComment = async (id: string) => {
     try {
@@ -147,92 +162,106 @@ export default function PostId() {
   return (
     <>
       <Header />
-      <div className="container">
-        <h1>{title}</h1>
-        <div className={`${style["markdown-content"]} ${style.whitespace}`}>
-          <Markdown content={content}></Markdown>
-        </div>
-        {postAuthor == currentUserName && loading == false && (
-          <div className="delete">
-            <button
-              className={`btn btn-danger ${style.icon}`}
-              onClick={handleDelete}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </button>
+      <div className="container" style={{marginTop:"32px"}}>
+        <div className={`row`}>
+          <div className={`col-12 ${style.mobileCenter}`}>
+            <h1>{title}</h1>
+            <div className={`${style["markdown-content"]} ${style.whitespace}`}>
+              <Markdown content={content}></Markdown>
+            </div>
+            {postAuthor == currentUserName && loading == false && (
+              <div className="delete">
+                <button
+                  className={`btn btn-danger ${style.icon}`}
+                  onClick={handleDelete}
+                >
+                  <FontAwesomeIcon icon={faTrash} />
+                </button>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
       {loading == false && (
         <>
           <div className="container">
-            <h3 className={style.h3}>コメント一覧</h3>
-            {comments.map((commentData, index) => {
-              return (
-                <div className={`row ${style.comment}`} key={index}>
-                  <Comment
-                    key={index}
-                    id={commentData.id}
-                    content={commentData.content}
-                    avatar={userData[index].avatar_url}
-                    username={userData[index].name}
-                    currentUser={currentUserName}
-                    postAuthor={postAuthor}
-                    onDelete={handleDeleteResult}
-                  />
-                  {index === comments.length - 1 && (
-                    <div className={style.border}></div>
-                  )}
-                  {index === comments.length - 1 && commentLoading == false && (
-                    <>
-                      <h3 style={{ marginTop: "16px" }}>コメントする</h3>
-                      <textarea
-                        className={`form-control ${style.textarea}`}
-                        style={{ width: "100%" }}
-                        value={comment}
-                        onChange={handleCommentChange}
-                      ></textarea>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <button
-                          className="btn btn-primary mt-2"
-                          type="submit"
-                          onClick={handleSubmit}
-                        >コメント</button>
+            <div className={`row ${style.mobileCenter}`}>
+              <div className="col-12">
+                <h3 className={style.h3}>コメント一覧</h3>
+                {comments.map((commentData, index) => {
+                  return (
+                    <div className={`row ${style.comment}`} key={index}>
+                      <div className="col-12">
+                        <Comment
+                          key={index}
+                          id={commentData.id}
+                          content={commentData.content}
+                          avatar={userData[index].avatar_url}
+                          username={userData[index].name}
+                          currentUser={currentUserName}
+                          postAuthor={postAuthor}
+                          onDelete={handleDeleteResult}
+                        />
+                        {index === comments.length - 1 && (
+                          <div className={style.border}></div>
+                        )}
+                        {index === comments.length - 1 && commentLoading == false && (
+                          <>
+                            <h3 style={{ marginTop: "16px" }}>コメントする</h3>
+                            <textarea
+                              className={`form-control ${style.textarea}`}
+                              style={{ width: "100%" }}
+                              value={comment}
+                              onChange={handleCommentChange}
+                            ></textarea>
+                            <div
+                              style={{
+                                display: "flex",
+                                justifyContent: "flex-end",
+                              }}
+                            >
+                              <button
+                                className="btn btn-primary mt-2"
+                                type="submit"
+                                onClick={handleSubmit}
+                              >コメント</button>
+                            </div>
+                          </>
+                        )}
                       </div>
-                    </>
-                  )}
-                </div>
-              );
-            })}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
           {comments.length == 0 && (
             <>
               <div className="container">
-                <h3 style={{ marginTop: "16px" }}>コメントする</h3>
-                <textarea
-                  className={`form-control ${style.textarea}`}
-                  style={{ width: "100%" }}
-                  value={comment}
-                  onChange={handleCommentChange}
-                ></textarea>
-                <div
-                  style={{
-                    display: "flex",
-                    justifyContent: "flex-end",
-                  }}
-                >
-                  <button
-                    className="btn btn-primary mt-2"
-                    type="submit"
-                    onClick={handleSubmit}
-                  >
-                    送信
-                  </button>
+                <div className="row mobile-center">
+                  <div className="col-12">
+                    <h3 style={{ marginTop: "16px" }}>コメントする</h3>
+                    <textarea
+                      className={`form-control ${style.textarea}`}
+                      style={{ width: "100%" }}
+                      value={comment}
+                      onChange={handleCommentChange}
+                    ></textarea>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
+                    >
+                      <button
+                        className="btn btn-primary mt-2"
+                        type="submit"
+                        onClick={handleSubmit}
+                      >
+                        送信
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </>

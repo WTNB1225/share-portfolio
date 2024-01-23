@@ -42,6 +42,8 @@ export default function Edit() {
     setName(e.target.value);
   };
 
+  console.log(name)
+
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
@@ -57,6 +59,7 @@ export default function Edit() {
   };
 
   const handleNameSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append("user[name]", name);
     if (loginUser == username) {
@@ -80,6 +83,7 @@ export default function Edit() {
     }
   };
   const handleEmailSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append("user[email]", email);
     if (loginUser == username) {
@@ -94,7 +98,7 @@ export default function Edit() {
             withCredentials: true,
           }
         );
-        router.push(`/${name}`);
+        router.push(`/${username}`);
       } catch (e) {
         alert(e);
       }
@@ -104,6 +108,7 @@ export default function Edit() {
   };
 
   const handlePasswordSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append("user[password]", password);
     formData.append("user[password_confirmation]", passwordConfirmation);
@@ -119,7 +124,7 @@ export default function Edit() {
             withCredentials: true,
           }
         );
-        router.push(`/${name}`);
+        router.push(`/${username}`);
       } catch (e) {
         alert(e);
       }
