@@ -25,6 +25,7 @@ export default function Comment({
   onDelete: (id:string) => void; 
 }){
 
+  //投稿者とログインしているユーザーが一致しているとコメントを削除できる
   const handleDelete = async () => {
     if(postAuthor == currentUser){
       try{

@@ -3,7 +3,6 @@ import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import Header from "../../../components/Header";
 import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
-import style from "./page.module.css";
 import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
 
@@ -42,7 +41,6 @@ export default function Edit() {
     setName(e.target.value);
   };
 
-  console.log(name)
 
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
@@ -74,7 +72,24 @@ export default function Edit() {
             withCredentials: true,
           }
         );
-        router.push(`/${name}`);
+        try{
+          const postData = new FormData();
+          postData.append("post[username]", name);
+          const postRes = await axios.patch(
+            `http://localhost:3000/posts/${username}`,
+            postData,
+            {
+              headers: {
+                "X-CSRF-Token": csrfToken,
+              },
+              withCredentials: true,
+            }
+          )
+          router.push(`/${name}`);
+          console.log(postRes)
+        } catch(e) {
+          alert(e);
+        }
       } catch (e) {
         alert(e);
       }

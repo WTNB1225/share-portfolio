@@ -11,7 +11,7 @@ console.log('It works!')
 \`\`\`
 `
 
-const code = ({node, className, children}: ExtraProps & ClassAttributes<HTMLElement> & HTMLAttributes<HTMLPreElement>) => {
+const code = ({ className, children}: ExtraProps & ClassAttributes<HTMLElement> & HTMLAttributes<HTMLPreElement>) => {
   const fileName = className?.split(":")[1]
   console.log(className?.split(":")[0].replace("language-", ""))
   return(
@@ -32,7 +32,7 @@ const code = ({node, className, children}: ExtraProps & ClassAttributes<HTMLElem
 
 export default function Markdowns(){
   return(
-    <ReactMarkdown components={{code:code}}>{markdown}</ReactMarkdown>
+    <ReactMarkdown className={style.md} components={{code:code}}>{markdown}</ReactMarkdown>
   )
 }
 
