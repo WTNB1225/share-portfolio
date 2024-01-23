@@ -62,7 +62,7 @@
 }
 
 .markdown-content img {
-  max-width: 300px;
+  max-width: 200px ;
   height: auto;
 }
 
@@ -70,4 +70,16 @@
 .whitespace{
   white-space: pre-wrap;
   word-break: break-all;
+}
+
+@media (max-width: 576px) {
+  .mobileCenter {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center!important;
+  }
+  .mobileCenter p img {
+    display: block !important;
+    margin: auto !important;
+  }
 }

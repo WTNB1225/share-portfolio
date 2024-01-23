@@ -4,18 +4,26 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className={style.margin}>
+    <div>
       <Header />
-      <div className={style.container}>
-        <h1 className={style.title}>作品共有サービスへようこそ</h1>
-        <p className={style.description}>このサイトではプログラミングの作品を共有することができます</p>
-        <div className={style.link}>
-          <Link href="/signup">
-            今すぐ登録
-          </Link>
-          <Link href="/login">
-            ログイン
-          </Link>
+      <div className="container" style={{marginTop:"32px"}}>
+        <div className="row justify-content-center">
+          <div className="col-xs-12 col-md-8 text-center">
+            <h1>作品共有サービスへようこそ</h1>
+            <p>このサイトではプログラミングの作品を共有することができます</p>
+          </div>
+        </div>
+        <div className="row justify-content-center" style={{marginTop:"32px"}}>
+          <div className="col-xs-6 col-md-4">
+            <div className={style.link + " text-center"}>
+              <Link href="/signup" className="btn btn-primary mb-4" >
+                今すぐ登録
+              </Link>
+              <Link href="/login" className="btn btn-primary mb-4">
+                ログイン
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
