@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_17_131350) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_23_002901) do
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -100,9 +100,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_17_131350) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "remember_digest"
-    t.string "liked", default: "[]"
     t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["liked"], name: "index_users_on_liked"
   end
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"

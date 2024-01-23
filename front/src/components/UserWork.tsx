@@ -10,6 +10,9 @@ import { faBookmark as faBookmarkRegular } from "@fortawesome/free-regular-svg-i
 import {faBookmark as faBookmarkSolid} from "@fortawesome/free-solid-svg-icons"
 import {faHeart as faHartRegular} from "@fortawesome/free-regular-svg-icons"
 import {faHeart as faHeartSolid} from "@fortawesome/free-solid-svg-icons"
+import ReactMarkdown from 'react-markdown';
+import rehypeRaw from "rehype-raw";
+import rehypeSanitize from "rehype-sanitize";
 
 export default function UserWork({
   id,
@@ -193,7 +196,7 @@ export default function UserWork({
             layout="responsive"
             className={style.workImage}
           />
-          <h2 className={style.workTitle}>{title}</h2>
+          <h2>{title}</h2>
         </Link>
         {isLiked ? (
           <button onClick={handleUnLike} className={style.icon}>

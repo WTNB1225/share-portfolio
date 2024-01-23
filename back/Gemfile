@@ -38,6 +38,9 @@ gem "bootsnap", require: false
 gem "rack-cors"
 
 gem 'rails-controller-testing'
+
+gem "image_processing", "1.12.2"
+
 #gem "rails_same_site_cookie"
 
 group :development, :test do

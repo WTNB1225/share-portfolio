@@ -60,3 +60,14 @@
   border: none;
 
 }
+
+.markdown-content img {
+  max-width: 300px;
+  height: auto;
+}
+
+
+.whitespace{
+  white-space: pre-wrap;
+  word-break: break-all;
+}

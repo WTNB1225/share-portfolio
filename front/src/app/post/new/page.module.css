@@ -24,3 +24,13 @@
 .height {
   height: 30em;
 }
+.markdown_preview img {
+  width: 200px;
+  height: auto;
+}
+
+.whitespace {
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+  text-align: left;
+}

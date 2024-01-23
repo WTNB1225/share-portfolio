@@ -6,20 +6,23 @@ import Header from "../../../components/Header";
 import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
 import Preview from "@/components/Preview";
+import Markdown from "@/components/Markdown";
+import style from "./page.module.css"
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import dotenv from "dotenv";
 
 export default function PostNew() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [image, setImages] = useState<File>();
-  const [image2, setImages2] = useState<File>();
-  const [image3, setImages3] = useState<File>();
-  const [image4, setImages4] = useState<File>();
+  const [image, setImage] = useState<File>();
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
   const [csrfToken, setCsrfToken] = useState("");
   const [avatar, setAvatar] = useState("");
+  dotenv.config();
+
 
   useCheckLoginStatus().then(async (d) => {
     if (d) {
@@ -38,6 +41,15 @@ export default function PostNew() {
     }
   });
 
+  const S3 = new S3Client({
+    region: "auto",
+    endpoint: process.env.NEXT_PUBLIC_CLOUDFLARE_ENDPOINT as string,
+    credentials: {
+      accessKeyId: process.env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY as string,
+    },
+  })
+
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
@@ -46,39 +58,38 @@ export default function PostNew() {
     setContent(e.target.value);
   };
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailChange = async(e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = e.target.files;
-      setImages(files[0]);
+      setImage(files[0]);
     }
   };
 
-  const handleFile2Change = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImagesChange = async(e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = e.target.files;
-      setImages2(files[0]);
+      const files = Array.from(e.target.files)
+      files.forEach(async (file) => {
+        await S3.send(
+          new PutObjectCommand({
+            Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
+            Key: file.name,
+            Body: file,
+            ContentType: file.type,
+          })
+        )
+        const encodedFileName = encodeURIComponent(file.name);
+        const imageUrl = `![${file.name}](https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/${encodedFileName})`;
+        setContent(prevContent => prevContent + '\n' + imageUrl);
+      })
     }
-  };
-
-  const handleFile3Change = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = e.target.files;
-      setImages3(files[0]);
-    }
-  };
-
-  const handleFile4Change = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const files = e.target.files;
-      setImages4(files[0]);
-    }
-  };
+  }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!csrfToken) {
       return;
     }
+    
     const formData = new FormData();
     formData.append("post[title]", title);
     formData.append("post[content]", content);
@@ -88,15 +99,6 @@ export default function PostNew() {
     formData.append("post[like]", "0");
     if (image) {
       formData.append("post[images][]", image);
-    }
-    if (image2) {
-      formData.append("post[images][]", image2);
-    }
-    if (image3) {
-      formData.append("post[images][]", image3);
-    }
-    if (image4) {
-      formData.append("post[images][]", image4);
     }
 
     try {
@@ -117,6 +119,8 @@ export default function PostNew() {
       alert(error);
     }
   };
+
+  
 
   if (loading) {
     return <></>;
@@ -144,56 +148,46 @@ export default function PostNew() {
                       />
                     </label>
                   </div>
+                  <div className="row text-center">
+                    <div className="col">
+                      <label className="form-label">
+                        Content
+                        <textarea
+                          className="form-control"
+                          onChange={handleContentChange}
+                          cols={50}
+                          rows={50}
+                          value={content}
+                        ></textarea>
+                      </label>
+                    </div>
+                    <div className="col">
+                        Preview
+                        <div className={`${style.whitespace} ${style.markdown_preview}`}>
+                          <Markdown content={content} />
+                        </div>
+                    </div> 
+                  </div>
                   <div className="col-12 text-center">
                     <label className="form-label">
-                      Content
-                      <textarea
+                      画像
+                      <input
                         className="form-control"
-                        onChange={handleContentChange}
+                        type="file"
+                        multiple
+                        accept="image/jpeg,image/gif,image/png"
+                        onChange={handleImagesChange}
                       />
                     </label>
                   </div>
                   <div className="col-12 text-center">
                     <label className="form-label">
-                      Image1
+                      サムネイル
                       <input
                         className="form-control"
                         type="file"
                         accept="image/jpeg,image/gif,image/png"
-                        onChange={handleFileChange}
-                      />
-                    </label>
-                  </div>
-                  <div className="col-12 text-center">
-                    <label className="form-label">
-                      Image2
-                      <input
-                        className="form-control"
-                        type="file"
-                        accept="image/jpeg,image/gif,image/png"
-                        onChange={handleFile2Change}
-                      />
-                    </label>
-                  </div>
-                  <div className="col-12 text-center">
-                    <label className="form-label">
-                      Image3
-                      <input
-                        className="form-control"
-                        type="file"
-                        accept="image/jpeg,image/gif,image/png"
-                        onChange={handleFile3Change}
-                      />
-                    </label>
-                  </div>
-                  <div className="col-12 text-center">
-                    <label className="form-label">
-                      Image
-                      <input
-                        className="form-control"
-                        type="file"
-                        accept="image/jpeg,image/gif,image/png"
-                        onChange={handleFile4Change}
+                        onChange={handleThumbnailChange}
                       />
                     </label>
                   </div>
@@ -203,27 +197,14 @@ export default function PostNew() {
                     </button>
                   </div>
                 </form>
-                　　　　　　
               </div>
               <div className="row mt-2 d-flex justify-content-center">
                 {image && (
                   <div className="col-6 col-sm-3">
-                    <Preview src={window.URL.createObjectURL(image)} icon={false}/>
-                  </div>
-                )}
-                {image2 && (
-                  <div className="col-6 col-sm-3 ">
-                    <Preview src={window.URL.createObjectURL(image2)} icon={false}/>
-                  </div>
-                )}
-                {image3 && (
-                  <div className="col-6 col-sm-3 ">
-                    <Preview src={window.URL.createObjectURL(image3)} icon={false} />
-                  </div>
-                )}
-                {image4 && (
-                  <div className="col-6 col-sm-3 ">
-                    <Preview src={window.URL.createObjectURL(image4)} icon={false}/>
+                    <Preview
+                      src={window.URL.createObjectURL(image)}
+                      icon={false}
+                    />
                   </div>
                 )}
               </div>

@@ -2,7 +2,9 @@ class User < ApplicationRecord
   attr_accessor :remember_token
   before_save {self.email = email.downcase}
   has_many :posts, dependent: :destroy
-  has_one_attached :avatar
+  has_one_attached :avatar do |attachable|
+    attachable.variant :display, resize_to_limit: [500, 500]
+  end
   has_many :favorites, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
   has_many :comments, dependent: :destroy
@@ -21,6 +23,7 @@ class User < ApplicationRecord
                     format: {with: VALID_EMAIL_REGEX},
                     uniqueness: true
   has_secure_password
+  validates :avatar, presence: true
   validates :password, presence:true, length: {minimum: 6} ,on: :create
   validates :avatar, content_type: { in: %w[image/jpeg image/gif image/png],
   message: "must be a valid image format" },
