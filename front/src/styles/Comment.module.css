@@ -15,7 +15,7 @@
   flex-direction: column;
 }
 
-.content {
+.whitespace{
   white-space: pre-wrap;
   word-break: break-all;
 }

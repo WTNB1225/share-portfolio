@@ -5,12 +5,12 @@ import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Header from "../../../../components/Header";
 import style from "./page.module.css";
-import Image from "next/image";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import Comment from "@/components/Comment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {faTrash} from "@fortawesome/free-solid-svg-icons"
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import Markdown from "@/components/Markdown";
 
 type Data = {
   user_id: string;
@@ -18,9 +18,8 @@ type Data = {
   content: string;
   avatar_url: string;
   name: string;
-  id:string;
+  id: string;
 };
-
 
 export default function PostId() {
   const [title, setTitle] = useState("");
@@ -35,7 +34,6 @@ export default function PostId() {
   const [postAuthor, setPostAuthor] = useState("");
   const [currentUserName, setCurrentUserName] = useState("");
   const [loading, setLoading] = useState(true);
-  const [render, setRender] = useState(1);
 
   const pathname = usePathname();
   const id = pathname.split("/").reverse()[0];
@@ -112,8 +110,8 @@ export default function PostId() {
     }
   };
 
-  const handleDeleteResult = (id:string) => {
-    setComments(comments.filter(comment => comment.id !== id));
+  const handleDeleteResult = (id: string) => {
+    setComments(comments.filter((comment) => comment.id !== id));
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -150,27 +148,17 @@ export default function PostId() {
     <>
       <Header />
       <div className="container">
-        <h1 className={style.h1}>{title}</h1>
-        <p className={style.content}>{content}</p>
-        <div className={style.imageContainer}>
-          <div className="row">
-            {url.map((image, index) => (
-                      <div key={index} className={`col-4 ${style.img}`}>
-          <Image
-            alt=""
-            src={image}
-            width={200}
-            height={200}
-            layout="responsive"
-          />
-        </div>
-            ))}
-          </div>
+        <h1>{title}</h1>
+        <div className={`${style["markdown-content"]} ${style.whitespace}`}>
+          <Markdown content={content}></Markdown>
         </div>
         {postAuthor == currentUserName && loading == false && (
           <div className="delete">
-            <button className={`btn btn-danger ${style.icon}`} onClick={handleDelete}>
-              <FontAwesomeIcon icon={faTrash}/>
+            <button
+              className={`btn btn-danger ${style.icon}`}
+              onClick={handleDelete}
+            >
+              <FontAwesomeIcon icon={faTrash} />
             </button>
           </div>
         )}
@@ -197,7 +185,7 @@ export default function PostId() {
                   )}
                   {index === comments.length - 1 && commentLoading == false && (
                     <>
-                      <h3 style={{marginTop:"16px"}}>コメントする</h3>
+                      <h3 style={{ marginTop: "16px" }}>コメントする</h3>
                       <textarea
                         className={`form-control ${style.textarea}`}
                         style={{ width: "100%" }}
@@ -214,9 +202,7 @@ export default function PostId() {
                           className="btn btn-primary mt-2"
                           type="submit"
                           onClick={handleSubmit}
-                        >
-                          
-                        </button>
+                        >コメント</button>
                       </div>
                     </>
                   )}
@@ -226,34 +212,35 @@ export default function PostId() {
           </div>
           {comments.length == 0 && (
             <>
-            <div className="container">
-            <h3 style={{marginTop:"16px"}}>コメントする</h3>
-                      <textarea
-                        className={`form-control ${style.textarea}`}
-                        style={{ width: "100%" }}
-                        value={comment}
-                        onChange={handleCommentChange}
-                      ></textarea>
-                      <div
-                        style={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                        }}
-                      >
-                        <button
-                          className="btn btn-primary mt-2"
-                          type="submit"
-                          onClick={handleSubmit}
-                        >
-                          送信
-                        </button>
-                      </div>
-            </div>
-                      </>
+              <div className="container">
+                <h3 style={{ marginTop: "16px" }}>コメントする</h3>
+                <textarea
+                  className={`form-control ${style.textarea}`}
+                  style={{ width: "100%" }}
+                  value={comment}
+                  onChange={handleCommentChange}
+                ></textarea>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <button
+                    className="btn btn-primary mt-2"
+                    type="submit"
+                    onClick={handleSubmit}
+                  >
+                    送信
+                  </button>
+                </div>
+              </div>
+            </>
           )}
-
         </>
       )}
     </>
   );
 }
+
+

@@ -1,7 +1,9 @@
 class Post < ApplicationRecord
   include Rails.application.routes.url_helpers
   belongs_to :user
-  has_many_attached :images
+  has_many_attached :images do |attachable|
+    attachable.variant :display, resize_to_limit: [500, 500]
+  end
   has_many :favorites, dependent: :destroy
   has_many :bookmarks, dependent: :destroy
   has_many :comments, dependent: :destroy

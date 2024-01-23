@@ -5,7 +5,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {faTrash} from "@fortawesome/free-solid-svg-icons"
 import axios from "axios";
-
+import Markdown from "./Markdown";
 
 export default function Comment({
   id,
@@ -46,8 +46,8 @@ export default function Comment({
           <p>{username}</p>
         </Link>
       </div>
-      <div className={style.inline}>
-        <p className={style.content}>{content}</p>
+      <div className={`${style.inline} ${style.whitespace}`}>
+        <Markdown content={content}></Markdown>
         {postAuthor == currentUser && (
           <button onClick={handleDelete} className={style.icon} style={{ width: '40px', height: '40px' }}>
             <FontAwesomeIcon icon={faTrash} />
