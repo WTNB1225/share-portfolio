@@ -35,6 +35,7 @@ export default function PostId() {
   const [currentUserName, setCurrentUserName] = useState("");
   const [loading, setLoading] = useState(true);
   const [avatar, setAvatar] = useState("");
+  const [authorId, setAuthorId] = useState("");
 
   const pathname = usePathname();
   const id = pathname.split("/").reverse()[0];
@@ -50,9 +51,10 @@ export default function PostId() {
       setUrl(response.data.images_url);
       setPostAuthor(response.data.username);
       setLoading(false);
+      setAuthorId(response.data.user_id);
       try{
         const authorRes = await axios.get(
-          `http://localhost:3000/user/${response.data.username}`,
+          `http://localhost:3000/user/${response.data.id}`,
           {
             withCredentials: true,
           }
@@ -159,6 +161,9 @@ export default function PostId() {
     getComment(id);
   }, []);
 
+  console.log(userId)
+  console.log(authorId)
+
   return (
     <>
       <Header />
@@ -169,7 +174,7 @@ export default function PostId() {
             <div className={`${style["markdown-content"]} ${style.whitespace}`}>
               <Markdown content={content}></Markdown>
             </div>
-            {postAuthor == currentUserName && loading == false && (
+            {authorId == userId && loading == false && (
               <div className="delete">
                 <button
                   className={`btn btn-danger ${style.icon}`}
@@ -198,8 +203,8 @@ export default function PostId() {
                           content={commentData.content}
                           avatar={userData[index].avatar_url}
                           username={userData[index].name}
-                          currentUser={currentUserName}
-                          postAuthor={postAuthor}
+                          currentUser={userId}
+                          postAuthor={authorId}
                           onDelete={handleDeleteResult}
                         />
                         {index === comments.length - 1 && (
