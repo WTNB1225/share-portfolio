@@ -1,6 +1,6 @@
 "use client"
 import { useState, useEffect } from "react"
-import { useRouter, usePathname } from "next/navigation"
+import { usePathname } from "next/navigation"
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import Header from "@/components/Header";

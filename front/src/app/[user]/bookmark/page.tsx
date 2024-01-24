@@ -1,10 +1,9 @@
 "use client";
 import axios from "axios";
-import { use, useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
 import Header from "@/components/Header";
 import style from "./page.module.css";
-import { useRouter, usePathname } from "next/navigation";
-import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
+import { usePathname } from "next/navigation";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import UserWork from "@/components/UserWork";
 

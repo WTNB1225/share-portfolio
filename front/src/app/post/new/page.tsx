@@ -192,36 +192,33 @@ export default function PostNew() {
           )}
         </div>
       </div>
-      <div className="row text-center" style={{marginRight:"8px", marginLeft:"8px", marginBottom:"32px"}}>
-        <div className={`col-12 col-md-6`}>
-          <label className="form-label">
-            Content
-            <div style={{width:"100%", height:"100%"}}>
-            <textarea
-              className="form-control"
-              onChange={handleContentChange}
-              cols={100}
-              rows={50}
-              value={content}
-            ></textarea>
+      {name &&(
+        <div className="row text-center" style={{marginRight:"8px", marginLeft:"8px", marginBottom:"32px"}}>
+          <div className={`col-12 col-md-6`}>
+            <label className="form-label">
+              Content
+              <div style={{width:"100%", height:"100%"}}>
+              <textarea
+                className="form-control"
+                onChange={handleContentChange}
+                cols={100}
+                rows={50}
+                value={content}
+              ></textarea>
+              </div>
+            </label>
+          </div>
+          <div className="col-12 col-md-6">
+            Preview
+            <div
+              className={`${style.whitespace} ${style.markdown_preview} ${style.borderPreview}`}
+              style={{width:"100%", height:"97.5%"}}
+            >
+              <Markdown content={content} />
             </div>
-          </label>
-        </div>
-        <div className="col-12 col-md-6">
-          Preview
-          <div
-            className={`${style.whitespace} ${style.markdown_preview} ${style.borderPreview}`}
-            style={{width:"100%", height:"97.5%"}}
-          >
-            <Markdown content={content} />
           </div>
         </div>
-      </div>
-      <div className="col-12 text-center">
-        <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
-          投稿
-        </button>
-      </div>
+      )}
     </>
   );
 }

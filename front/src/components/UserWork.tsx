@@ -111,7 +111,6 @@ export default function UserWork({
   const isFavorite = async () => {
     try{
       const response = await axios.get(`http://localhost:3000/isFavorites/${currentUserId}/${id}`);
-      console.log(response)
       if(response.data == true){
         setIsLiked(true);
       } else {
@@ -192,7 +191,7 @@ export default function UserWork({
             layout="responsive"
             className={style.workImage}
           />
-          <h2>{title}</h2>
+          <h2 className={style.overflow}>{title}</h2>
         </Link>
         {isLiked ? (
           <button onClick={handleUnLike} className={style.icon}>
