@@ -25,6 +25,7 @@ export default function Edit() {
   const [csrfToken, setCsrfToken] = useState("");
   const [userLoading, setUserLoading] = useState(true);
   const [postDatas, setPostDatas] = useState<Data[]>([]);
+  const [error, setError] = useState();
 
   const router = useRouter();
   const pathname = usePathname();
@@ -37,7 +38,6 @@ export default function Edit() {
       setLoginUser(d.name);
     }
     setUserLoading(false);
-
   });
 
   useGetCsrfToken().then((token) => {
@@ -55,8 +55,8 @@ export default function Edit() {
           setPostDatas(response.data);
           console.log(response.data)
         }
-      } catch (e) {
-        alert(e);
+      } catch (e:any) {
+        alert(e)
       }
     }
     fetchPosts(username);
@@ -80,6 +80,8 @@ export default function Edit() {
   ) => {
     setPasswordConfirmation(e.target.value);
   };
+
+  console.log(password)
 
   const handleNameSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -115,11 +117,12 @@ export default function Edit() {
             }
             router.push(`/${name}`);
           }
-        } catch(e) {
-          alert(e);
+        } catch(e:any) {
+          alert(e)
         }
-      } catch (e) {
-        alert(e);
+      } catch (e:any) {
+        console.log(e.response.data);
+        setError(e.response.data);
       }
     } else {
       router.push("/401");
@@ -129,10 +132,10 @@ export default function Edit() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("user[email]", email);
-    if (loginUser == username) {
+    if (loginUser == decodeURIComponent(username)) {
       try {
         const response = await axios.patch(
-          `http://localhost:3000/users/${username}`,
+          `http://localhost:3000/users/${decodeURIComponent(username)}`,  
           formData,
           {
             headers: {
@@ -142,8 +145,9 @@ export default function Edit() {
           }
         );
         router.push(`/${username}`);
-      } catch (e) {
-        alert(e);
+      } catch (e:any) {
+        //console.log(e.response.data);
+        setError(e.response.data);
       }
     } else {
       router.push("/401");
@@ -155,10 +159,10 @@ export default function Edit() {
     const formData = new FormData();
     formData.append("user[password]", password);
     formData.append("user[password_confirmation]", passwordConfirmation);
-    if (loginUser == username) {
+    if (loginUser == decodeURIComponent(username)) {
       try {
         const response = await axios.patch(
-          `http://localhost:3000/users/${username}`,
+          `http://localhost:3000/users/${decodeURIComponent(username)}`,
           formData,
           {
             headers: {
@@ -167,9 +171,11 @@ export default function Edit() {
             withCredentials: true,
           }
         );
-        router.push(`/${username}`);
-      } catch (e) {
-        alert(e);
+        console.log(response)
+        //router.push(`/${username}`);
+      } catch (e:any) {
+        //console.log(e.response.data);
+        setError(e.response.data);
       }
     } else {
       router.push("/401");
@@ -192,6 +198,13 @@ export default function Edit() {
   return (
     <>
     <Header />
+    {error && (
+        <div className="alert alert-danger" role="alert">
+          {Object.entries(error).map(([key, value]) => (
+            <div key={key}>{`${key}: ${value}`}</div>
+          ))}
+        </div>
+      )}
     <div className="container d-flex justify-content-center vh-100 " style={{marginTop:"32px"}}>
       <div className="row">
         <div className="col-12 col-lg-8">

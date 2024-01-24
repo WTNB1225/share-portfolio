@@ -36,6 +36,7 @@ class UsersController < ApplicationController
       log_in @user
       render json:@user, status: :created
     else
+      @user.save
       render json:@user.errors, status: :unprocessable_entity
     end
   end
@@ -51,6 +52,7 @@ class UsersController < ApplicationController
     if @user.update(user_params)
       render json:@user
     else
+      @user.update(user_params)
       render json:@user.errors, status: :unprocessable_entity
     end
   end

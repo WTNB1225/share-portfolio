@@ -45,7 +45,7 @@ export default function PostUser() {
       const response = await axios.get(`http://localhost:3000/users/${name}`);
       setAvatar(response.data.avatar_url);
     } catch (e) {
-      console.log(e);
+      console.log(e)
     }
   };
 
@@ -53,6 +53,12 @@ export default function PostUser() {
     getUsersPosts(name);
     getUsersAvatar(name);
   }, []);
+
+  if(data.length === 0) {
+    return(
+      <h1>ユーザーが存在しません</h1>
+    )
+  }
 
   return (
     <>
