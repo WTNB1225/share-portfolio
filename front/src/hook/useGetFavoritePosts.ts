@@ -29,6 +29,7 @@ export const usePageData = () => {
         setToken(token);
       }
     };
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useFetchData();
   }, []);
 

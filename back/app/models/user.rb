@@ -18,11 +18,12 @@ class User < ApplicationRecord
   has_many :following, through: :active_relationships, source: :followed
   has_many :followers, through: :passive_relationships, source: :follower
   VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-]+(\.[a-z\d\-]+)*\.[a-z]+\z/i
-  validates :name, presence: true, length: { maximum: 50 }, uniqueness: true
+  validates :name, presence: true, length: { maximum: 8 }, uniqueness: true
   validates :email, presence: true, length: { maximum: 255 },
                     format: {with: VALID_EMAIL_REGEX},
                     uniqueness: true
   has_secure_password
+  validate :name_should_not_include_space
   validates :avatar, presence: true
   validates :password, presence:true, length: {minimum: 6} ,on: :create
   validates :avatar, content_type: { in: %w[image/jpeg image/gif image/png],
@@ -77,4 +78,10 @@ class User < ApplicationRecord
   def following?(other_user)
     following.include?(other_user)
   end
+
+  private
+
+    def name_should_not_include_space
+      errors.add(:name, "にはスペースを含めることはできません") if name&.include?(" ") || name&.include?("　")
+    end
 end

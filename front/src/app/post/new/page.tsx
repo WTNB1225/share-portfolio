@@ -7,7 +7,7 @@ import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
 import Preview from "@/components/Preview";
 import Markdown from "@/components/Markdown";
-import style from "./page.module.css"
+import style from "./page.module.css";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import dotenv from "dotenv";
 
@@ -22,7 +22,6 @@ export default function PostNew() {
   const [csrfToken, setCsrfToken] = useState("");
   const [avatar, setAvatar] = useState("");
   dotenv.config();
-
 
   useCheckLoginStatus().then(async (d) => {
     if (d) {
@@ -48,7 +47,7 @@ export default function PostNew() {
       accessKeyId: process.env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY_ID as string,
       secretAccessKey: process.env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY as string,
     },
-  })
+  });
 
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
@@ -58,16 +57,16 @@ export default function PostNew() {
     setContent(e.target.value);
   };
 
-  const handleThumbnailChange = async(e: ChangeEvent<HTMLInputElement>) => {
+  const handleThumbnailChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = e.target.files;
       setImage(files[0]);
     }
   };
 
-  const handleImagesChange = async(e: ChangeEvent<HTMLInputElement>) => {
+  const handleImagesChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = Array.from(e.target.files)
+      const files = Array.from(e.target.files);
       files.forEach(async (file) => {
         await S3.send(
           new PutObjectCommand({
@@ -76,20 +75,20 @@ export default function PostNew() {
             Body: file,
             ContentType: file.type,
           })
-        )
+        );
         const encodedFileName = encodeURIComponent(file.name);
         const imageUrl = `![${file.name}](https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/${encodedFileName})`;
-        setContent(prevContent => prevContent + '\n' + imageUrl);
-      })
+        setContent((prevContent) => prevContent + "\n" + imageUrl);
+      });
     }
-  }
+  };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (!csrfToken) {
       return;
     }
-    
+
     const formData = new FormData();
     formData.append("post[title]", title);
     formData.append("post[content]", content);
@@ -121,8 +120,6 @@ export default function PostNew() {
     }
   };
 
-  
-
   if (loading) {
     return <></>;
   }
@@ -134,42 +131,36 @@ export default function PostNew() {
         className="container d-flex justify-content-center"
         style={{ marginTop: "32px" }}
       >
-        <div>
+        <div className="col-12 col-lg-8">
           {name ? (
             <>
-              <div>
-                <form onSubmit={handleSubmit} className="row g-3">
-                  <div className="col-12 text-center">
+              <form
+                className="row g-3 justify-content-center"
+              >
+                <div className="col-12 col-md-6 text-center">
+                  <label className="form-label">
+                    Title
+                    <input
+                      style={{width:"100%"}}
+                      className="form-control"
+                      type="text"
+                      onChange={handleTitleChange}
+                    />
+                  </label>
+                </div>
+                <div className="row">
+                  <div className="col-12 col-md-6 text-center">
                     <label className="form-label">
-                      Title
+                      サムネイル
                       <input
                         className="form-control"
-                        type="text"
-                        onChange={handleTitleChange}
+                        type="file"
+                        accept="image/jpeg,image/gif,image/png"
+                        onChange={handleThumbnailChange}
                       />
                     </label>
                   </div>
-                  <div className="row text-center">
-                    <div className="col">
-                      <label className="form-label">
-                        Content
-                        <textarea
-                          className="form-control"
-                          onChange={handleContentChange}
-                          cols={50}
-                          rows={50}
-                          value={content}
-                        ></textarea>
-                      </label>
-                    </div>
-                    <div className="col">
-                        Preview
-                        <div className={`${style.whitespace} ${style.markdown_preview}`}>
-                          <Markdown content={content} />
-                        </div>
-                    </div> 
-                  </div>
-                  <div className="col-12 text-center">
+                  <div className="col-12 col-md-6 text-center">
                     <label className="form-label">
                       画像
                       <input
@@ -181,27 +172,11 @@ export default function PostNew() {
                       />
                     </label>
                   </div>
-                  <div className="col-12 text-center">
-                    <label className="form-label">
-                      サムネイル
-                      <input
-                        className="form-control"
-                        type="file"
-                        accept="image/jpeg,image/gif,image/png"
-                        onChange={handleThumbnailChange}
-                      />
-                    </label>
-                  </div>
-                  <div className="col-12 text-center">
-                    <button type="submit" className="btn btn-primary">
-                      投稿
-                    </button>
-                  </div>
-                </form>
-              </div>
+                </div>
+              </form>
               <div className="row mt-2 d-flex justify-content-center">
                 {image && (
-                  <div className="col-6 col-sm-3">
+                  <div className="col-12 col-sm-6 col-md-3">
                     <Preview
                       src={window.URL.createObjectURL(image)}
                       icon={false}
@@ -216,6 +191,36 @@ export default function PostNew() {
             </div>
           )}
         </div>
+      </div>
+      <div className="row text-center" style={{marginRight:"8px", marginLeft:"8px", marginBottom:"32px"}}>
+        <div className={`col-12 col-md-6`}>
+          <label className="form-label">
+            Content
+            <div style={{width:"100%", height:"100%"}}>
+            <textarea
+              className="form-control"
+              onChange={handleContentChange}
+              cols={100}
+              rows={50}
+              value={content}
+            ></textarea>
+            </div>
+          </label>
+        </div>
+        <div className="col-12 col-md-6">
+          Preview
+          <div
+            className={`${style.whitespace} ${style.markdown_preview} ${style.borderPreview}`}
+            style={{width:"100%", height:"97.5%"}}
+          >
+            <Markdown content={content} />
+          </div>
+        </div>
+      </div>
+      <div className="col-12 text-center">
+        <button type="submit" className="btn btn-primary" onClick={handleSubmit}>
+          投稿
+        </button>
       </div>
     </>
   );

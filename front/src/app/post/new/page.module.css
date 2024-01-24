@@ -13,6 +13,16 @@
   margin: auto;
 }
 
+.borderPreview {
+  border: 1px solid #ced4da; /* 線の太さと色を設定 */
+  padding: 10px; /* 内側のスペースを設定 */
+  border-radius: 0.25rem;
+}
+
+.noMarginRight {
+  margin-right: 0 !important;
+}
+
 .file {
   display: none;
 }

@@ -8,6 +8,12 @@ import Image from "next/image";
 import style from "./page.module.css";
 import UserWork from "../../components/UserWork";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
+import { FaUserPlus } from "react-icons/fa6";
+import { FaUserMinus } from "react-icons/fa";
+import { FaUserCheck } from "react-icons/fa";
+import { FaUserEdit } from "react-icons/fa";
+import { FaUserFriends } from "react-icons/fa";
+import { useWindowWidth } from "@/hook/useWindowWidth";
 
 type Data = {
   images_url: string;
@@ -38,6 +44,8 @@ export default function User() {
   const splitpath = pathname.split("/");
   const username = splitpath[splitpath.length - 1]; // urlからusernameを取得
 
+  const windowWidth = useWindowWidth();
+
   const checkLoginStatus = async () => {
     try {
       const response = await axios.get("http://localhost:3000/logged_in_user", {
@@ -47,6 +55,16 @@ export default function User() {
         setParamName(response.data.name);
         setUserData(response.data);
       }
+      const fetchUserId = async (username: string) => {
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/user_id/${username}`
+          );
+          return response.data.id;
+        } catch (e) {
+          console.log(e);
+        }
+      };
     } catch (e) {
       console.log(e);
     }
@@ -75,7 +93,7 @@ export default function User() {
       const response = await axios.get(
         `http://localhost:3000/users/${username}`
       );
-      if(response.data.name != null) {
+      if (response.data.name != null) {
         setPresence(true);
       } else {
         setPresence(false);
@@ -140,76 +158,106 @@ export default function User() {
     getUserInfo();
     getUsersPosts(username);
   }, [paramName]);
+
   return (
     <>
-    {!loading2 && !loading && (
-      <>
-      <Header/>
-        <div className="container">
-        {!loading2 && !loading && (
-          <div className="row">
-            {!presence ? (
-              <>
-                <p className="col-12">ユーザーが存在しません</p>
-              </>
-            ) : (
-              <>
-                <div className={`col-12 ${style.avatar}`}>
-                  <Image
-                    className={style.img}
-                    src={avatar}
-                    width={80}
-                    height={80}
-                    alt="avatar"
-                  />
-                  <h1>{username}</h1>
-                  <a style={{marginRight:"8px", marginLeft:"8px"}} className={style.a} href={`/${username}/followings`}>
-                    フォロー中
+      {!loading2 && !loading && (
+        <>
+          <Header />
+          <div className="container" style={{ marginTop: "32px" }}>
+            {!loading2 && !loading && (
+              <div className="row">
+                {!presence ? (
+                  <>
+                    <p className="col-12">ユーザーが存在しません</p>
+                  </>
+                ) : (
+                  <>
+                    <div className={`col-12 align-items-center text-center`}>
+                      <Image
+                        className={style.img}
+                        src={avatar}
+                        width={80}
+                        height={80}
+                        alt="avatar"
+                      />
+                      <h1>{decodeURIComponent(username)}</h1>
+                    </div>
+                  </>
+                )}
+                <div className="align-items-center text-center">
+                  <a
+                    style={{ marginRight: "8px" }}
+                    className={style.a}
+                    href={`/${username}/followings`}
+                  >
+                    {windowWidth <= 768 ? <FaUserCheck /> : "フォロー中"}
                   </a>
-                  <a style={{marginRight:"8px"}} className={style.a} href={`/${username}/followers`}>
-                    フォロワー
+                  <a
+                    style={{ marginRight: "8px" }}
+                    className={style.a}
+                    href={`/${username}/followers`}
+                  >
+                    {windowWidth <= 768 ? <FaUserFriends /> : "フォロワー"}
                   </a>
-                  {userData && username === userData.name && (
-                    <a style={{marginRight:"8px"}} className={style.a} href={`/${username}/edit`}>
-                      プロフィールを編集
-                    </a>
-                  )}
-                  {userData && username !== paramName && isFollowed === true && (
-                    <button
-                      onClick={() => {
-                        handleUnfollow(userData.id);
-                      }}
-                      className={style.a}
-                    >
-                      フォロー解除
-                    </button>
-                  )}
-                  {userData && username !== paramName && isFollowed === false && (
-                    <button onClick={handleFollow} className={style.a}>
-                      フォロー
-                    </button>
-                  )}
-                </div>
-              </>
-            )}
-                  {postData.map((d, index) => (
-                  <div className="col-sm-12 col-md-6 col-lg-4">
-                    <UserWork
-                      key={index}
-                      title={d.title}
-                      id={d.id}
-                      name={d.username}
-                      image={d.images_url[0]}
-                      avatar={avatar}
-                      token={token}
-                    />
+                  {userData &&
+                    decodeURIComponent(username) === userData.name && (
+                      <a className={style.a} href={`/${username}/edit`}>
+                        {windowWidth <= 768 ? (
+                          <FaUserEdit />
+                        ) : (
+                          "プロフィールを編集"
+                        )}
+                      </a>
+                    )}
+                  {userData &&
+                    decodeURIComponent(username) !== paramName &&
+                    isFollowed === true && (
+                      <button
+                        onClick={() => {
+                          handleUnfollow(userData.id);
+                        }}
+                        className={style.a}
+                      >
+                        {windowWidth <= 768 ? <FaUserMinus /> : "フォロー解除"}
+                      </button>
+                    )}
+                  {userData &&
+                    decodeURIComponent(username) !== paramName &&
+                    isFollowed === false && (
+                      <button
+                        onClick={() => {
+                          handleFollow();
+                        }}
+                        className={style.a}
+                      >
+                        {windowWidth <= 768 ? <FaUserPlus /> : "フォロー"}
+                      </button>
+                    )}
+                  <div className="row" style={{marginTop:"32px"}}>
+                    {postData.map((d, index) => (
+                      <div
+                        key={index}
+                        className={`col-sm-12 col-md-6 col-lg-4 justify-content-center  ${style.userWork}`}
+                      >
+                        <UserWork
+                          key={index}
+                          title={d.title}
+                          id={d.id}
+                          name={d.username}
+                          image={d.images_url[0]}
+                          avatar={avatar}
+                          token={token}
+                        />
+                      </div>
+                    ))}
                   </div>
-                ))}
+                </div>
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      </>
-    )}
+        </>
+      )}
     </>
   );
 }

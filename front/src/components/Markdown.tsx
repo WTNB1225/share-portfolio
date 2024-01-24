@@ -15,7 +15,7 @@ const code = ({className, children}: ExtraProps & ClassAttributes<HTMLElement> &
   console.log(className?.split(":")[0].replace("language-", ""))
   return(
     <>
-    <div style={{backgroundColor:"#2b2b2b", color:"white",}}>
+    <div style={{backgroundColor:"#2b2b2b", color:"white", borderRadius:"0.25rem"}}>
     <span>{"  "}</span><span className={style.filename} >{fileName}</span>
     <SyntaxHighlighter
       language={className?.split(":")[0].replace("language-", "")}
