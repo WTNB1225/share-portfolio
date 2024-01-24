@@ -6,6 +6,15 @@ import { useRouter, usePathname } from "next/navigation";
 import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
 
+type Data = {
+  images_url: string;
+  title: string;
+  content: string;
+  id: string;
+  username: string;
+  avatar_url: string;
+};
+
 export default function Edit() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -15,6 +24,7 @@ export default function Edit() {
   const [loading, setLoading] = useState(true);
   const [csrfToken, setCsrfToken] = useState("");
   const [userLoading, setUserLoading] = useState(true);
+  const [postDatas, setPostDatas] = useState<Data[]>([]);
 
   const router = useRouter();
   const pathname = usePathname();
@@ -36,6 +46,21 @@ export default function Edit() {
       setLoading(false);
     }
   });
+
+  useEffect(() => {
+    async function fetchPosts(username: string)  {
+      try {
+        const response = await axios.get(`http://localhost:3000/posts/${username}`);
+        if(response.data) {
+          setPostDatas(response.data);
+          console.log(response.data)
+        }
+      } catch (e) {
+        alert(e);
+      }
+    }
+    fetchPosts(username);
+  },[username])
 
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
@@ -60,10 +85,10 @@ export default function Edit() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("user[name]", name);
-    if (loginUser == username) {
+    if (loginUser == decodeURIComponent(username)) {
       try {
         const response = await axios.patch(
-          `http://localhost:3000/users/${username}`,
+          `http://localhost:3000/users/${decodeURIComponent(username)}`,
           formData,
           {
             headers: {
@@ -73,20 +98,23 @@ export default function Edit() {
           }
         );
         try{
-          const postData = new FormData();
-          postData.append("post[username]", name);
-          const postRes = await axios.patch(
-            `http://localhost:3000/posts/${username}`,
-            postData,
-            {
-              headers: {
-                "X-CSRF-Token": csrfToken,
-              },
-              withCredentials: true,
+          if(postDatas.length > 1) {
+            for(let i = 0; i < postDatas.length; i++) {
+              const postData = new FormData();
+              postData.append("post[username]", name);
+              const postRes = await axios.patch(
+                `http://localhost:3000/posts/${decodeURIComponent(username)}`,
+                postData,
+                {
+                  headers: {
+                    "X-CSRF-Token": csrfToken,
+                  },
+                  withCredentials: true,
+                }
+              )
             }
-          )
-          router.push(`/${name}`);
-          console.log(postRes)
+            router.push(`/${name}`);
+          }
         } catch(e) {
           alert(e);
         }
@@ -152,7 +180,7 @@ export default function Edit() {
     return;
   }
 
-  if (loginUser !== username) {
+  if (loginUser !== decodeURIComponent(username)) {
     return (
       <div>
         <Header />

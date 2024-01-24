@@ -6,7 +6,6 @@ import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import style from "./page.module.css";
-import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 
 type Data = {
   id: string;

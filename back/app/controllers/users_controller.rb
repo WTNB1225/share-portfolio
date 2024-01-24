@@ -2,6 +2,9 @@ class UsersController < ApplicationController
 
   include SessionHelper
 
+  protect_from_forgery with: :exception
+  skip_before_action :verify_authenticity_token, only: [:create]
+
   def index
     @users = User.all
     render json: @users
