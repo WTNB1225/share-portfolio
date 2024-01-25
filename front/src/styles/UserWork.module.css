@@ -11,6 +11,9 @@
   text-align: center;
   display: inline-block;
   font-size: 1em; /* コンテナのフォントサイズを基準にする */
+  max-width: 100%; /* 要素の最大幅を親要素の幅に制限します */
+  box-sizing: border-box; /* パディングとボーダーを要素の幅と高さに含めます */
+  overflow: hidden; /* 要素の内容が領域を超えた場合に、それを隠します */
 }
 
 .center {

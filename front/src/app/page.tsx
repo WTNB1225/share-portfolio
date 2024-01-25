@@ -7,12 +7,6 @@ export default function Home() {
     <div>
       <Header />
       <div className="container" style={{marginTop:"32px"}}>
-        <div className="row justify-content-center">
-          <div className="col-xs-12 col-md-8 text-center">
-            <h1>作品共有サービスへようこそ</h1>
-            <p>このサイトではプログラミングの作品を共有することができます</p>
-          </div>
-        </div>
         <div className="row justify-content-center" style={{marginTop:"32px"}}>
           <div className="col-xs-6 col-md-4">
             <div className={style.link + " text-center"}>

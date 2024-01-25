@@ -3,12 +3,12 @@
 
 import axios from "axios"
 import { useState, useEffect } from "react";
+import Image from "next/image";
 
 export default function Header(){
   const [name, setName] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
-  const [loading, setLoading] = useState(true);
-
+  const [avatar, setAvatar] = useState<string>("");
   const checkLoginStatus = async() => {
     try{
       const response = await axios.get("http://localhost:3000/logged_in_user", 
@@ -16,12 +16,11 @@ export default function Header(){
       if(response.data != null){
         setIsLoggedIn(true);
         setName(response.data.name);
+        setAvatar(response.data.avatar_url);
       } else {
         setIsLoggedIn(false);
       }
-      setLoading(false);
     }catch(e) {
-      setLoading(false);
       console.log(e);
     }
   }
@@ -35,38 +34,36 @@ export default function Header(){
     
   return(
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
-      <div className="container-fluid">
-        <a className="navbar-brand" href="/">Portfolio</a>
-        <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
-        </button>
-        <div className="collapse navbar-collapse" id="navbarText">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <a className="nav-link active" aria-current="page" href="/home">ホーム</a>
-            </li>
-            {isLoggedIn && (
-              <li className="nav-item">
-                <a className="nav-link" href={`/${name}`}>プロフィール</a>
-              </li>
-            )}
-            <li className="nav-item">
-              <a className="nav-link" href={`/post`}>タイムライン</a>
-            </li>
-            <li>
-              <a className="nav-link" href={`/post/new`}>新規投稿</a>
-            </li>
-            {
-              loading == false &&
-              <li className="nav-item">
-                <a className="nav-link" href={isLoggedIn ? `/logout` : '/login'}>
-                {isLoggedIn ? "ログアウト" : "ログイン"}
-                </a>
-              </li>
-          }
+  <div className="container-fluid">
+    <a className="navbar-brand" href="/">Portfolio</a>
+    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+      <span className="navbar-toggler-icon"></span>
+    </button>
+    <div className="collapse navbar-collapse" id="navbarText">
+      <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+        <li className="nav-item">
+          <a className="nav-link active" aria-current="page" href="/home">ホーム</a>
+        </li>
+        <li className="nav-item">
+          <a className="nav-link" href={`/post`}>タイムライン</a>
+        </li>
+        <li>
+          <a className="nav-link" href={`/post/new`}>新規投稿</a>
+        </li>
+      </ul>
+      {isLoggedIn && (
+        <div className="dropdown">
+          <button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style={{background: "none", border: "none"}}>
+            <Image src={avatar} width={40} height={40} alt="" style={{borderRadius:"50%"}}/>
+          </button>
+          <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
+            <li><a className="dropdown-item" href={`/${name}`}>プロフィール</a></li>
+            <li><a className="dropdown-item" href={`/logout`}>ログアウト</a></li>
           </ul>
         </div>
-      </div>
-    </nav>
+      )}
+    </div>
+  </div>
+</nav>
   )
 }

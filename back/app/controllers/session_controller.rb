@@ -23,7 +23,7 @@ class SessionController < ApplicationController
   end
 
   def get_current_user
-    render json: current_user
+    render json: current_user.as_json(include: :avatar).merge(avatar_url: url_for(current_user.avatar))
   end
 
   def get_token

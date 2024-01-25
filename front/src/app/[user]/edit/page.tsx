@@ -22,7 +22,7 @@ export default function Edit() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [loginUser, setLoginUser] = useState("");
   const [loading, setLoading] = useState(true);
-  const [csrfToken, setCsrfToken] = useState("");
+  const [token, setToken] = useState("");
   const [userLoading, setUserLoading] = useState(true);
   const [postDatas, setPostDatas] = useState<Data[]>([]);
   const [error, setError] = useState();
@@ -32,20 +32,20 @@ export default function Edit() {
   const splitPathname = pathname.split("/");
   const username = splitPathname[splitPathname.length - 2];
 
-
-  useCheckLoginStatus().then((d) => {
-    if (d) {
-      setLoginUser(d.name);
+  const {data, } = useCheckLoginStatus();
+  useEffect(() => {
+    if (data) {
+      setLoginUser(data.name);
     }
     setUserLoading(false);
-  });
+  },[data])
 
-  useGetCsrfToken().then((token) => {
-    if (token) {
-      setCsrfToken(token);
-      setLoading(false);
-    }
-  });
+  const csrfToken = useGetCsrfToken();
+  useEffect(() => {
+    setToken(csrfToken); 
+    setLoading(false);
+  }, [csrfToken]);
+  
 
   useEffect(() => {
     async function fetchPosts(username: string)  {
@@ -81,8 +81,6 @@ export default function Edit() {
     setPasswordConfirmation(e.target.value);
   };
 
-  console.log(password)
-
   const handleNameSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -94,7 +92,7 @@ export default function Edit() {
           formData,
           {
             headers: {
-              "X-CSRF-Token": csrfToken,
+              "X-CSRF-Token": token,
             },
             withCredentials: true,
           }
@@ -109,7 +107,7 @@ export default function Edit() {
                 postData,
                 {
                   headers: {
-                    "X-CSRF-Token": csrfToken,
+                    "X-CSRF-Token": token,
                   },
                   withCredentials: true,
                 }
@@ -139,7 +137,7 @@ export default function Edit() {
           formData,
           {
             headers: {
-              "X-CSRF-Token": csrfToken,
+              "X-CSRF-Token": token,
             },
             withCredentials: true,
           }
@@ -166,7 +164,7 @@ export default function Edit() {
           formData,
           {
             headers: {
-              "X-CSRF-Token": csrfToken,
+              "X-CSRF-Token": token,
             },
             withCredentials: true,
           }
@@ -182,11 +180,11 @@ export default function Edit() {
     }
   };
 
-  if (loading) {
+  if (loading || userLoading) {
     return;
   }
 
-  if (loginUser !== decodeURIComponent(username)) {
+  if (loading == userLoading == false && loginUser !== decodeURIComponent(username)) {
     return (
       <div>
         <Header />

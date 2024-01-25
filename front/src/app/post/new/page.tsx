@@ -1,6 +1,6 @@
 "use client";
 import axios from "axios";
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Header from "../../../components/Header";
 import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
@@ -19,26 +19,27 @@ export default function PostNew() {
   const [id, setId] = useState("");
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
-  const [csrfToken, setCsrfToken] = useState("");
+  const [userLoading, setUserLoading] = useState(true);
+  const [token, setToken] = useState("");
   const [avatar, setAvatar] = useState("");
   dotenv.config();
 
-  useCheckLoginStatus().then(async (d) => {
-    if (d) {
-      setId(d.id);
-      setName(d.name);
-      const res = await axios.get(`http://localhost:3000/users/${name}`);
-      setAvatar(res.data.avatar_url);
-      setLoading(false);
+  const {data, isLoading} = useCheckLoginStatus();
+  useEffect(() => {
+    if (isLoading == false) {
+      setId(data?.id!);
+      setName(data?.name!);
+      setAvatar(data?.avatar_url!);
+      setUserLoading(false);
     }
-  });
+  }, [data, isLoading]);
 
-  useGetCsrfToken().then((token) => {
-    if (token) {
-      setCsrfToken(token);
-      setLoading(false);
-    }
-  });
+
+  const csrfToken = useGetCsrfToken();
+  useEffect(() => {
+    setToken(csrfToken);
+    setLoading(false);
+  }, [csrfToken]);
 
   const S3 = new S3Client({
     region: "auto",
@@ -108,7 +109,7 @@ export default function PostNew() {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            "X-CSRF-Token": csrfToken, // ヘッダーにCSRFトークンを追加
+            "X-CSRF-Token": token, // ヘッダーにCSRFトークンを追加
           },
           withCredentials: true,
         }
@@ -120,8 +121,29 @@ export default function PostNew() {
     }
   };
 
-  if (loading) {
+  if (loading || userLoading) {
     return <></>;
+  }
+
+  console.log(name)
+  if (loading == false && userLoading == false && name == undefined) {
+    return (
+      <>
+        <Header />
+        <div
+          className="container d-flex justify-content-center"
+          style={{ marginTop: "32px" }}
+        >
+          <div className="col-12 col-lg-8">
+            <div className="row">
+              <div className="col-12 col-md-6">
+                <h2>ログインしてください</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </>
+    );
   }
 
   return (
@@ -132,79 +154,78 @@ export default function PostNew() {
         style={{ marginTop: "32px" }}
       >
         <div className="col-12 col-lg-8">
-          {name ? (
-            <>
-              <form
-                className="row g-3 justify-content-center"
-              >
+          <>
+            <form className="row g-3 justify-content-center">
+              <div className="col-12 col-md-6 text-center">
+                <label className="form-label">
+                  Title
+                  <input
+                    style={{ width: "100%" }}
+                    className="form-control"
+                    type="text"
+                    onChange={handleTitleChange}
+                  />
+                </label>
+              </div>
+              <div className="row">
                 <div className="col-12 col-md-6 text-center">
                   <label className="form-label">
-                    Title
+                    サムネイル
                     <input
-                      style={{width:"100%"}}
                       className="form-control"
-                      type="text"
-                      onChange={handleTitleChange}
+                      type="file"
+                      accept="image/jpeg,image/gif,image/png"
+                      onChange={handleThumbnailChange}
                     />
                   </label>
                 </div>
-                <div className="row">
-                  <div className="col-12 col-md-6 text-center">
-                    <label className="form-label">
-                      サムネイル
-                      <input
-                        className="form-control"
-                        type="file"
-                        accept="image/jpeg,image/gif,image/png"
-                        onChange={handleThumbnailChange}
-                      />
-                    </label>
-                  </div>
-                  <div className="col-12 col-md-6 text-center">
-                    <label className="form-label">
-                      画像
-                      <input
-                        className="form-control"
-                        type="file"
-                        multiple
-                        accept="image/jpeg,image/gif,image/png"
-                        onChange={handleImagesChange}
-                      />
-                    </label>
-                  </div>
-                </div>
-              </form>
-              <div className="row mt-2 d-flex justify-content-center">
-                {image && (
-                  <div className="col-12 col-sm-6 col-md-3">
-                    <Preview
-                      src={window.URL.createObjectURL(image)}
-                      icon={false}
+                <div className="col-12 col-md-6 text-center">
+                  <label className="form-label">
+                    画像
+                    <input
+                      className="form-control"
+                      type="file"
+                      multiple
+                      accept="image/jpeg,image/gif,image/png"
+                      onChange={handleImagesChange}
                     />
-                  </div>
-                )}
+                  </label>
+                </div>
               </div>
-            </>
-          ) : (
-            <div>
-              <p>ログインしてください</p>
+            </form>
+            <div className="row mt-2 d-flex justify-content-center">
+              {image && (
+                <div className="col-12 col-sm-6 col-md-3">
+                  <Preview
+                    src={window.URL.createObjectURL(image)}
+                    icon={false}
+                  />
+                </div>
+              )}
             </div>
-          )}
+          </>
         </div>
       </div>
-      {name &&(
-        <div className="row text-center" style={{marginRight:"8px", marginLeft:"8px", marginBottom:"32px"}}>
+      {name && (
+        <div
+          className="row text-center"
+          style={{
+            marginRight: "8px",
+            marginLeft: "8px",
+            marginBottom: "32px",
+          }}
+        >
           <div className={`col-12 col-md-6`}>
             <label className="form-label">
               Content
-              <div style={{width:"100%", height:"100%"}}>
-              <textarea
-                className="form-control"
-                onChange={handleContentChange}
-                cols={100}
-                rows={50}
-                value={content}
-              ></textarea>
+              <div style={{ width: "100%", height: "100%" }}>
+                <textarea
+                  className="form-control"
+                  onChange={handleContentChange}
+                  cols={100}
+                  rows={50}
+                  value={content}
+                ></textarea>
               </div>
             </label>
           </div>
@@ -212,10 +233,15 @@ export default function PostNew() {
             Preview
             <div
               className={`${style.whitespace} ${style.markdown_preview} ${style.borderPreview}`}
-              style={{width:"100%", height:"97.5%"}}
+              style={{ width: "100%", height: "97.5%" }}
             >
               <Markdown content={content} />
             </div>
+          </div>
+          <div className="d-flex justify-content-center mt-3">
+            <button className="btn btn-primary" onClick={handleSubmit}>
+              投稿
+            </button>
           </div>
         </div>
       )}

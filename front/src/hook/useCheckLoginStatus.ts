@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
 import axios from "axios";
+import { useEffect, useState } from "react";
 
-type Data = {
+interface Data {
   id: string
   name:string;
+  avatar_url: string;
 }
-
-export const useCheckLoginStatus = async () => {
+export const useCheckLoginStatus = () => {
   const [data, setData] = useState<Data>();
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,14 +17,15 @@ export const useCheckLoginStatus = async () => {
           withCredentials: true,
         });
         setData(response.data);
+        setLoading(false);
       } catch (e) {
         console.log(e);
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
 
-  return data;
+  return { data, isLoading };
 };
-

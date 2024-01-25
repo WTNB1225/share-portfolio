@@ -13,18 +13,18 @@ export const usePageData = () => {
   const [postData, setPostData] = useState<Data[]>([]);
   const [token, setToken] = useState(""); 
 
-  useEffect(() => {
-    const useFetchData = async () => {
-      const data = await useCheckLoginStatus();
-      if (data) {
-        setName(data.name);
-        setUserId(data.id);
-      } else {
-        setUserId("");
-      }
-      setLoading(false);
 
-      const token = await useGetCsrfToken();
+  const {data, isLoading} = useCheckLoginStatus();
+  useEffect(() => {
+    if (isLoading == false) {
+      setUserId(data?.id!);
+      setName(data?.name!);
+      setLoading(false);
+    }
+  }, [data, isLoading]);
+  useEffect(() => {
+    const useFetchData = () => {
+      const token = useGetCsrfToken();
       if (token) {
         setToken(token);
       }

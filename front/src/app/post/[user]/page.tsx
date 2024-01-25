@@ -24,11 +24,11 @@ export default function PostUser() {
   const [avatar, setAvatar] = useState("");
   const [token, setToken] = useState<string>("");
 
-  useGetCsrfToken().then((token) => {
-    if (token) {
-      setToken(token);
-    }
-  });
+  const csrfToken = useGetCsrfToken();
+  useEffect(() => {
+    setToken(csrfToken); 
+  }, [csrfToken]);
+
 
   const getUsersPosts = async (name: string) => {
     try {

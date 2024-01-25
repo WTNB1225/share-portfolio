@@ -1,9 +1,10 @@
 "use client";
 import axios from "axios";
-import {  useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import Header from "@/components/Header";
 import style from "./page.module.css";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import UserWork from "@/components/UserWork";
 
@@ -64,11 +65,13 @@ export default function Bookmark() {
   }, []); 
 
 
-  useGetCsrfToken().then((token) => {
-    if (token) {
-      setToken(token);
+  const csrfToken = useGetCsrfToken();
+  useEffect(() => {
+    if (csrfToken) {
+      setToken(csrfToken);
     }
-  });
+  }, [csrfToken]);
+
 
   // ログインしていない場合
   if(loading == false) {
@@ -87,25 +90,28 @@ export default function Bookmark() {
     loading == false &&(
     <div>
       <Header />
-      <h1>ブックマーク</h1>
-      {postData.map((d, index) => {
-        const thumbnail = d.images_url[0];
-        return (
-          <div className={`${style.posts}`} key={index}>
-            <UserWork
-              key={index}
-              title={d.title}
-              id={d.id}
-              name={d.username}
-              image={thumbnail}
-              avatar={d.avatar_url}
-              token={token}
-            />
-          </div>
-        );
-      })}
+      <h1 className="text-center" style={{marginTop:"32px"}}>ブックマーク</h1>
+      <div className="container">
+        <div className="row justify-content-center">
+          {postData.map((d, index) => {
+            const thumbnail = d.images_url[0];
+            return (
+              <div className={`col-12 col-sm-8 col-md-6 col-lg-4 ${style.posts}`} style={{marginTop:"8px"}} key={index}>
+                <UserWork
+                  key={index}
+                  title={d.title}
+                  id={d.id}
+                  name={d.username}
+                  image={thumbnail}
+                  avatar={d.avatar_url}
+                  token={token}
+                />
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
     )
   );
-  
 }
