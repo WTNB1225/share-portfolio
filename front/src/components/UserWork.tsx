@@ -31,12 +31,12 @@ export default function UserWork({
   const [isLiked, setIsLiked] = useState<boolean>();
   const [isBookmarked, setIsBookmarked] = useState<boolean | undefined>();
 
-
-  useCheckLoginStatus().then((data) => {
-    if (data) {
-      setCurrentUserId(data.id);
+  const {data, isLoading} = useCheckLoginStatus();
+  useEffect(() => {
+    if (isLoading == false) {
+      setCurrentUserId(data?.id!);
     }
-  });
+  }, [data, isLoading]);
 
   const checkBookmark = async () => {
     try{
@@ -86,7 +86,6 @@ export default function UserWork({
           },
         }
       );
-      console.log(response);
       setIsBookmarked(false);
       checkBookmark()
     } catch (e) {
@@ -186,8 +185,8 @@ export default function UserWork({
           <Image
             alt=""
             src={image}
-            height={300}
-            width={400}
+            height={250}
+            width={250}
             layout="responsive"
             className={style.workImage}
           />

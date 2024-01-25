@@ -93,20 +93,22 @@ export default function PostId() {
     }
   };
 
-  //ログインしているユーザーのidを取得 idは投稿時に使うので非同期で取得
-  useCheckLoginStatus().then((data) => {
-    if (data) {
-      setUserId(data.id);
-      setCurrentUserName(data.name);
+  const {data, isLoading} = useCheckLoginStatus();
+  useEffect(() => {
+    if (isLoading == false) {
+      setUserId(data?.id!);
+      setCurrentUserName(data?.name!);
+      setAvatar(data?.avatar_url!);
     }
-  });
+  }, [data, isLoading]);
 
-  //csrfトークンを取得 トークンは投稿時に使うので非同期で取得
-  useGetCsrfToken().then((token) => {
-    if (token) {
-      setToken(token);
-    }
-  });
+
+  const csrfToken = useGetCsrfToken();
+  useEffect(() => {
+    setToken(csrfToken); 
+    setLoading(false);
+  }, [csrfToken]);
+
 
   const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);

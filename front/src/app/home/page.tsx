@@ -1,5 +1,5 @@
 "use client";
-import {  useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "../../components/Header";
 import { useCheckLoginStatus } from "../../hook/useCheckLoginStatus";
 
@@ -7,14 +7,13 @@ export default function App() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(true);
 
-  useCheckLoginStatus().then((d) => {
-    if (d) {
-      setName(d.name);
-    } else {
-      setName("guest");
+  const {data, isLoading} = useCheckLoginStatus();
+  useEffect(() => {
+    if (isLoading == false) {
+      setName(data?.name!);
+      setLoading(false);
     }
-    setLoading(false);
-  });
+  }, [data, isLoading]);
 
   return (
     <>

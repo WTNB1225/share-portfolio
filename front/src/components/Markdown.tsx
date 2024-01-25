@@ -8,8 +8,6 @@ import rehypeSanitize from 'rehype-sanitize'
 import gfm from 'remark-gfm'
 import style from "@/styles/Markdown.module.css"
 
-
-
 const code = ({className, children}: ExtraProps & ClassAttributes<HTMLElement> & HTMLAttributes<HTMLPreElement>) => {
   const fileName = className?.split(":")[1]
   console.log(className?.split(":")[0].replace("language-", ""))
@@ -31,7 +29,6 @@ const code = ({className, children}: ExtraProps & ClassAttributes<HTMLElement> &
 
 export default function Markdowns({content}: {content:string}) {
   return(
-    <ReactMarkdown rehypePlugins={[rehypeRaw, rehypeSanitize]} remarkPlugins={[gfm]} components={{code:code}}>{content}</ReactMarkdown>
+    <ReactMarkdown className={style.whitespace} rehypePlugins={[rehypeRaw, rehypeSanitize]} remarkPlugins={[gfm]} components={{code:code}}>{content}</ReactMarkdown>
   )
 }
-
