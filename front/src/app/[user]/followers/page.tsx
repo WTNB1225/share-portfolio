@@ -11,11 +11,11 @@ type Data = {
 };
 
 export default function Followings() {
-  const [data, setData] = useState<Data[]>([]); // Data should be an array
-  const [avatars, setAvatars] = useState<string[]>([]); // Renamed for clarity
+  const [data, setData] = useState<Data[]>([]); 
+  const [avatars, setAvatars] = useState<string[]>([]); 
 
   const pathname = usePathname();
-  const username = pathname.split("/").slice(-2)[0]; // More robust way to get username
+  const username = pathname.split("/").slice(-2)[0]; 
 
   const getFollowers = async (name: string) => {
     try {
@@ -25,7 +25,7 @@ export default function Followings() {
       setData(response.data);
       return response.data;
     } catch (e) {
-      console.error(e);
+      return;
     }
   };
 
@@ -34,7 +34,7 @@ export default function Followings() {
       const response = await axios.get(`http://localhost:3000/users/${name}`);
       return response.data.avatar_url;
     } catch (e) {
-      console.error(e);
+      return;
     }
   };
 
@@ -56,14 +56,20 @@ export default function Followings() {
   }, [username]);
 
   //console.log(data)
-
   return (
-    <div>
-      <Header />
-      <h1>フォロワー</h1>
-      {data.map((d, index) => (
-        <FollowPage key={index} img={avatars[index]} name={d.name} />
-      ))}
+    <>
+    <Header />
+    <div className="container">
+      <h1 className="text-center">フォロワー</h1>
+      <div className="row d-flex justify-content-center">
+        {data.map((d, index) => (
+          <div className="col-xs-12 col-md-6 col-lg-4 justify-content-center" key={index}>
+            <FollowPage img={avatars[index]} name={d.name} />
+          </div>
+        ))}
+      </div>
     </div>
+    </>
   );
 }
+

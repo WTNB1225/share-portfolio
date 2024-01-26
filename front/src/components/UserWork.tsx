@@ -47,7 +47,7 @@ export default function UserWork({
         setIsBookmarked(false);
       }
     } catch(e){
-      console.log(e)
+      return;
     }
   }
 
@@ -72,7 +72,7 @@ export default function UserWork({
       setIsBookmarked(true);
       checkBookmark();
     } catch(e){
-      console.log(e)
+      return;
     }
   }
 
@@ -89,7 +89,7 @@ export default function UserWork({
       setIsBookmarked(false);
       checkBookmark()
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 
@@ -102,7 +102,7 @@ export default function UserWork({
       );
       setAmountOfLikes(response.data);
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 
@@ -116,7 +116,7 @@ export default function UserWork({
         setIsLiked(false);
       }
     } catch(e){
-      console.log(e)
+      return;
     }
   }
 
@@ -149,7 +149,7 @@ export default function UserWork({
       setIsLiked(true);
       getAmountOfLikes();
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 
@@ -166,7 +166,7 @@ export default function UserWork({
       setIsLiked(false);
       getAmountOfLikes();
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
   return (

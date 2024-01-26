@@ -8,6 +8,7 @@ import Image from "next/image";
 import style from "./page.module.css";
 import UserWork from "../../components/UserWork";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { FaUserPlus } from "react-icons/fa6";
 import { FaUserMinus } from "react-icons/fa";
 import { FaUserCheck } from "react-icons/fa";
@@ -51,36 +52,30 @@ export default function User() {
   const [paramName, setParamName] = useState<string>("");
   const [loading, setLoading] = useState(true);
   const [loading2, setLoading2] = useState(true);
-  const [presence, setPresence] = useState<boolean>();
+  const [presence, setPresence] = useState(true);
   const [token, setToken] = useState<string>("");
-  const [isUserProfileActionsRendered, setUserProfileActionsRendered] = useState(false);
 
   const pathname = usePathname();
   const splitpath = pathname.split("/");
   const username = splitpath[splitpath.length - 1]; // urlからusernameを取得
 
+  //画面幅を取得
   const windowWidth = useWindowWidth();
 
-
-  const checkLoginStatus = async () => {
-    try {
-      const response = await axios.get("http://localhost:3000/logged_in_user", {
-        withCredentials: true,
-      });
-      if (response.data.name != null) {
-        setParamName(response.data.name);
-        setUserData(response.data);
+  const {data, isLoading} = useCheckLoginStatus();
+  useEffect(() => {
+    if(isLoading == false) {
+      if(data) {
+        setParamName(data.name);
+        setUserData(data)
       }
-    } catch (e) {
-      console.log(e);
+      setLoading2(false)
     }
-    setLoading2(false);
-  };
+  },[data, isLoading]);
 
   const csrfToken = useGetCsrfToken();
   useEffect(() => {
     setToken(csrfToken);
-    setLoading(false);
   }, [csrfToken]);
 
   //nameのpostデータを取得する
@@ -89,7 +84,7 @@ export default function User() {
       const response = await axios.get(`http://localhost:3000/posts/${name}`);
       setPostData(response.data);
     } catch (e) {
-      alert(e);
+      return;
     }
   };
 
@@ -99,16 +94,17 @@ export default function User() {
       const response = await axios.get(
         `http://localhost:3000/users/${username}`
       );
-      if (response.data.name != null) {
-        setPresence(true);
-      } else {
+      if (response.data == null) {
         setPresence(false);
+      } else {
+        setPresence(true);
+        setAvatar(response.data.avatar_url);
       }
-      setAvatar(response.data.avatar_url);
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
+
 
   //フォローの処理
   const handleFollow = async () => {
@@ -121,7 +117,7 @@ export default function User() {
       });
       setIsFollowed(true);
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 
@@ -137,12 +133,12 @@ export default function User() {
       });
       setIsFollowed(false);
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 
   //loginしているuserがすでにフォローしているか確認
-  const checkAlreadyFollowing = async (followName: string) => {
+  const checkAlreadyFollowing = async (followName: string | undefined) => {
     try {
       const response = await axios.get(
         `http://localhost:3000/followings/${followName}`
@@ -152,17 +148,16 @@ export default function User() {
       );
       setIsFollowed(isAlreadyFollowing);
     } catch (e) {
-      console.log(e);
+    } finally{
+      setLoading(false);
+      return;
     }
-    setLoading(false);
   };
 
   useEffect(() => {
-    checkLoginStatus().then(() => {
-      checkAlreadyFollowing(paramName);
-    });
     getUserInfo();
     getUsersPosts(username);
+    checkAlreadyFollowing(paramName);
   }, [paramName]);
 
   const UserProfileActions = ({
@@ -173,16 +168,12 @@ export default function User() {
     handleFollow,
     isFollowed,
   }: UserProfileActionsProps) => {
-    if (!userData) return null;
 
-    const isCurrentUser = decodeURIComponent(username) === userData.name;
-    const isFollowedUser = decodeURIComponent(username) !== userData.name && isFollowed;
+    const isCurrentUser = decodeURIComponent(username) === userData?.name;
+    const isFollowedUser = decodeURIComponent(username) !== userData?.name && isFollowed;
 
-    useEffect(() => {
-      setUserProfileActionsRendered(true);
-    },[]);
     return (
-      isFollowed !== undefined && 
+      !isFollowed && 
       <>
         <div className={`col-12 align-items-center text-center`} style={{marginTop:"32px"}}>
           <Image
@@ -216,7 +207,7 @@ export default function User() {
           )}
           {isFollowedUser && (
             <button
-              onClick={() => handleUnfollow(String(userData.id))}
+              onClick={() => handleUnfollow(String(userData?.id))}
               className={style.a}
             >
               {windowWidth <= 768 ? <FaUserMinus /> : "フォロー解除"}
@@ -256,7 +247,7 @@ export default function User() {
     return;
   }
 
-  if(loading == loading2 == false && ! presence){
+  if((loading == false && loading2 == false ) && (presence == false)){
     return(
       <>
         <Header />

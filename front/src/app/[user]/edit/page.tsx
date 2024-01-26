@@ -32,13 +32,13 @@ export default function Edit() {
   const splitPathname = pathname.split("/");
   const username = splitPathname[splitPathname.length - 2];
 
-  const {data, } = useCheckLoginStatus();
+  const {data, isLoading} = useCheckLoginStatus();
   useEffect(() => {
-    if (data) {
-      setLoginUser(data.name);
+    if (isLoading == false) {
+      setLoginUser(data?.name!);
+      setUserLoading(false);
     }
-    setUserLoading(false);
-  },[data])
+  }, [data, isLoading]);
 
   const csrfToken = useGetCsrfToken();
   useEffect(() => {
@@ -53,10 +53,10 @@ export default function Edit() {
         const response = await axios.get(`http://localhost:3000/posts/${username}`);
         if(response.data) {
           setPostDatas(response.data);
-          console.log(response.data)
         }
       } catch (e:any) {
         alert(e)
+        return;
       }
     }
     fetchPosts(username);
@@ -85,7 +85,7 @@ export default function Edit() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("user[name]", name);
-    if (loginUser == decodeURIComponent(username)) {
+    if (loginUser == decodeURIComponent(username)){
       try {
         const response = await axios.patch(
           `http://localhost:3000/users/${decodeURIComponent(username)}`,
@@ -98,7 +98,7 @@ export default function Edit() {
           }
         );
         try{
-          if(postDatas.length > 1) {
+          if(postDatas.length >= 1) {
             for(let i = 0; i < postDatas.length; i++) {
               const postData = new FormData();
               postData.append("post[username]", name);
@@ -117,10 +117,11 @@ export default function Edit() {
           }
         } catch(e:any) {
           alert(e)
+          return;
         }
       } catch (e:any) {
-        console.log(e.response.data);
         setError(e.response.data);
+        return;
       }
     } else {
       router.push("/401");
@@ -146,6 +147,7 @@ export default function Edit() {
       } catch (e:any) {
         //console.log(e.response.data);
         setError(e.response.data);
+        return;
       }
     } else {
       router.push("/401");
@@ -169,11 +171,10 @@ export default function Edit() {
             withCredentials: true,
           }
         );
-        console.log(response)
         //router.push(`/${username}`);
       } catch (e:any) {
-        //console.log(e.response.data);
         setError(e.response.data);
+        return;
       }
     } else {
       router.push("/401");

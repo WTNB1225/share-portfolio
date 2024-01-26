@@ -15,6 +15,7 @@ export default function Comment({
   postAuthor,
   currentUser,
   onDelete,
+  admin
 }: {
   id: string;
   content: string;
@@ -23,18 +24,20 @@ export default function Comment({
   postAuthor: string;
   currentUser: string;
   onDelete: (id:string) => void; 
+  admin: number;
 }){
 
+  console.log(admin)
   //投稿者とログインしているユーザーが一致しているとコメントを削除できる
   const handleDelete = async () => {
-    if(postAuthor == currentUser){
+    if((postAuthor == currentUser )|| admin == 1){
       try{
         const response = await axios.delete(`http://localhost:3000/comments/${id}`);
         if(response.status == 200){
           onDelete(id)
         }
       } catch(e){
-        console.log(e)
+        return;
       }
     }
   }
@@ -49,7 +52,7 @@ export default function Comment({
       </div>
       <div className={`${style.inline} ${style.whitespace}`}>
         <Markdown content={content}></Markdown>
-        {postAuthor == currentUser && (
+        {((postAuthor == currentUser ) || (admin == 1))&& (
           <button onClick={handleDelete} className={style.icon} style={{ width: '40px', height: '40px' }}>
             <FontAwesomeIcon icon={faTrash} />
           </button>

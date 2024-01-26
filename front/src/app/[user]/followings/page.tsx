@@ -25,7 +25,7 @@ export default function Followings() {
       setData(response.data);
       return response.data;
     } catch (e) {
-      console.error(e);
+      return;
     }
   };
 
@@ -34,7 +34,7 @@ export default function Followings() {
       const response = await axios.get(`http://localhost:3000/users/${name}`);
       return response.data.avatar_url;
     } catch (e) {
-      console.error(e);
+      return;
     }
   };
 
@@ -58,12 +58,18 @@ export default function Followings() {
   //console.log(data)
 
   return (
-    <div>
+    <>
       <Header />
-      <h1>フォロー中</h1>
-      {data.map((d, index) => (
-        <FollowPage key={index} img={avatars[index]} name={d.name} />
-      ))}
+      <div className="container">
+      <h1 className="text-center">フォロー中</h1>
+      <div className="row d-flex justify-content-center">
+        {data.map((d, index) => (
+          <div className="col-xs-12 col-md-6 col-lg-4" key={index}>
+            <FollowPage img={avatars[index]} name={d.name} />
+          </div>
+        ))}
+      </div>
     </div>
+    </>
   );
 }

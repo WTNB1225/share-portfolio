@@ -28,7 +28,7 @@ class User < ApplicationRecord
   validates :password, presence: true, length: { minimum: 6 }, on: [:create]
   validates :password_confirmation, presence: true, on: [:create]
   validates :password, presence: true, length: { minimum: 6 }, if: :password_required?, on: :update
-validates :password_confirmation, presence: true, if: :password_required?, on: :update
+  validates :password_confirmation, presence: true, if: :password_required?, on: :update
   validates :avatar, content_type: { in: %w[image/jpeg image/gif image/png],
   message: "must be a valid image format" },
   size:         { less_than: 10.megabytes,
@@ -91,4 +91,5 @@ validates :password_confirmation, presence: true, if: :password_required?, on: :
     def password_required?
       !password.nil? || !password_confirmation.nil?
     end
+    
 end

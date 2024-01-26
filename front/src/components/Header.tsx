@@ -2,13 +2,16 @@
 "use client"
 
 import axios from "axios"
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import Image from "next/image";
+import Cookies from "js-cookie";
+
 
 export default function Header(){
   const [name, setName] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
   const [avatar, setAvatar] = useState<string>("");
+  const [theme, setTheme] = useState(Cookies.get("theme") || "light");
   const checkLoginStatus = async() => {
     try{
       const response = await axios.get("http://localhost:3000/logged_in_user", 
@@ -21,19 +24,29 @@ export default function Header(){
         setIsLoggedIn(false);
       }
     }catch(e) {
-      console.log(e);
+      return;
     }
   }
 
+  const handleThemeChange = () => {
+    if(theme == "light" || theme == ""){
+      setTheme("dark");
+      Cookies.set("theme", "dark");
+    } else {
+      setTheme("light");
+      Cookies.set("theme", "light");
+    }
+  }
 
-
+  useEffect(() => {
+  },[theme])
 
   useEffect(() => {
     checkLoginStatus()
   },[])  
     
   return(
-    <nav className="navbar navbar-expand-lg bg-body-tertiary">
+    <nav className="navbar navbar-expand-lg bg-body-tertiary" style={{background:theme}}>
   <div className="container-fluid">
     <a className="navbar-brand" href="/">Portfolio</a>
     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,6 +72,7 @@ export default function Header(){
           <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuButton">
             <li><a className="dropdown-item" href={`/${name}`}>プロフィール</a></li>
             <li><a className="dropdown-item" href={`/logout`}>ログアウト</a></li>
+            <li><a className="dropdown-item" onClick={handleThemeChange}>色の変更</a></li>
           </ul>
         </div>
       )}

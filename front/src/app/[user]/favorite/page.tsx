@@ -35,8 +35,6 @@ export default function UsersFavorite() {
   useEffect(() => {
     if (isLoading == false) {
       setUserId(data?.id!);
-      console.log(data)
-      console.log(data?.id!);
       setName(data?.name!);
       setUserLoading(false);
     }
@@ -63,7 +61,7 @@ export default function UsersFavorite() {
         }
         setUserLoading(false);
       } catch (e) {
-        console.log(e);
+        return;
       }
     }
     getUserId(username);
@@ -92,9 +90,8 @@ export default function UsersFavorite() {
           }
           setPostData(postDataTemp);
         }
-        console.log(response);
       } catch (e) {
-        console.log(e);
+        return;
       }
     }
     if (userId) {
