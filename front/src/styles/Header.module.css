@@ -1,0 +1,5 @@
+@media (min-width: 1024px) {
+  .maxHeight {
+    max-height: 75px;
+  }
+}

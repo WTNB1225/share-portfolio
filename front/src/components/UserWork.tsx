@@ -10,6 +10,7 @@ import { faBookmark as faBookmarkRegular } from "@fortawesome/free-regular-svg-i
 import {faBookmark as faBookmarkSolid} from "@fortawesome/free-solid-svg-icons"
 import {faHeart as faHartRegular} from "@fortawesome/free-regular-svg-icons"
 import {faHeart as faHeartSolid} from "@fortawesome/free-solid-svg-icons"
+import Cookies from "js-cookie"; 
 
 export default function UserWork({
   id,
@@ -30,6 +31,13 @@ export default function UserWork({
   const [amountOfLikes, setAmountOfLikes] = useState<number | undefined>();
   const [isLiked, setIsLiked] = useState<boolean>();
   const [isBookmarked, setIsBookmarked] = useState<boolean | undefined>();
+  const [theme, setTheme] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const cookieTheme = Cookies.get("theme");
+    setTheme(cookieTheme || "#F8F9FA");
+  },[theme])
 
   const {data, isLoading} = useCheckLoginStatus();
   useEffect(() => {
@@ -101,6 +109,7 @@ export default function UserWork({
         `http://localhost:3000/favorites_count/${id}`
       );
       setAmountOfLikes(response.data);
+      setLoading(false)
     } catch (e) {
       return;
     }
@@ -169,7 +178,13 @@ export default function UserWork({
       return;
     }
   };
+
+  if(loading) {
+    return;
+  }
+
   return (
+    loading == false &&
       <div className={`${style.workContainer}`}>
         <Link className={`${style.user} ${style.center}`} href={`/${name}`} >
           <Image
@@ -179,38 +194,39 @@ export default function UserWork({
             height={40}
             alt="avatar"
           />
-          <h3>{name}</h3>
+          <h3 style={{color: theme == "#F8F9FA" ? "black" : "white", textDecoration:"none" }}>{name}</h3>
         </Link>
-        <Link href={`/post/${name}/${id}`}>
+        <Link href={`/post/${name}/${id}`} style={{textDecoration:"none"}}>
           <Image
             alt=""
             src={image}
             height={250}
             width={250}
             layout="responsive"
+            style={{marginTop:"8px"}}
             className={style.workImage}
           />
-          <h2 className={style.overflow}>{title}</h2>
+          <h2 className={style.overflow} style={{color: theme == "#F8F9FA" ? "black" : "white", textDecoration:"none"}}>{title}</h2>
         </Link>
         {isLiked ? (
-          <button onClick={handleUnLike} className={style.icon}>
+          <button onClick={handleUnLike} className={style.icon} style={{background:"none"}}>
             <FontAwesomeIcon icon={faHeartSolid} color="red" size="xl"/>
           </button>
         ) : (
-          <button className={style.icon} onClick={handleLike}>
+          <button className={style.icon} onClick={handleLike} style={{background:"none"}}>
             <FontAwesomeIcon icon={faHartRegular} size="xl"/>
           </button>
         )}
         {isBookmarked ? (
-          <button onClick={handleUnBookmark} className={style.bookmark}>
+          <button onClick={handleUnBookmark} className={style.bookmark} style={{background:"none"}}>
             <FontAwesomeIcon icon={faBookmarkSolid} color="skyblue" size="xl"/>
           </button>
         ) : (
-          <button className={style.icon} onClick={handleBookmark}>
+          <button className={style.icon} onClick={handleBookmark} style={{background:"none"}}>
             <FontAwesomeIcon icon={faBookmarkRegular} size="xl"/>
           </button>
         )}
-        <h3>{amountOfLikes} likes</h3>
+        <h3 style={{color: theme == "#F8F9FA" ? "black" : "white" }}>{amountOfLikes} likes</h3>
       </div>
     )
 }

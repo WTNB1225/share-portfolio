@@ -17,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const cookieStore = cookies();
-  const theme = cookieStore.get("theme")?.value || "light";
+  const theme = cookieStore.get("theme")?.value || "#F8F9FA";
   return (
     <html lang="ja">
       <head>
@@ -34,7 +34,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
         ></Script>
       </head>
-      {theme == "light" ? (
+      {theme == "#F8F9FA" ? (
           <body className={style.body} >{children}</body>
       ):(
           <body className={style.bodyDark}>{children}</body>
