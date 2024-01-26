@@ -5,6 +5,7 @@ interface Data {
   id: string
   name:string;
   avatar_url: string;
+  admin: number;
 }
 export const useCheckLoginStatus = () => {
   const [data, setData] = useState<Data>();
@@ -19,8 +20,8 @@ export const useCheckLoginStatus = () => {
         setData(response.data);
         setLoading(false);
       } catch (e) {
-        console.log(e);
         setLoading(false);
+        return;
       }
     };
 

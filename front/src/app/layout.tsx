@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "bootstrap/dist/css/bootstrap.min.css";
-import style from "./globals.module.css";
 import Script from "next/script";
+import style from "./globals.module.css";
+import {cookies} from "next/headers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -15,6 +16,8 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = cookies();
+  const theme = cookieStore.get("theme")?.value || "light";
   return (
     <html lang="ja">
       <head>
@@ -31,7 +34,11 @@ export default function RootLayout({
           crossOrigin="anonymous"
         ></Script>
       </head>
-      <body className={`${style.body}`}>{children}</body>
+      {theme == "light" ? (
+          <body className={style.body} >{children}</body>
+      ):(
+          <body className={style.bodyDark}>{children}</body>
+      )}
     </html>
   );
 }

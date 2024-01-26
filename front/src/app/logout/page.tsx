@@ -5,6 +5,7 @@ import { FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Header from "../../components/Header";
 import style from "./page.module.css"
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 
 export default function Logout() {
   const router = useRouter();
@@ -14,11 +15,9 @@ export default function Logout() {
       const response = await axios.delete("http://localhost:3000/logout", {
         withCredentials: true,
       });
-      console.log(response);
       router.push("/");
     } catch (e) {
-      alert(e);
-      console.log(e);
+      return;
     }
   };
 

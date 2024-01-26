@@ -22,6 +22,8 @@ export default function PostNew() {
   const [userLoading, setUserLoading] = useState(true);
   const [token, setToken] = useState("");
   const [avatar, setAvatar] = useState("");
+  const [error, setError] = useState();
+  const [imgNum, setImgNum] = useState(0);
   dotenv.config();
 
   const {data, isLoading} = useCheckLoginStatus();
@@ -114,10 +116,10 @@ export default function PostNew() {
           withCredentials: true,
         }
       );
-      console.log(response);
       router.push("/post");
-    } catch (error) {
-      alert(error);
+    } catch (e:any) {
+      setError(e.response.data);
+      return;
     }
   };
 
@@ -125,7 +127,6 @@ export default function PostNew() {
     return <></>;
   }
 
-  console.log(name)
   if (loading == false && userLoading == false && name == undefined) {
     return (
       <>
@@ -149,6 +150,13 @@ export default function PostNew() {
   return (
     <>
       <Header />
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {Object.entries(error).map(([key, value]) => (
+            <div key={key}>{`${key}: ${value}`}</div>
+          ))}
+        </div>
+      )}
       <div
         className="container d-flex justify-content-center"
         style={{ marginTop: "32px" }}

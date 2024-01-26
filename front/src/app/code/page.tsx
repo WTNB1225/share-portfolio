@@ -13,7 +13,6 @@ console.log('It works!')
 
 const code = ({ className, children}: ExtraProps & ClassAttributes<HTMLElement> & HTMLAttributes<HTMLPreElement>) => {
   const fileName = className?.split(":")[1]
-  console.log(className?.split(":")[0].replace("language-", ""))
   return(
     <>
     <div style={{backgroundColor:"#2b2b2b", color:"white", fontFamily:"YakuHanJPs"}}>

@@ -41,6 +41,8 @@ gem 'rails-controller-testing'
 
 gem "image_processing", "1.12.2"
 
+gem 'rails-i18n'
+
 #gem "rails_same_site_cookie"
 
 group :development, :test do

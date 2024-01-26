@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
-import axios from "axios";
 import { Data } from "../type.d";
 
 export const usePageData = () => {
@@ -22,6 +21,7 @@ export const usePageData = () => {
       setLoading(false);
     }
   }, [data, isLoading]);
+
   useEffect(() => {
     const useFetchData = () => {
       const token = useGetCsrfToken();

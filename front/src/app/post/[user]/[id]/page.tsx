@@ -11,8 +11,10 @@ import Comment from "@/components/Comment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Markdown from "@/components/Markdown";
+import { error } from "console";
 
 type Data = {
+  admin: boolean;
   user_id: string;
   post_id: string;
   content: string;
@@ -20,7 +22,7 @@ type Data = {
   name: string;
   id: string;
 };
-
+//Todo 存在しない時に404ページに飛ばす
 export default function PostId() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -36,6 +38,8 @@ export default function PostId() {
   const [loading, setLoading] = useState(true);
   const [avatar, setAvatar] = useState("");
   const [authorId, setAuthorId] = useState("");
+  const [isAdmin, setIsAdmin] = useState<number>(0);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const pathname = usePathname();
   const id = pathname.split("/").reverse()[0];
@@ -50,26 +54,24 @@ export default function PostId() {
       setContent(response.data.content);
       setUrl(response.data.images_url);
       setPostAuthor(response.data.username);
-      setLoading(false);
       setAuthorId(response.data.user_id);
-      try{
+      setLoading(false);
+      try {
         const authorRes = await axios.get(
           `http://localhost:3000/user/${response.data.id}`,
           {
             withCredentials: true,
           }
-        )
+        );
         setAvatar(authorRes.data.avatar_url);
-      } catch(e) {
-        console.log(e)
+      } catch (e) {
+        return;
       }
-    } catch (e) {
-      alert(e);
+    } catch (e: any) {
+      setCommentLoading(true);
+      setErrorMessage("エラーが発生しました。存在しない投稿です");
     }
   };
-
-  console.log(postAuthor)
-  console.log(avatar)
 
   const getComment = async (id: string) => {
     try {
@@ -89,26 +91,26 @@ export default function PostId() {
       setComments(response.data);
       setCommentLoading(false);
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 
-  const {data, isLoading} = useCheckLoginStatus();
+
+  const { data, isLoading } = useCheckLoginStatus();
   useEffect(() => {
     if (isLoading == false) {
       setUserId(data?.id!);
       setCurrentUserName(data?.name!);
       setAvatar(data?.avatar_url!);
+      setIsAdmin(data?.admin!);
+      setLoading(false);
     }
   }, [data, isLoading]);
 
-
   const csrfToken = useGetCsrfToken();
   useEffect(() => {
-    setToken(csrfToken); 
-    setLoading(false);
+    setToken(csrfToken);
   }, [csrfToken]);
-
 
   const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
@@ -122,10 +124,9 @@ export default function PostId() {
           "X-CSRF-Token": token,
         },
       });
-      console.log(response.data);
       router.push(`/post`);
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 
@@ -154,43 +155,60 @@ export default function PostId() {
       setComment("");
       getComment(id);
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 
   useEffect(() => {
-    getPostById(id);
-    getComment(id);
+    const fetchData = async () => {
+      await getPostById(id);
+      await getComment(id);
+    };
+    fetchData();
   }, []);
 
-  console.log(userId)
-  console.log(authorId)
-
-  return (
-    <>
-      <Header />
-      <div className="container" style={{marginTop:"32px"}}>
-        <div className={`row`}>
-          <div className={`col-12 ${style.mobileCenter}`}>
-            <h1>{title}</h1>
-            <div className={`${style["markdown-content"]} ${style.whitespace}`}>
-              <Markdown content={content}></Markdown>
+  if(errorMessage) {
+    return (
+      <>
+        <Header />
+        <div className="container">
+          <div className="row">
+            <div className="col-12">
+              <h1 className="text-center" style={{marginTop:"32px"}}>{errorMessage}</h1>
             </div>
-            {authorId == userId && loading == false && (
-              <div className="delete">
-                <button
-                  className={`btn btn-danger ${style.icon}`}
-                  onClick={handleDelete}
-                >
-                  <FontAwesomeIcon icon={faTrash} />
-                </button>
-              </div>
-            )}
           </div>
         </div>
-      </div>
-      {loading == false && (
-        <>
+      </>
+    )
+  }
+
+  return (
+    loading == false && (
+      <>
+        <Header />
+        <div className="container" style={{ marginTop: "32px" }}>
+          <div className={`row`}>
+            <div className={`col-12 ${style.mobileCenter}`}>
+              <h1>{title}</h1>
+              <div
+                className={`${style["markdown-content"]} ${style.whitespace}`}
+              >
+                <Markdown content={content}></Markdown>
+              </div>
+              {(authorId == userId || isAdmin == 1) && loading == false && (
+                <div className="delete">
+                  <button
+                    className={`btn btn-danger ${style.icon}`}
+                    onClick={handleDelete}
+                  >
+                    <FontAwesomeIcon icon={faTrash} />
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        {commentLoading == false && errorMessage == "" && (
           <div className="container">
             <div className={`row ${style.mobileCenter}`}>
               <div className="col-12">
@@ -202,6 +220,7 @@ export default function PostId() {
                         <Comment
                           key={index}
                           id={commentData.id}
+                          admin={isAdmin}
                           content={commentData.content}
                           avatar={userData[index].avatar_url}
                           username={userData[index].name}
@@ -212,29 +231,34 @@ export default function PostId() {
                         {index === comments.length - 1 && (
                           <div className={style.border}></div>
                         )}
-                        {index === comments.length - 1 && commentLoading == false && (
-                          <>
-                            <h3 style={{ marginTop: "16px" }}>コメントする</h3>
-                            <textarea
-                              className={`form-control ${style.textarea}`}
-                              style={{ width: "100%" }}
-                              value={comment}
-                              onChange={handleCommentChange}
-                            ></textarea>
-                            <div
-                              style={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                              }}
-                            >
-                              <button
-                                className="btn btn-primary mt-2"
-                                type="submit"
-                                onClick={handleSubmit}
-                              >コメント</button>
-                            </div>
-                          </>
-                        )}
+                        {index === comments.length - 1 &&
+                          commentLoading == false && (
+                            <>
+                              <h3 style={{ marginTop: "16px" }}>
+                                コメントする
+                              </h3>
+                              <textarea
+                                className={`form-control ${style.textarea}`}
+                                style={{ width: "100%" }}
+                                value={comment}
+                                onChange={handleCommentChange}
+                              ></textarea>
+                              <div
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "flex-end",
+                                }}
+                              >
+                                <button
+                                  className="btn btn-primary mt-2"
+                                  type="submit"
+                                  onClick={handleSubmit}
+                                >
+                                  コメント
+                                </button>
+                              </div>
+                            </>
+                          )}
                       </div>
                     </div>
                   );
@@ -242,41 +266,39 @@ export default function PostId() {
               </div>
             </div>
           </div>
-          {comments.length == 0 && (
-            <>
-              <div className="container">
-                <div className="row mobile-center">
-                  <div className="col-12">
-                    <h3 style={{ marginTop: "16px" }}>コメントする</h3>
-                    <textarea
-                      className={`form-control ${style.textarea}`}
-                      style={{ width: "100%" }}
-                      value={comment}
-                      onChange={handleCommentChange}
-                    ></textarea>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                      }}
+        )}
+        {comments.length == 0 && loading == false && commentLoading == false && (
+          <>
+            <div className="container">
+              <div className="row mobile-center">
+                <div className="col-12">
+                  <h3 style={{ marginTop: "16px" }}>コメントする</h3>
+                  <textarea
+                    className={`form-control ${style.textarea}`}
+                    style={{ width: "100%" }}
+                    value={comment}
+                    onChange={handleCommentChange}
+                  ></textarea>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                    }}
+                  >
+                    <button
+                      className="btn btn-primary mt-2"
+                      type="submit"
+                      onClick={handleSubmit}
                     >
-                      <button
-                        className="btn btn-primary mt-2"
-                        type="submit"
-                        onClick={handleSubmit}
-                      >
-                        送信
-                      </button>
-                    </div>
+                      送信
+                    </button>
                   </div>
                 </div>
               </div>
-            </>
-          )}
-        </>
-      )}
-    </>
+            </div>
+          </>
+        )}
+      </>
+    )
   );
 }
-
-

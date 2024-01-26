@@ -1,10 +1,9 @@
 "use client";
 import axios from "axios";
-import { use, useEffect, useState } from "react";
+import {useEffect, useState } from "react";
 import Header from "@/components/Header";
 import style from "./page.module.css";
 import { useRouter, usePathname } from "next/navigation";
-import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import UserWork from "@/components/UserWork";
 
@@ -41,9 +40,10 @@ export default function Bookmark() {
         getBookmark(response.data.id);
         setUserId(response.data.id); 
       } catch (e) {
-        console.log(e);
+        return;
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     }
     
   
@@ -57,7 +57,7 @@ export default function Bookmark() {
         }
         setPostData(tmpData);
       } catch(e) {
-        console.log(e);
+        return;
       }
     }
   
@@ -79,8 +79,7 @@ export default function Bookmark() {
       return (
         <div>
           <Header />
-          <h1>ブックマーク</h1>
-          <h1>あなたはこのページを見ることはできません</h1>
+          <h1 className="text-center" style={{marginTop:"32px"}}>あなたはこのページを見ることはできません</h1>
         </div>
       )
     }

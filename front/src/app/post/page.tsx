@@ -35,7 +35,7 @@ export default function Post() {
       const response = await axios.get("http://localhost:3000/posts");
       setPostData(response.data);
     } catch (e) {
-      alert(e);
+      return;
     }
   };
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function Post() {
           {postData.map((d, index) => {
             const thumbnail = d.images_url[0];
             return (
-              <div className={`col-sm-12 col-md-6 col-lg-4 ${style.userWork}`} key={index}>
+              <div className={`col-sm-12 col-md-6 col-lg-4 ${style.userWork}`}  style={{marginTop:"32px"}} key={index}>
                 <UserWork
                   key={index}
                   title={d.title}

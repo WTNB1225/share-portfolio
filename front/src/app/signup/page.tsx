@@ -24,8 +24,6 @@ export default function Signup() {
   const [avatar, setAvatar] = useState<File[]>([]);
   const [error, setError] = useState();
 
-  console.log(error)
-
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
@@ -69,10 +67,10 @@ export default function Signup() {
           withCredentials: true,
         }
       );
-      console.log(response);
       router.push("/home");
     } catch (e: any) {
       setError(e.response.data);
+      return;
     }
   };
   return (

@@ -38,10 +38,9 @@ export default function Login() {
           withCredentials: true,
         }
       );
-      console.log(response);
       router.push("/home");
     } catch (e) {
-      console.log(e);
+      return;
     }
   };
 

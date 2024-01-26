@@ -12,9 +12,20 @@ class Post < ApplicationRecord
   validates :content, presence:true, length: {maximum: 500}
   validates :username, presence:true
   validates :userid, presence:true
+  #サムネイルのバリデーション
+  validate :images_count_within_limit
   validates :images, content_type: { in: %w[image/jpeg image/gif image/png],
-  message: "must be a valid image format" },
-  size:         { less_than: 30.megabytes,
-  message:   "should be less than 30MB" },
-  limit: {min: 0, max: 4}
+  message: "有効なフォーマットを選択してください" },
+  size:         { less_than: 20.megabytes,
+  message:   "20MBより小さくしてください" },
+  presence: {presence: true, message: "サムネイルを選択してください"}
+  
+  private
+
+  def images_count_within_limit
+    if self.images.length > 1 || self.images.length == 0
+      errors.add(:images, "サムネイルは1枚だけ選択してください")
+    end
+  end
+
 end
