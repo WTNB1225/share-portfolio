@@ -1,10 +1,8 @@
 "use client";
-
 import axios from "axios";
 import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "../../components/Header";
-import style from "./page.module.css";
 import Preview from "../../components/Preview";
 
 type Signup = {
@@ -22,8 +20,9 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [avatar, setAvatar] = useState<File[]>([]);
-  const [error, setError] = useState();
+  const [error, setError] = useState(); //バリデーションエラーを設定
 
+  //inputの値をstateに格納
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };

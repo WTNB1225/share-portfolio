@@ -11,8 +11,9 @@ export default function Header(){
   const [name, setName] = useState<string>("");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>();
   const [avatar, setAvatar] = useState<string>("");
-  const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA");
+  const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA"); //cookieに保存されていなければデフォルトは白
   const [width, setWidth] = useState(0);
+  //ログイン状態を確認する関数
   const checkLoginStatus = async() => {
     try{
       const response = await axios.get("http://localhost:3000/logged_in_user", 
@@ -23,19 +24,20 @@ export default function Header(){
         setAvatar(response.data.avatar_url);
       } else {
         setIsLoggedIn(false);
+        setTheme("#F8F9FA"); //ログインしていない場合はテーマを白にする
       }
     }catch(e) {
       return;
     }
   }
 
+  //レスポンシブのため, ウィンドウの幅を取得 カスタムフック
   const windowWidth = useWindowWidth();
   useEffect(() => {
     setWidth(windowWidth);
   }, [windowWidth]);
 
-  
-
+  //テーマの変更
   const handleThemeChange = () => {
     if(theme == "#F8F9FA" || theme == ""){
       setTheme("#1a1a1a");
@@ -74,27 +76,28 @@ export default function Header(){
           {isLoggedIn && (
             <div className={`dropdown ms-auto`}>
             {width < 1024 && (
-              <>          <button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style={{background: "none", border: "none"}}>
-              <Image src={avatar} width={40} height={40} alt="" style={{borderRadius:"50%"}}/>
-            </button>
-                          <ul className={`dropdown-menu dropdown-memu-end`} aria-labelledby="dropdownMenuButton" style={{background:theme}}>
-                          <li><a className="dropdown-item" href={`/${name}`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>プロフィール</a></li>
-                          <li><a className="dropdown-item" href={`/logout`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログアウト</a></li>
-                          <li onClick={handleThemeChange}><a href={`/${name}`} className="dropdown-item" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>色の変更</a></li>
-                        </ul>
-                        </>  
+              <>
+                <button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style={{background: "none", border: "none"}}>
+                  <Image src={avatar} width={40} height={40} alt="" style={{borderRadius:"50%"}}/>
+                </button>
+                <ul className={`dropdown-menu dropdown-memu-end ${style.hover}`} aria-labelledby="dropdownMenuButton" style={{background:theme}}>
+                  <li><a className={`dropdown-item`} href={`/${name}`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>プロフィール</a></li>
+                  <li><a className="dropdown-item" href={`/logout`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログアウト</a></li>
+                  <li onClick={handleThemeChange}><a href={`/${name}`} className="dropdown-item" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>色の変更</a></li>
+                </ul>
+              </>  
             )}
             {width >= 1024 && (
               <>
-              <button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style={{background: "none", border: "none", position:"static"}}>
-                <Image src={avatar} width={40} height={40} alt="" style={{borderRadius:"50%", position:"static"}}/>
-              </button>
-                  <ul className={`dropdown-menu dropdown-memu-end`} aria-labelledby="dropdownMenuButton" style={{background:theme,transform: "translateX(-60%)"}}>
-                    <li><a className="dropdown-item" href={`/${name}`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>プロフィール</a></li>
-                    <li><a className="dropdown-item" href={`/logout`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログアウト</a></li>
-                    <li onClick={handleThemeChange}><a href={`/${name}`} className="dropdown-item" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>色の変更</a></li>
-                  </ul>
-                  </>  
+                <button type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style={{background: "none", border: "none", position:"static"}}>
+                  <Image src={avatar} width={40} height={40} alt="" style={{borderRadius:"50%", position:"static"}}/>
+                </button>
+                <ul className={`dropdown-menu dropdown-memu-end ${style.hover}`} aria-labelledby="dropdownMenuButton" style={{background:theme,transform: "translateX(-60%)"}}>
+                  <li><a className="dropdown-item" href={`/${name}`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>プロフィール</a></li>
+                  <li><a className="dropdown-item" href={`/logout`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログアウト</a></li>
+                  <li onClick={handleThemeChange}><a href={`/${name}`} className="dropdown-item" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>色の変更</a></li>
+                </ul>
+              </>  
             )}
           </div>
           )}

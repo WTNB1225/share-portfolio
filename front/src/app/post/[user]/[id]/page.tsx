@@ -11,7 +11,7 @@ import Comment from "@/components/Comment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 import Markdown from "@/components/Markdown";
-import { error } from "console";
+import { usePageIdState } from "@/hook/usePostIdState";
 
 type Data = {
   admin: boolean;
@@ -22,29 +22,32 @@ type Data = {
   name: string;
   id: string;
 };
-//Todo 存在しない時に404ページに飛ばす
+
 export default function PostId() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [url, setUrl] = useState<string[]>([]);
-  const [comment, setComment] = useState("");
-  const [userId, setUserId] = useState("");
-  const [token, setToken] = useState("");
-  const [comments, setComments] = useState<Data[]>([]);
-  const [commentLoading, setCommentLoading] = useState(true);
-  const [userData, setUserData] = useState<Data[]>([]);
-  const [postAuthor, setPostAuthor] = useState("");
-  const [currentUserName, setCurrentUserName] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [avatar, setAvatar] = useState("");
-  const [authorId, setAuthorId] = useState("");
-  const [isAdmin, setIsAdmin] = useState<number>(0);
-  const [errorMessage, setErrorMessage] = useState("");
+  const {
+    title, setTitle,
+    content, setContent,
+    url, setUrl,
+    comment, setComment,
+    userId, setUserId,
+    token, setToken,
+    comments, setComments,
+    commentLoading, setCommentLoading,
+    userData, setUserData,
+    postAuthor, setPostAuthor,
+    currentUserName, setCurrentUserName,
+    loading, setLoading,
+    avatar, setAvatar,
+    authorId, setAuthorId,
+    isAdmin, setIsAdmin,
+    errorMessage, setErrorMessage
+  } = usePageIdState();
 
   const pathname = usePathname();
-  const id = pathname.split("/").reverse()[0];
+  const id = pathname.split("/").reverse()[0]; //URLから投稿IDを取得
   const router = useRouter();
 
+  //投稿を取得する関数
   const getPostById = async (id: string) => {
     try {
       const response = await axios.get(`http://localhost:3000/post/${id}`, {
@@ -55,7 +58,6 @@ export default function PostId() {
       setUrl(response.data.images_url);
       setPostAuthor(response.data.username);
       setAuthorId(response.data.user_id);
-      setLoading(false);
       try {
         const authorRes = await axios.get(
           `http://localhost:3000/user/${response.data.id}`,
@@ -70,9 +72,12 @@ export default function PostId() {
     } catch (e: any) {
       setCommentLoading(true);
       setErrorMessage("エラーが発生しました。存在しない投稿です");
+    } finally {
+      setLoading(false); //投稿の取得完了 or エラー
     }
   };
 
+  //コメントを取得する関数
   const getComment = async (id: string) => {
     try {
       const response = await axios.get(
@@ -80,7 +85,7 @@ export default function PostId() {
       );
       if (response.data != null) {
         const tmpData = [];
-        for (let d of response.data) {
+        for (let d of response.data) { //ループでコメントに対応したidのユーザーを取得
           const response = await axios.get(
             `http://localhost:3000/user/${d.user_id}`
           );
@@ -89,14 +94,15 @@ export default function PostId() {
         setUserData(tmpData);
       }
       setComments(response.data);
-      setCommentLoading(false);
     } catch (e) {
       return;
+    } finally {
+      setCommentLoading(false); //コメントの取得完了 or エラー
     }
   };
 
+  const { data, isLoading } = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
 
-  const { data, isLoading } = useCheckLoginStatus();
   useEffect(() => {
     if (isLoading == false) {
       setUserId(data?.id!);
@@ -107,15 +113,18 @@ export default function PostId() {
     }
   }, [data, isLoading]);
 
+  //CSRFトークンを取得するカスタムフック
   const csrfToken = useGetCsrfToken();
   useEffect(() => {
     setToken(csrfToken);
   }, [csrfToken]);
 
+  //コメントの内容を変更する関数
   const handleCommentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setComment(e.target.value);
   };
 
+  //投稿を削除する関数
   const handleDelete = async () => {
     try {
       const response = await axios.delete(`http://localhost:3000/posts/${id}`, {
@@ -130,10 +139,12 @@ export default function PostId() {
     }
   };
 
+  //Commentコンポーネントから削除したとき、再レンダリングをするための関数
   const handleDeleteResult = (id: string) => {
     setComments(comments.filter((comment) => comment.id !== id));
   };
 
+  //コメントを投稿する関数
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -167,19 +178,21 @@ export default function PostId() {
     fetchData();
   }, []);
 
-  if(errorMessage) {
+  if (errorMessage) {
     return (
       <>
         <Header />
         <div className="container">
           <div className="row">
             <div className="col-12">
-              <h1 className="text-center" style={{marginTop:"32px"}}>{errorMessage}</h1>
+              <h1 className="text-center" style={{ marginTop: "32px" }}>
+                {errorMessage}
+              </h1>
             </div>
           </div>
         </div>
       </>
-    )
+    );
   }
 
   return (
@@ -267,37 +280,39 @@ export default function PostId() {
             </div>
           </div>
         )}
-        {comments.length == 0 && loading == false && commentLoading == false && (
-          <>
-            <div className="container">
-              <div className="row mobile-center">
-                <div className="col-12">
-                  <h3 style={{ marginTop: "16px" }}>コメントする</h3>
-                  <textarea
-                    className={`form-control ${style.textarea}`}
-                    style={{ width: "100%" }}
-                    value={comment}
-                    onChange={handleCommentChange}
-                  ></textarea>
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                    }}
-                  >
-                    <button
-                      className="btn btn-primary mt-2"
-                      type="submit"
-                      onClick={handleSubmit}
+        {comments.length == 0 &&
+          loading == false &&
+          commentLoading == false && (
+            <>
+              <div className="container">
+                <div className="row mobile-center">
+                  <div className="col-12">
+                    <h3 style={{ marginTop: "16px" }}>コメントする</h3>
+                    <textarea
+                      className={`form-control ${style.textarea}`}
+                      style={{ width: "100%" }}
+                      value={comment}
+                      onChange={handleCommentChange}
+                    ></textarea>
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "flex-end",
+                      }}
                     >
-                      送信
-                    </button>
+                      <button
+                        className="btn btn-primary mt-2"
+                        type="submit"
+                        onClick={handleSubmit}
+                      >
+                        送信
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
       </>
     )
   );
