@@ -3,3 +3,7 @@
     max-height: 75px;
   }
 }
+
+.hover li a:hover {
+  background-color: brown !important;
+}

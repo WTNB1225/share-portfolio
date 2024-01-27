@@ -6,7 +6,8 @@
     "dev": "next dev -p 8080",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "jest"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.496.0",
@@ -20,6 +21,7 @@
     "bootstrap-sass": "^3.4.3",
     "dotenv": "^16.3.2",
     "font-awesome": "^4.7.0",
+    "jest-transform-stub": "^2.0.0",
     "js-cookie": "^3.0.5",
     "next-flash": "^1.0.2",
     "react-dom": "^18",
@@ -31,7 +33,10 @@
     "remark-gfm": "^4.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.3.0",
+    "@testing-library/react": "^14.1.2",
     "@types/bcrypt": "^5.0.2",
+    "@types/jest": "^29.5.11",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^20",
     "@types/react": "^18.2.48",
@@ -39,10 +44,15 @@
     "@types/react-syntax-highlighter": "^15.5.11",
     "eslint": "^8",
     "eslint-config-next": "14.0.4",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "next": "^14.1.0",
     "react": "^18.2.0",
     "react-markdown": "^9.0.1",
     "sass": "^1.69.5",
-    "typescript": "^5"
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }

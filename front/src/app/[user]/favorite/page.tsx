@@ -3,63 +3,51 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
+import { useUsersFavoriteState } from "@/hook/useUsersFavoriteState";
 import Header from "@/components/Header";
 import UserWork from "@/components/UserWork";
 import style from "./page.module.css";
 import axios from "axios";
 
-type Data = {
-  id: string;
-  title: string;
-  content: string;
-  image: string;
-  images_url: string;
-  username: string;
-  avatar_url: string;
-  post_id: string;
-};
 
 export default function UsersFavorite() {
-  const [name, setName] = useState("");
-  const [userId, setUserId] = useState("");
-  const [userLoading, setUserLoading] = useState(true);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [postId, setPostId] = useState<Data[]>([]);
-  const [postData, setPostData] = useState<Data[]>([]);
-  const [token, setToken] = useState("");
+  const {
+    name, setName,
+    userId, setUserId,
+    usernameLoading, setUsernameLoading,
+    usernameId, setUsernameId,
+    userLoading, setUserLoading,
+    loading, setLoading,
+    postId, setPostId,
+    postData, setPostData,
+    token, setToken
+  } = useUsersFavoriteState(); //useStateを管理するカスタムフック
 
   const pathname = usePathname();
-  const username = pathname.split("/").reverse()[1];
+  const username = pathname.split("/").reverse()[1]; //URLからユーザー名を取得
 
-  const {data, isLoading} = useCheckLoginStatus();
+  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
   useEffect(() => {
     if (isLoading == false) {
-      setUserId(data?.id!);
-      setName(data?.name!);
-      setUserLoading(false);
+      if(data) {
+        setUserId(data?.id!);
+        setName(data?.name!);
+      }
+      setUserLoading(false) //dataの取得完了
     }
   }, [data, isLoading]);
 
   useEffect(() => {
-    if (data) {
-      setName(data.name);
-      setUserId(data.id);
-      setUserLoading(false);
-    }
-  })
-  
-
-  useEffect(() => {
+    //usernameのユーザーIDを取得する関数
     async function getUserId(username: string) {
       try {
         const response = await axios.get(
           `http://localhost:3000/users/${username}`
         );
         if (response.data) {
-          setName(response.data.name);
-          setUserId(response.data.id);
+          setUsernameId(response.data.id);
         }
-        setUserLoading(false);
+        setUsernameLoading(false);//ユーザーIDの取得完了
       } catch (e) {
         return;
       }
@@ -67,17 +55,19 @@ export default function UsersFavorite() {
     getUserId(username);
   },[username])
 
-  const csrfToken = useGetCsrfToken();
+  const csrfToken = useGetCsrfToken(); //CSRFトークンを取得するカスタムフック
   useEffect(() => {
     setToken(csrfToken);
     setLoading(false);
   }, [csrfToken]);
 
   useEffect(() => {
+    //usernameがした投稿を取得する関数
     async function getFavorite() {
+      if(usernameId == "") return; //usennameIdが取得できていない場合はreturn
       try {
         const response = await axios.get(
-          `http://localhost:3000/${userId}/favorites`
+          `http://localhost:3000/${usernameId}/favorites`
         );
         if (response.data) {
           setPostId(response.data);
@@ -94,25 +84,23 @@ export default function UsersFavorite() {
         return;
       }
     }
-    if (userId) {
-      getFavorite();
-    }
-  }, [userId]);
+    getFavorite();
+  }, [usernameId]);
 
-  if (loading || userLoading) {
+  //全てのデータを読み込んでからレンダリングする
+  if (loading || userLoading || usernameLoading) {
     return;
   }
 
-  if ((loading == userLoading) == false && name == "") {
+  if(loading == false &&  userLoading == false && usernameLoading == false && usernameId == ""){ 
     return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="text-center w-100">
+      <div>
           <Header />
-          <p>ログインしてください</p>
-        </div>
+          <h1 className="text-center" style={{marginTop:"32px"}}>このユーザーは存在しません</h1>
       </div>
     );
   }
+
   return (
     <>
         <Header />

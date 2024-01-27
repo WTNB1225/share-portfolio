@@ -1,44 +1,29 @@
 "use client";
 import axios from "axios";
-import {useEffect, useState } from "react";
+import {useEffect} from "react";
 import Header from "@/components/Header";
 import style from "./page.module.css";
-import { useRouter, usePathname } from "next/navigation";
-import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
+import { usePathname } from "next/navigation";
+import { useGetCsrfToken } from "@/hook/useGetCsrfToken";  //CSRFトークンを取得するカスタムフック
+import { useBookmarkState } from "@/hook/useBookmarkState"; //useStateを管理するカスタムフック
 import UserWork from "@/components/UserWork";
 
-type Data = {
-  name:string;
-  id: string;
-  title: string;
-  content: string;
-  image: string;
-  images_url: string;
-  username: string;
-  avatar_url: string;
-  post_id: string;
-};
 
 export default function Bookmark() {
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [data, setData] = useState<Data[]>([]);
-  const [token, setToken] = useState("");
-  const [postData, setPostData] = useState<Data[]>([]);
-  const [userId, setUserId] = useState("");
+  const { name, setName, loading, setLoading, token, setToken, postData, setPostData } = useBookmarkState(); 
+  const pathname = usePathname();//現在のURLを取得
+  const username = pathname?.split("/").reverse()[1]; //URLからユーザー名を取得
 
-  const pathname = usePathname();
-  const username = pathname.split("/").reverse()[1];
 
-  useEffect(() => {
+  useEffect(() => {;
+    //ログインしているかどうかを確認する関数
     async function checkLoginStatus() {
       try {
         const response = await axios.get("http://localhost:3000/logged_in_user", {
           withCredentials: true,
         });
-        setName(response.data.name);
-        getBookmark(response.data.id);
-        setUserId(response.data.id); 
+        setName(response.data.name); //ログインしているユーザー名を取得
+        getBookmark(response.data.id); //ブックマークした投稿を取得
       } catch (e) {
         return;
       } finally {
@@ -47,30 +32,30 @@ export default function Bookmark() {
     }
     
   
+    //ブックマークした投稿を取得する関数
     async function getBookmark(id: string) { 
       try{
-        const response = await axios.get(`http://localhost:3000/${id}/bookmarks`);
+        const response = await axios.get(`http://localhost:3000/${id}/bookmarks`); //userのbookmarkを取得
         const tmpData = [];
         for(let d of response.data) {
-          const response = await axios.get(`http://localhost:3000/post/${d.post_id}`);
-          tmpData.push(response.data);
+          const response = await axios.get(`http://localhost:3000/post/${d.post_id}`); //bookmarkの配列をループして投稿を取得
+          tmpData.push(response.data); 
         }
         setPostData(tmpData);
       } catch(e) {
         return;
       }
     }
-  
     checkLoginStatus();
-  }, []); 
+  }, [setLoading, setName, setPostData]); 
 
 
-  const csrfToken = useGetCsrfToken();
+  const csrfToken = useGetCsrfToken(); //CSRFトークンを取得するカスタムフック
   useEffect(() => {
     if (csrfToken) {
       setToken(csrfToken);
     }
-  }, [csrfToken]);
+  }, [csrfToken, setToken]);
 
 
   // ログインしていない場合

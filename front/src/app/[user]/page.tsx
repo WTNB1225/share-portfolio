@@ -48,12 +48,12 @@ export default function User() {
   const [postData, setPostData] = useState<Data[]>([]);
   const [userData, setUserData] = useState<UserData | undefined>(undefined);
   const [avatar, setAvatar] = useState("");
-  const [isFollowed, setIsFollowed] = useState<boolean | undefined>(undefined);
-  const [paramName, setParamName] = useState<string>("");
-  const [loading, setLoading] = useState(true);
-  const [loading2, setLoading2] = useState(true);
-  const [presence, setPresence] = useState(true);
-  const [token, setToken] = useState<string>("");
+  const [isFollowed, setIsFollowed] = useState<boolean | undefined>(undefined); //loginしているuserが相手をすでにフォローしているか
+  const [paramName, setParamName] = useState<string>("");  //apiのパラメーターに使うname
+  const [loading, setLoading] = useState(true); //フォローの情報を取得するまでtrue
+  const [loading2, setLoading2] = useState(true); //ログインユーザーの情報を取得するまでtrue
+  const [presence, setPresence] = useState(true); //存在しないユーザーの場合はfalseになる
+  const [token, setToken] = useState<string>(""); 
 
   const pathname = usePathname();
   const splitpath = pathname.split("/");
@@ -62,7 +62,7 @@ export default function User() {
   //画面幅を取得
   const windowWidth = useWindowWidth();
 
-  const {data, isLoading} = useCheckLoginStatus();
+  const {data, isLoading} = useCheckLoginStatus(); 
   useEffect(() => {
     if(isLoading == false) {
       if(data) {
@@ -173,7 +173,6 @@ export default function User() {
     const isFollowedUser = decodeURIComponent(username) !== userData?.name && isFollowed;
 
     return (
-      !isFollowed && 
       <>
         <div className={`col-12 align-items-center text-center`} style={{marginTop:"32px"}}>
           <Image

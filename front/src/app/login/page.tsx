@@ -1,7 +1,9 @@
 "use client";
 import axios from "axios";
-import { useState, ChangeEvent, FormEvent } from "react";
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus"; 
+
 import Header from "../../components/Header";
 
 export default function Login() {
@@ -9,8 +11,11 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(-1);
+  const [loading, setLoading] = useState(true);
   
+  const { data, isLoading } = useCheckLoginStatus();//ログイン状態を管理
 
+  //inputの値をstateに格納
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
@@ -44,7 +49,21 @@ export default function Login() {
     }
   };
 
+  //ログインしている状態でアクセスしたらhomeに飛ばす
+  useEffect(() => {
+    if(!isLoading && data) {
+      router.replace("/home");
+    }
+    if(!isLoading && !data) {
+      setLoading(false);
+    }
+  }, [isLoading, data]);
+
+  if(loading) {
+    return;
+  }
   return (
+
     <>
       <Header />
       <div className="container d-flex justify-content-center" style={{marginTop:"32px"}}>

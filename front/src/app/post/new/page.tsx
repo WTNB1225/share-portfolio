@@ -9,6 +9,7 @@ import Preview from "@/components/Preview";
 import Markdown from "@/components/Markdown";
 import style from "./page.module.css";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import Cookies from "js-cookie";
 import dotenv from "dotenv";
 
 export default function PostNew() {
@@ -23,10 +24,9 @@ export default function PostNew() {
   const [token, setToken] = useState("");
   const [avatar, setAvatar] = useState("");
   const [error, setError] = useState();
-  const [imgNum, setImgNum] = useState(0);
   dotenv.config();
 
-  const {data, isLoading} = useCheckLoginStatus();
+  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
   useEffect(() => {
     if (isLoading == false) {
       setId(data?.id!);
@@ -37,12 +37,14 @@ export default function PostNew() {
   }, [data, isLoading]);
 
 
+  //CSRFトークンを取得する関数
   const csrfToken = useGetCsrfToken();
   useEffect(() => {
     setToken(csrfToken);
     setLoading(false);
   }, [csrfToken]);
 
+  //CloudFlareR2のためにS3Clientを作成(互換性がある)
   const S3 = new S3Client({
     region: "auto",
     endpoint: process.env.NEXT_PUBLIC_CLOUDFLARE_ENDPOINT as string,
@@ -52,6 +54,7 @@ export default function PostNew() {
     },
   });
 
+  //inputの値が変更されたらstateを更新する関数
   const handleTitleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value);
   };
@@ -60,6 +63,7 @@ export default function PostNew() {
     setContent(e.target.value);
   };
 
+  //サムネイルの画像をstateに保存する関数
   const handleThumbnailChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = e.target.files;
@@ -67,10 +71,11 @@ export default function PostNew() {
     }
   };
 
+  //画像をR2にアップロードする関数
   const handleImagesChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      files.forEach(async (file) => {
+      files.forEach(async (file) => { //画像を1つずつアップロード
         await S3.send(
           new PutObjectCommand({
             Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
@@ -79,9 +84,10 @@ export default function PostNew() {
             ContentType: file.type,
           })
         );
-        const encodedFileName = encodeURIComponent(file.name);
-        const imageUrl = `![${file.name}](https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/${encodedFileName})`;
-        setContent((prevContent) => prevContent + "\n" + imageUrl);
+        const encodedFileName = encodeURIComponent(file.name); //特殊文字が含まれないようにエンコード
+        //R2に保存した画像のURLを取得
+        const imageUrl = `![${file.name}](https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/${encodedFileName})`; 
+        setContent((prevContent) => prevContent + "\n" + imageUrl); //contentに反映
       });
     }
   };
@@ -118,15 +124,16 @@ export default function PostNew() {
       );
       router.push("/post");
     } catch (e:any) {
-      setError(e.response.data);
+      setError(e.response.data); //Railsのvalidationを設定
       return;
     }
   };
 
+  //loading中は何も表示しない
   if (loading || userLoading) {
-    return <></>;
   }
 
+  //ログインしていない場合
   if (loading == false && userLoading == false && name == undefined) {
     return (
       <>
@@ -229,6 +236,7 @@ export default function PostNew() {
               <div style={{ width: "100%", height: "100%" }}>
                 <textarea
                   className="form-control"
+                  style={{background: "#1d2020"}}
                   onChange={handleContentChange}
                   cols={100}
                   rows={50}

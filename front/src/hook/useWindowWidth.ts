@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 
+//windowの幅を取得する レスポンシブのために使う
 export const  useWindowWidth = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 

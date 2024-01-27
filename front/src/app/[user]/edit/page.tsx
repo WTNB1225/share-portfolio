@@ -5,49 +5,44 @@ import axios from "axios";
 import { useRouter, usePathname } from "next/navigation";
 import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
-
-type Data = {
-  images_url: string;
-  title: string;
-  content: string;
-  id: string;
-  username: string;
-  avatar_url: string;
-};
+import { useEditState } from "@/hook/useEditState"; //editのstateを纏めたカスタムフック
 
 export default function Edit() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [loginUser, setLoginUser] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState("");
-  const [userLoading, setUserLoading] = useState(true);
-  const [postDatas, setPostDatas] = useState<Data[]>([]);
-  const [error, setError] = useState();
+  const {
+    name, setName,
+    email, setEmail,
+    password, setPassword,
+    passwordConfirmation, setPasswordConfirmation,
+    loginUser, setLoginUser,
+    loading, setLoading,
+    token, setToken,
+    userLoading, setUserLoading,
+    postDatas, setPostDatas,
+    error, setError
+  } = useEditState(); 
 
   const router = useRouter();
-  const pathname = usePathname();
-  const splitPathname = pathname.split("/");
-  const username = splitPathname[splitPathname.length - 2];
 
-  const {data, isLoading} = useCheckLoginStatus();
+  const pathname = usePathname();
+  const username = pathname.split("/").reverse()[1]; //URLからユーザー名を取得
+
+  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
   useEffect(() => {
     if (isLoading == false) {
       setLoginUser(data?.name!);
-      setUserLoading(false);
+      setUserLoading(false); //userdataの取得完了
     }
   }, [data, isLoading]);
 
   const csrfToken = useGetCsrfToken();
   useEffect(() => {
     setToken(csrfToken); 
-    setLoading(false);
+    setLoading(false); //CSRFトークンの取得完了
   }, [csrfToken]);
   
 
   useEffect(() => {
+    //ユーザーの投稿を取得する関数, postのusernameを変更するため
     async function fetchPosts(username: string)  {
       try {
         const response = await axios.get(`http://localhost:3000/posts/${username}`);
@@ -62,30 +57,35 @@ export default function Edit() {
     fetchPosts(username);
   },[username])
 
+
+  //inputの値を取得する関数
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
     setName(e.target.value);
   };
 
-
+  //inputの値を取得する関数
   const handleEmailChange = (e: ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
-
+  
+  //inputの値を取得する関数
   const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
+  //inputの値を取得する関数
   const handlePasswordConfirmationChange = (
     e: ChangeEvent<HTMLInputElement>
   ) => {
     setPasswordConfirmation(e.target.value);
   };
 
+  //submit時の処理
   const handleNameSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("user[name]", name);
-    if (loginUser == decodeURIComponent(username)){
+    if (loginUser == decodeURIComponent(username)){ //特殊文字も正しく判定するためにdecodeURIComponentを使用
       try {
         const response = await axios.patch(
           `http://localhost:3000/users/${decodeURIComponent(username)}`,
@@ -98,7 +98,7 @@ export default function Edit() {
           }
         );
         try{
-          if(postDatas.length >= 1) {
+          if(postDatas.length >= 1) { //投稿がある場合はpostのusernameも変更する
             for(let i = 0; i < postDatas.length; i++) {
               const postData = new FormData();
               postData.append("post[username]", name);
@@ -112,14 +112,14 @@ export default function Edit() {
                   withCredentials: true,
                 }
               )
-            }
-            router.push(`/${name}`);
+            } 
+            router.push(`/${name}`); //プロフィールへ遷移
           }
-        } catch(e:any) {
-          alert(e)
+        } catch(e) {
           return;
         }
       } catch (e:any) {
+        //エラーメッセージを取得
         setError(e.response.data);
         return;
       }
@@ -127,6 +127,8 @@ export default function Edit() {
       router.push("/401");
     }
   };
+
+  //handleNameSubmitと同様
   const handleEmailSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -145,7 +147,6 @@ export default function Edit() {
         );
         router.push(`/${username}`);
       } catch (e:any) {
-        //console.log(e.response.data);
         setError(e.response.data);
         return;
       }
@@ -154,6 +155,7 @@ export default function Edit() {
     }
   };
 
+  //handleNameSubmitと同様
   const handlePasswordSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -181,10 +183,12 @@ export default function Edit() {
     }
   };
 
+  //どちらかがloading中の場合は何も表示しない
   if (loading || userLoading) {
     return;
   }
 
+  //自分以外が見ようとすると401
   if (loading == userLoading == false && loginUser !== decodeURIComponent(username)) {
     return (
       <div>

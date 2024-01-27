@@ -2,8 +2,9 @@
 import { useState, useEffect } from "react";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
-import { Data } from "../type.d";
+import { Data } from "../type";
 
+//userがいいねした投稿を取得する
 export const usePageData = () => {
   const [name, setName] = useState("");
   const [userId, setUserId] = useState("");
@@ -29,7 +30,6 @@ export const usePageData = () => {
         setToken(token);
       }
     };
-    // eslint-disable-next-line react-hooks/rules-of-hooks
     useFetchData();
   }, []);
 

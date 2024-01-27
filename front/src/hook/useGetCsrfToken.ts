@@ -8,7 +8,7 @@ export const useGetCsrfToken = () => {
     const fetchData = async() => {
       try{
         const response = await axios.get("http://localhost:3000/csrf_token", {withCredentials: true});
-        setToken(response.headers["x-csrf-token"]);
+        setToken(response.headers["x-csrf-token"]); //response.headers["x-csrf-token"]はtokenの値
       } catch(e) {
         return;
       }

@@ -34,18 +34,20 @@ export default function UserWork({
   const [theme, setTheme] = useState("");
   const [loading, setLoading] = useState(true);
 
+  //テーマの設定
   useEffect(() => {
     const cookieTheme = Cookies.get("theme");
     setTheme(cookieTheme || "#F8F9FA");
   },[theme])
 
-  const {data, isLoading} = useCheckLoginStatus();
+  const {data, isLoading} = useCheckLoginStatus(); //ログイン状態を確認するカスタムフック
   useEffect(() => {
     if (isLoading == false) {
-      setCurrentUserId(data?.id!);
+      setCurrentUserId(data?.id!); //ログインしているユーザーのidを取得
     }
   }, [data, isLoading]);
 
+  //ブックマークをすでにしているかを確認
   const checkBookmark = async () => {
     try{
       const response = await axios.get(`http://localhost:3000/isBookmarked/${currentUserId}/${id}`);
@@ -59,8 +61,9 @@ export default function UserWork({
     }
   }
 
+  //ブックマーク登録
   const handleBookmark = async () => {
-    if(!currentUserId) {
+    if(!currentUserId) { 
       alert("ログインしてください")
     }
     const formData = new FormData();
@@ -84,6 +87,7 @@ export default function UserWork({
     }
   }
 
+  //ブックマーク解除
   const handleUnBookmark = async () => {
     try {
       const response = await axios.delete(
@@ -102,7 +106,7 @@ export default function UserWork({
   };
 
   
-
+  //いいねの数を取得
   const getAmountOfLikes = async () => {
     try {
       const response = await axios.get(
@@ -116,6 +120,7 @@ export default function UserWork({
   };
 
 
+  //いいねをすでにしているかを確認
   const isFavorite = async () => {
     try{
       const response = await axios.get(`http://localhost:3000/isFavorites/${currentUserId}/${id}`);
@@ -137,6 +142,7 @@ export default function UserWork({
     }
   }, [currentUserId]);
 
+  //いいね登録
   const handleLike = async () => {
     if(!currentUserId) {
       alert("ログインしてください")
@@ -162,6 +168,7 @@ export default function UserWork({
     }
   };
 
+  //いいね解除
   const handleUnLike = async () => {
     try {
       const response = await axios.delete(

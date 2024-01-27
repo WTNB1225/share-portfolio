@@ -20,13 +20,11 @@ type Data = {
 export default function Post() {
   const [postData, setPostData] = useState<Data[]>([]);
   const [token, setToken] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [name, setName] = useState("");
 
+  //CSRFトークンを取得するカスタムフック(いいね,ブックマークに使用)
   const csrfToken = useGetCsrfToken();
   useEffect(() => {
     setToken(csrfToken); 
-    setLoading(false);
   }, [csrfToken]);
 
 

@@ -8,15 +8,15 @@ import rehypeSanitize from 'rehype-sanitize'
 import gfm from 'remark-gfm'
 import style from "@/styles/Markdown.module.css"
 
+//react-markdownではcodeblockに背景色,文字に色がつかないのでカスタムする
 const code = ({className, children}: ExtraProps & ClassAttributes<HTMLElement> & HTMLAttributes<HTMLPreElement>) => {
-  const fileName = className?.split(":")[1]
-  console.log(className?.split(":")[0].replace("language-", ""))
+  const fileName = className?.split(":")[1] //classnameからファイル名を取得
   return(
     <>
     <div style={{backgroundColor:"#2b2b2b", color:"white", borderRadius:"0.25rem"}}>
     <span>{"  "}</span><span className={style.filename} >{fileName}</span>
     <SyntaxHighlighter
-      language={className?.split(":")[0].replace("language-", "")}
+      language={className?.split(":")[0].replace("language-", "")} //classnameからプログラミング言語を取得
       style={a11yDark}
     >
       { String(children).replace(/\n$/, '')}
@@ -26,9 +26,9 @@ const code = ({className, children}: ExtraProps & ClassAttributes<HTMLElement> &
   )
 }
 
-
+//カスタムしたMarkdownを返す
 export default function Markdowns({content}: {content:string}) {
   return(
-    <ReactMarkdown className={style.whitespace} rehypePlugins={[rehypeRaw, rehypeSanitize]} remarkPlugins={[gfm]} components={{code:code}}>{content}</ReactMarkdown>
+    <ReactMarkdown className={style.whitespace}  rehypePlugins={[rehypeRaw, rehypeSanitize]} remarkPlugins={[gfm]} components={{code:code}}>{content}</ReactMarkdown>
   )
 }
