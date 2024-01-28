@@ -7,7 +7,7 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "https://share-portfolio-api.onrender.com" 
+    origins "https://share-portfolio.vercel.app"
     resource "*",
       credentials: true,
       headers: :any,
