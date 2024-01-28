@@ -50,7 +50,7 @@ export default function PostId() {
   //投稿を取得する関数
   const getPostById = async (id: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/post/${id}`, {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/post/${id}`, {
         withCredentials: true,
       });
       setTitle(response.data.title);
@@ -60,7 +60,7 @@ export default function PostId() {
       setAuthorId(response.data.user_id);
       try {
         const authorRes = await axios.get(
-          `http://localhost:3000/user/${response.data.id}`,
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/user/${response.data.id}`,
           {
             withCredentials: true,
           }
@@ -81,13 +81,13 @@ export default function PostId() {
   const getComment = async (id: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/showPostComments/${id}`
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/showPostComments/${id}`
       );
       if (response.data != null) {
         const tmpData = [];
         for (let d of response.data) { //ループでコメントに対応したidのユーザーを取得
           const response = await axios.get(
-            `http://localhost:3000/user/${d.user_id}`
+            `${process.env.NEXT_PUBLIC_ENDPOINT}/user/${d.user_id}`
           );
           tmpData.push(response.data);
         }
@@ -127,7 +127,7 @@ export default function PostId() {
   //投稿を削除する関数
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`http://localhost:3000/posts/${id}`, {
+      const response = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${id}`, {
         withCredentials: true,
         headers: {
           "X-CSRF-Token": token,
@@ -153,7 +153,7 @@ export default function PostId() {
     formData.append("comment[user_id]", userId);
     try {
       const response = await axios.post(
-        "http://localhost:3000/comments",
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/comments`,
         formData,
         {
           withCredentials: true,

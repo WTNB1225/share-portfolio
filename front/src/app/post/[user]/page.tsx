@@ -38,7 +38,7 @@ export default function PostUser() {
   //nameのユーザーがいるかどうかを確認する関数
   const checkUser = async (name: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/users/${name}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/users/${name}`);
       if (response.data !== null) {
         setPresence(true);
       } else {
@@ -52,7 +52,7 @@ export default function PostUser() {
   //nameのユーザーの投稿を取得する関数
   const getUsersPosts = async (name: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/posts/${name}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${name}`);
       setData(response.data);
     } catch (e) {
     } finally {
@@ -64,7 +64,7 @@ export default function PostUser() {
   const getUsersAvatar = async (name: string) => {
     setLoadingAvatar(true);
     try {
-      const response = await axios.get(`http://localhost:3000/users/${name}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/users/${name}`);
       setAvatar(response.data.avatar_url);
     } catch (e) {
     } finally {

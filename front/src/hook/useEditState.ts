@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Data } from "../type";
+import Cookies from "js-cookie";
 
 export const useEditState = () => {
   const [name, setName] = useState("");
@@ -12,6 +13,8 @@ export const useEditState = () => {
   const [userLoading, setUserLoading] = useState(true);
   const [postDatas, setPostDatas] = useState<Data[]>([]);
   const [error, setError] = useState();
+  const [postData, setPostData] = useState<Data[]>([]);
+  const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA");
 
   return {
     name, setName,
@@ -23,6 +26,7 @@ export const useEditState = () => {
     token, setToken,
     userLoading, setUserLoading,
     postDatas, setPostDatas,
-    error, setError
+    error, setError,
+    theme, setTheme
   };
 };

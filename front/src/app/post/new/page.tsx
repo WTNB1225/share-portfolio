@@ -9,6 +9,7 @@ import Preview from "@/components/Preview";
 import Markdown from "@/components/Markdown";
 import style from "./page.module.css";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { useWindowWidth } from "@/hook/useWindowWidth";
 import Cookies from "js-cookie";
 import dotenv from "dotenv";
 
@@ -23,10 +24,11 @@ export default function PostNew() {
   const [userLoading, setUserLoading] = useState(true);
   const [token, setToken] = useState("");
   const [avatar, setAvatar] = useState("");
-  const [error, setError] = useState();
+  const [error, setError] = useState("");
+  const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA");
   dotenv.config();
 
-  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
+  const { data, isLoading } = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
   useEffect(() => {
     if (isLoading == false) {
       setId(data?.id!);
@@ -36,6 +38,8 @@ export default function PostNew() {
     }
   }, [data, isLoading]);
 
+  //画面サイズ取得
+  const width = useWindowWidth();
 
   //CSRFトークンを取得する関数
   const csrfToken = useGetCsrfToken();
@@ -60,6 +64,8 @@ export default function PostNew() {
   };
 
   const handleContentChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    e.target.style.height = "inherit";
+    e.target.style.height = `${e.target.scrollHeight}px`;
     setContent(e.target.value);
   };
 
@@ -75,7 +81,8 @@ export default function PostNew() {
   const handleImagesChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files);
-      files.forEach(async (file) => { //画像を1つずつアップロード
+      files.forEach(async (file) => {
+        //画像を1つずつアップロード
         await S3.send(
           new PutObjectCommand({
             Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
@@ -86,7 +93,7 @@ export default function PostNew() {
         );
         const encodedFileName = encodeURIComponent(file.name); //特殊文字が含まれないようにエンコード
         //R2に保存した画像のURLを取得
-        const imageUrl = `![${file.name}](https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/${encodedFileName})`; 
+        const imageUrl = `![${file.name}](${process.env.NEXT_PUBLIC_STORAGE_ENDPOINT}/${encodedFileName})`;
         setContent((prevContent) => prevContent + "\n" + imageUrl); //contentに反映
       });
     }
@@ -112,7 +119,7 @@ export default function PostNew() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/posts",
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/posts`,
         formData,
         {
           headers: {
@@ -123,7 +130,7 @@ export default function PostNew() {
         }
       );
       router.push("/post");
-    } catch (e:any) {
+    } catch (e: any) {
       setError(e.response.data); //Railsのvalidationを設定
       return;
     }
@@ -131,10 +138,15 @@ export default function PostNew() {
 
   //loading中は何も表示しない
   if (loading || userLoading) {
+    return;
   }
 
   //ログインしていない場合
-  if (loading == false && userLoading == false && name == undefined) {
+  if (
+    loading == false &&
+    userLoading == false &&
+    (name == "" || name == undefined)
+  ) {
     return (
       <>
         <Header />
@@ -172,10 +184,13 @@ export default function PostNew() {
           <>
             <form className="row g-3 justify-content-center">
               <div className="col-12 col-md-6 text-center">
-                <label className="form-label">
-                  Title
+                <label className="form-label" style={{ width: "90%" }}>
+                  タイトル
                   <input
-                    style={{ width: "100%" }}
+                    style={{
+                      background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",
+                      color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",
+                    }}
                     className="form-control"
                     type="text"
                     onChange={handleTitleChange}
@@ -184,9 +199,13 @@ export default function PostNew() {
               </div>
               <div className="row">
                 <div className="col-12 col-md-6 text-center">
-                  <label className="form-label">
+                  <label className="form-label" style={{ width: "100%" }}>
                     サムネイル
                     <input
+                      style={{
+                        background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",
+                        color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",
+                      }}
                       className="form-control"
                       type="file"
                       accept="image/jpeg,image/gif,image/png"
@@ -195,9 +214,13 @@ export default function PostNew() {
                   </label>
                 </div>
                 <div className="col-12 col-md-6 text-center">
-                  <label className="form-label">
+                  <label className="form-label" style={{ width: "100%" }}>
                     画像
                     <input
+                      style={{
+                        background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",
+                        color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",
+                      }}
                       className="form-control"
                       type="file"
                       multiple
@@ -221,7 +244,56 @@ export default function PostNew() {
           </>
         </div>
       </div>
-      {name && (
+      {width >= 768 && name ?(
+        <div
+          className="row text-center"
+          style={{
+            marginRight: "8px",
+            marginLeft: "8px",
+            marginBottom: "32px",
+          }}
+        >
+          <div className="d-flex align-items-stretch">
+            <div className={`col-12 col-md-6`}>
+              <label className="form-label">
+                本文
+                <div style={{ width: "100%", height: "100%" }}>
+                  <textarea
+                    style={{
+                      background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",
+                      color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",
+                    }}
+                    className="form-control"
+                    onChange={handleContentChange}
+                    cols={100}
+                    rows={50}
+                    value={content}
+                  />
+                </div>
+              </label>
+            </div>
+            <div className="col-12 col-md-6">
+              プレビュー
+              <div
+                className={`${style.whitespace} ${style.markdown_preview} ${style.borderPreview}`}
+                style={{
+                  width: "100%",
+                  height: "97.5%",
+                  background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",
+                  color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",
+                }}
+              >
+                <Markdown content={content} />
+              </div>
+            </div>
+          </div>
+          <div className="d-flex justify-content-center mt-3">
+            <button className="btn btn-primary" onClick={handleSubmit}>
+              投稿
+            </button>
+          </div>
+        </div>
+      ) : (
         <div
           className="row text-center"
           style={{
@@ -236,7 +308,12 @@ export default function PostNew() {
               <div style={{ width: "100%", height: "100%" }}>
                 <textarea
                   className="form-control"
-                  style={{background: "#1d2020"}}
+                  style={{
+                    width: "100%",
+                    height: "97.5%",
+                    background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",
+                    color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",
+                  }}
                   onChange={handleContentChange}
                   cols={100}
                   rows={50}
@@ -254,7 +331,7 @@ export default function PostNew() {
               <Markdown content={content} />
             </div>
           </div>
-          <div className="d-flex justify-content-center mt-3">
+          <div className="d-flex justify-content-center" style={{marginTop:"32px"}}>
             <button className="btn btn-primary" onClick={handleSubmit}>
               投稿
             </button>

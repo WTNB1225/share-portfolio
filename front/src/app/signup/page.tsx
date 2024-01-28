@@ -57,7 +57,7 @@ export default function Signup() {
     });
     try {
       const response = await axios.post(
-        "http://localhost:3000/users",
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/users`,
         formData,
         {
           headers: {

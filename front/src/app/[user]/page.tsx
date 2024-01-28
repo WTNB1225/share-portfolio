@@ -81,7 +81,7 @@ export default function User() {
   //nameのpostデータを取得する
   const getUsersPosts = async (name: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/posts/${name}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${name}`);
       setPostData(response.data);
     } catch (e) {
       return;
@@ -92,7 +92,7 @@ export default function User() {
   const getUserInfo = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/users/${username}`
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/users/${username}`
       );
       if (response.data == null) {
         setPresence(false);
@@ -112,7 +112,7 @@ export default function User() {
     formData.append("relationship[current_user]", paramName);
     formData.append("relationship[name]", username);
     try {
-      await axios.post("http://localhost:3000/relationships", formData, {
+      await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/relationships`, formData, {
         withCredentials: true,
       });
       setIsFollowed(true);
@@ -127,7 +127,7 @@ export default function User() {
     formData.append("relationship[current_user]", paramName);
     formData.append("relationship[name]", username);
     try {
-      await axios.delete(`http://localhost:3000/relationships/${id}`, {
+      await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/relationships/${id}`, {
         data: formData,
         withCredentials: true,
       });
@@ -141,7 +141,7 @@ export default function User() {
   const checkAlreadyFollowing = async (followName: string | undefined) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/followings/${followName}`
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/followings/${followName}`
       );
       const isAlreadyFollowing = response.data.some(
         (follow: { name: string }) => follow?.name === username

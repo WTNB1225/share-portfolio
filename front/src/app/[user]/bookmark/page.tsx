@@ -19,7 +19,7 @@ export default function Bookmark() {
     //ログインしているかどうかを確認する関数
     async function checkLoginStatus() {
       try {
-        const response = await axios.get("http://localhost:3000/logged_in_user", {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/logged_in_user`, {
           withCredentials: true,
         });
         setName(response.data.name); //ログインしているユーザー名を取得
@@ -35,10 +35,10 @@ export default function Bookmark() {
     //ブックマークした投稿を取得する関数
     async function getBookmark(id: string) { 
       try{
-        const response = await axios.get(`http://localhost:3000/${id}/bookmarks`); //userのbookmarkを取得
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/${id}/bookmarks`); //userのbookmarkを取得
         const tmpData = [];
         for(let d of response.data) {
-          const response = await axios.get(`http://localhost:3000/post/${d.post_id}`); //bookmarkの配列をループして投稿を取得
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/post/${d.post_id}`); //bookmarkの配列をループして投稿を取得
           tmpData.push(response.data); 
         }
         setPostData(tmpData);

@@ -18,14 +18,14 @@ export default function Edit() {
     token, setToken,
     userLoading, setUserLoading,
     postDatas, setPostDatas,
-    error, setError
+    error, setError,
+    theme, setTheme,
   } = useEditState(); 
 
   const router = useRouter();
 
   const pathname = usePathname();
   const username = pathname.split("/").reverse()[1]; //URLからユーザー名を取得
-
   const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
   useEffect(() => {
     if (isLoading == false) {
@@ -45,7 +45,7 @@ export default function Edit() {
     //ユーザーの投稿を取得する関数, postのusernameを変更するため
     async function fetchPosts(username: string)  {
       try {
-        const response = await axios.get(`http://localhost:3000/posts/${username}`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${username}`);
         if(response.data) {
           setPostDatas(response.data);
         }
@@ -88,7 +88,7 @@ export default function Edit() {
     if (loginUser == decodeURIComponent(username)){ //特殊文字も正しく判定するためにdecodeURIComponentを使用
       try {
         const response = await axios.patch(
-          `http://localhost:3000/users/${decodeURIComponent(username)}`,
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/users/${decodeURIComponent(username)}`,
           formData,
           {
             headers: {
@@ -103,7 +103,7 @@ export default function Edit() {
               const postData = new FormData();
               postData.append("post[username]", name);
               const postRes = await axios.patch(
-                `http://localhost:3000/posts/${decodeURIComponent(username)}`,
+                `${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${decodeURIComponent(username)}`,
                 postData,
                 {
                   headers: {
@@ -136,7 +136,7 @@ export default function Edit() {
     if (loginUser == decodeURIComponent(username)) {
       try {
         const response = await axios.patch(
-          `http://localhost:3000/users/${decodeURIComponent(username)}`,  
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/users/${decodeURIComponent(username)}`,  
           formData,
           {
             headers: {
@@ -164,7 +164,7 @@ export default function Edit() {
     if (loginUser == decodeURIComponent(username)) {
       try {
         const response = await axios.patch(
-          `http://localhost:3000/users/${decodeURIComponent(username)}`,
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/users/${decodeURIComponent(username)}`,
           formData,
           {
             headers: {
@@ -189,7 +189,7 @@ export default function Edit() {
   }
 
   //自分以外が見ようとすると401
-  if (loading == userLoading == false && loginUser !== decodeURIComponent(username)) {
+  if (loading == false && userLoading == false && loginUser !== decodeURIComponent(username)) {
     return (
       <div>
         <Header />
@@ -214,23 +214,23 @@ export default function Edit() {
           <form className="mb-3">
             <label style={{width: '300px'}}>
               name
-              <input type="text" onChange={handleNameChange} className="form-control" />
+              <input type="text" onChange={handleNameChange} className="form-control" style={{background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",}} />
               <button onClick={handleNameSubmit} className="btn btn-primary mt-2">変更</button>
             </label>
           </form>
           <form className="mb-3">
             <label style={{width: '300px'}}>
               email
-              <input type="text" onChange={handleEmailChange} className="form-control" />
+              <input type="text" onChange={handleEmailChange} className="form-control" style={{background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",}}/>
               <button onClick={handleEmailSubmit} className="btn btn-primary mt-2">変更</button>
             </label>
           </form>
           <form className="mb-3">
             <label style={{width: '300px'}}>
               password
-              <input type="text" onChange={handlePasswordChange} className="form-control mb-3" />
+              <input type="text" onChange={handlePasswordChange} className="form-control mb-3" style={{background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",}}/>
               password confirmation
-              <input type="text" onChange={handlePasswordConfirmationChange} className="form-control" />
+              <input type="text" onChange={handlePasswordConfirmationChange} className="form-control" style={{background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA",}} />
               <button onClick={handlePasswordSubmit} className="btn btn-primary mt-2">変更</button>
             </label>
           </form>
