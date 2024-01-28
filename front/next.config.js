@@ -2,7 +2,7 @@
 const path = require("path")
 const nextConfig = {
   images:{
-    domains:["localhost", "share-portfolio-git-product-wtnbjps-projects.vercel.app"]
+    domains:["localhost", ]
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
