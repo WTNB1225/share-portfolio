@@ -7,9 +7,9 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "*"
+    origins "https://share-portfolio-git-product-wtnbjps-projects.vercel.app" 
     resource "*",
-      credentials: false,
+      credentials: true,
       headers: :any,
       expose: ['X-CSRF-Token'],
       methods: [:get, :post, :put, :patch, :delete, :options, :head]
