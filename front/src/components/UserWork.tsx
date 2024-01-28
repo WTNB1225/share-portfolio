@@ -50,7 +50,7 @@ export default function UserWork({
   //ブックマークをすでにしているかを確認
   const checkBookmark = async () => {
     try{
-      const response = await axios.get(`http://localhost:3000/isBookmarked/${currentUserId}/${id}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/isBookmarked/${currentUserId}/${id}`);
       if(response.data == true){
         setIsBookmarked(true);
       } else {
@@ -71,7 +71,7 @@ export default function UserWork({
     formData.append("bookmark[post_id]", id);
     try{
       const response = await axios.post(
-        "http://localhost:3000/bookmarks",
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/bookmarks`,
         formData,
         {
           headers:{
@@ -91,7 +91,7 @@ export default function UserWork({
   const handleUnBookmark = async () => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/bookmarks/${currentUserId}/${id}`,
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/bookmarks/${currentUserId}/${id}`,
         {
           headers: {
             "X-CSRF-Token": token,
@@ -110,7 +110,7 @@ export default function UserWork({
   const getAmountOfLikes = async () => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/favorites_count/${id}`
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/favorites_count/${id}`
       );
       setAmountOfLikes(response.data);
       setLoading(false)
@@ -123,7 +123,7 @@ export default function UserWork({
   //いいねをすでにしているかを確認
   const isFavorite = async () => {
     try{
-      const response = await axios.get(`http://localhost:3000/isFavorites/${currentUserId}/${id}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/isFavorites/${currentUserId}/${id}`);
       if(response.data == true){
         setIsLiked(true);
       } else {
@@ -153,7 +153,7 @@ export default function UserWork({
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/favorites",
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/favorites`,
         formData,
         {
           headers: {
@@ -172,7 +172,7 @@ export default function UserWork({
   const handleUnLike = async () => {
     try {
       const response = await axios.delete(
-        `http://localhost:3000/favorites/${currentUserId}/${id}`,
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/favorites/${currentUserId}/${id}`,
         {
           headers: {
             "X-CSRF-Token": token,

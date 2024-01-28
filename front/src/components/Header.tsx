@@ -16,7 +16,7 @@ export default function Header(){
   //ログイン状態を確認する関数
   const checkLoginStatus = async() => {
     try{
-      const response = await axios.get("http://localhost:3000/logged_in_user", 
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/logged_in_user`, 
       {withCredentials: true});
       if(response.data != null){
         setIsLoggedIn(true);

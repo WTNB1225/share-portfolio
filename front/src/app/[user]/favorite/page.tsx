@@ -42,7 +42,7 @@ export default function UsersFavorite() {
     async function getUserId(username: string) {
       try {
         const response = await axios.get(
-          `http://localhost:3000/users/${username}`
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/users/${username}`
         );
         if (response.data) {
           setUsernameId(response.data.id);
@@ -67,14 +67,14 @@ export default function UsersFavorite() {
       if(usernameId == "") return; //usennameIdが取得できていない場合はreturn
       try {
         const response = await axios.get(
-          `http://localhost:3000/${usernameId}/favorites`
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/${usernameId}/favorites`
         );
         if (response.data) {
           setPostId(response.data);
           const postDataTemp = [];
           for (const d of response.data) {
             const response = await axios.get(
-              `http://localhost:3000/post/${d.post_id}`
+              `${process.env.NEXT_PUBLIC_ENDPOINT}/post/${d.post_id}`
             );
             postDataTemp.push(response.data);
           }

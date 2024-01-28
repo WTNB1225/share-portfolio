@@ -34,7 +34,7 @@ export default function Comment({
     if (postAuthor === currentUser || admin === 1) {
       try {
         const response = await axios.delete(
-          `http://localhost:3000/comments/${id}`
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/comments/${id}`
         );
         if (response.status == 200) {
           onDelete(id);

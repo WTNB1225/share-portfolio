@@ -20,7 +20,7 @@ export default function Followings() {
   const getFollowers = async (name: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/followers/${name}`
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/followers/${name}`
       );
       setData(response.data);
       return response.data;
@@ -31,7 +31,7 @@ export default function Followings() {
 
   const getUsersAvatar = async (name: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/users/${name}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/users/${name}`);
       return response.data.avatar_url;
     } catch (e) {
       return;

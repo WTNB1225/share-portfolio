@@ -21,7 +21,7 @@ export default function Followings() {
   const getFollowings = async (name: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:3000/followings/${name}`
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/followings/${name}`
       );
       setData(response.data);
       return response.data;
@@ -33,7 +33,7 @@ export default function Followings() {
   //ユーザーのアバターを取得する関数
   const getUsersAvatar = async (name: string) => {
     try {
-      const response = await axios.get(`http://localhost:3000/users/${name}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/users/${name}`);
       return response.data.avatar_url;
     } catch (e) {
       return;
