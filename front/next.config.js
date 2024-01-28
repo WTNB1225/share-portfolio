@@ -2,7 +2,7 @@
 const path = require("path")
 const nextConfig = {
   images:{
-    domains:["localhost", ]
+    domains:["localhost", "share-portfolio-api.onrender.com"]
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
