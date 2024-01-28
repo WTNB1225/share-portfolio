@@ -24,13 +24,13 @@ export const usePageData = () => {
   }, [data, isLoading]);
 
   useEffect(() => {
-    const useFetchData = () => {
+    const FetchData = () => {
       const token = useGetCsrfToken();
       if (token) {
         setToken(token);
       }
     };
-    useFetchData();
+    FetchData();
   }, []);
 
   return { name, userId, loading, postId, postData, token };
