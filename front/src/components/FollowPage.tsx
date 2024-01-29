@@ -29,7 +29,7 @@ export default function FollowPage({
         }}
       >
         <Image
-          className={`${style.img} d-flex justify-content-bottom`}
+          className={`${style.img} d-flex`}
           src={img}
           width={40}
           height={40}

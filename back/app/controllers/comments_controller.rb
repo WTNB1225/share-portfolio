@@ -1,8 +1,7 @@
 class CommentsController < ApplicationController
-
   def index
     @comments = Comment.all
-    render json: @comments
+    render json: @comments, status: :ok
   end
 
   def create
@@ -18,18 +17,18 @@ class CommentsController < ApplicationController
     @comment = Comment.find_by(id: params[:id])
     if @comment
       @comment.destroy
-      render json: @comment
+      render json: @comment, status: :ok
     else
-      render json: @comment.errors, status: :unprocessable_entity
+      render json: @comment.errors, status: :not_found
     end
   end
 
   def show_post_comments
     @comments = Comment.where(post_id: params[:post_id])
-    if @comments
-      render json: @comments
+    if @comments.exists?
+      render json: @comments, status: :ok
     else 
-      render json: @comments.errors, status: :unprocessable_entity
+      render json: { error: 'No comments found for this post.' }, status: :not_found
     end
   end
 

@@ -9,7 +9,7 @@ class PostsController < ApplicationController
         images_url: post.images.map { |image| url_for(image) },
       )
     end
-    render json: posts_with_images
+    render json: posts_with_images, status: :ok
   end
 
   def show
@@ -20,7 +20,7 @@ class PostsController < ApplicationController
         images_url: post.images.map { |image| url_for(image)},
       )
     end
-    render json: post_with_images
+    render json: post_with_images, status: :ok
   end
 
   def show_by_id
@@ -28,7 +28,7 @@ class PostsController < ApplicationController
     if @post
       post = @post.as_json(include: :images).merge(images_url: @post.images.map { |image| url_for(image) })
     end
-    render json: post
+    render json: post, status: :ok
   end
   
   def create

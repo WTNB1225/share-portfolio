@@ -4,6 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Script from "next/script";
 import style from "./globals.module.css";
 import {cookies} from "next/headers";
+import  axios  from "axios";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -18,6 +19,8 @@ export default function RootLayout({
 }) {
   const cookieStore = cookies();
   const theme = cookieStore.get("theme")?.value || "#F8F9FA";
+  const jwt = cookieStore.get("jwt")?.value || "";
+  axios.defaults.headers.common["Authorization"] = `${jwt}`; //axiosのデフォルトヘッダーにjwtを設定 
   return (
     <html lang="ja">
       <head>

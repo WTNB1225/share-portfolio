@@ -1,11 +1,18 @@
+"use client"
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Data } from "../type";
+import Cookies from "js-cookie";
 
 export const useCheckLoginStatus = () => {
   const [data, setData] = useState<Data>();
   const [isLoading, setLoading] = useState(true);
+  const [token, setToken] = useState(Cookies.get('jwt') || "") //jwt
 
+
+  useEffect(() => {
+    axios.defaults.headers.common["Authorization"] = `${token}`; //jwtをヘッダーに含める
+  }, [token]);
 
   useEffect(() => {
     //ログインしているユーザーの情報を取得する

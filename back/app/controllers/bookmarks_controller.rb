@@ -1,7 +1,7 @@
 class BookmarksController < ApplicationController
   def index
     @bookmark = Bookmark.all
-    render json: @bookmark
+    render json: @bookmark, status: :ok
   end
   
   def create
@@ -17,29 +17,33 @@ class BookmarksController < ApplicationController
     @bookmark = Bookmark.find_by(user_id: params["user_id"], post_id: params["post_id"])
     if @bookmark
       @bookmark.destroy
-      render json: @bookmark
+      render json: @bookmark, status: :ok
     else
-      render json: @bookmark.errors, status: :unprocessable_entity
+      render json: { error: 'Bookmark not found.' }, status: :not_found
     end
   end
 
   def count
     @bookmark = Bookmark.where(post_id: params[:id])
-    render json: @bookmark.count
+    render json: @bookmark.count, status: :ok
   end
 
   def bookmark?
     @bookmark = Bookmark.find_by(user_id: params["user_id"], post_id: params[:post_id])
     if @bookmark
-      render json: true
+      render json: true, status: :ok
     else
-      render json: false
+      render json: false, status: :ok
     end
   end
 
   def users_bookmark
     @bookmark = Bookmark.where(user_id: params[:id])
-    render json:@bookmark
+    if @bookmark.exists?
+      render json:@bookmark, status: :ok
+    else
+      render json: { error: 'No bookmarks found for this user.' }, status: :not_found
+    end
   end
 
   private
