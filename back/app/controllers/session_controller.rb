@@ -13,7 +13,7 @@ class SessionController < ApplicationController
       reset_session
       params[:session][:remember_me] == "1" ? remember(@user) : forget(@user)
       token = generate_jwt(@user)
-      cookies[:jwt] = {value: token, http_only: false, secure: true}
+      cookies[:jwt] = {value: token, http_only: , secure: true}
       log_in @user
       render json: {user: @user.as_json(only:[:name,:id]).merge(avatar_url: url_for(@user.avatar)), token: token}, status: :created
     else
