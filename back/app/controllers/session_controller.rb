@@ -12,7 +12,7 @@ class SessionController < ApplicationController
       reset_session
       params[:session][:remember_me] == "1" ? remember(@user) : forget(@user)
       log_in @user
-      render json: {is_logged_in: true , user: @user}, status: :created
+      render json: {is_logged_in: true , user: @user.as_json(only: [:name, :id, :avatar])}, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -23,7 +23,7 @@ class SessionController < ApplicationController
   end
 
   def get_current_user
-    render json: current_user.as_json(include: :avatar).merge(avatar_url: url_for(current_user.avatar))
+    render json: current_user.as_json(only:[:name,:id]).merge(avatar_url: url_for(current_user.avatar))
   end
 
   def get_token
