@@ -39,7 +39,7 @@ class BookmarksController < ApplicationController
 
   def users_bookmark
     @bookmark = Bookmark.where(user_id: params[:id])
-    if @bookmark.exists?
+    if @bookmark
       render json:@bookmark, status: :ok
     else
       render json: { error: 'No bookmarks found for this user.' }, status: :not_found

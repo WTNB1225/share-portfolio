@@ -6,6 +6,7 @@ import style from "./page.module.css";
 import { usePathname } from "next/navigation";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";  //CSRFトークンを取得するカスタムフック
 import { useBookmarkState } from "@/hook/useBookmarkState"; //useStateを管理するカスタムフック
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus"; //ログイン状態を取得するカスタムフック
 import UserWork from "@/components/UserWork";
 
 
@@ -15,39 +16,31 @@ export default function Bookmark() {
   const username = pathname?.split("/").reverse()[1]; //URLからユーザー名を取得
 
 
-  useEffect(() => {;
-    //ログインしているかどうかを確認する関数
-    async function checkLoginStatus() {
-      try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/logged_in_user`, {
-          withCredentials: true,
-        });
-        setName(response.data.name); //ログインしているユーザー名を取得
-        getBookmark(response.data.id); //ブックマークした投稿を取得
-      } catch (e) {
-        return;
-      } finally {
-        setLoading(false);
-      }
-    }
-    
+  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
   
-    //ブックマークした投稿を取得する関数
-    async function getBookmark(id: string) { 
-      try{
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/${id}/bookmarks`); //userのbookmarkを取得
-        const tmpData = [];
-        for(let d of response.data) {
-          const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/post/${d.post_id}`); //bookmarkの配列をループして投稿を取得
-          tmpData.push(response.data); 
-        }
-        setPostData(tmpData);
-      } catch(e) {
-        return;
+  async function getBookmark(id: string) { 
+    try{
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/${id}/bookmarks`); //userのbookmarkを取得
+      const tmpData = [];
+      for(let d of response.data) {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/post/${d.post_id}`); //bookmarkの配列をループして投稿を取得
+        tmpData.push(response.data); 
       }
+      setPostData(tmpData);
+    } catch(e) {
+      return;
     }
-    checkLoginStatus();
-  }, [setLoading, setName, setPostData]); 
+  }
+
+  useEffect(() => {
+    if(isLoading == false) {
+      setName(data?.name!);
+      if(data) {
+        getBookmark(data.id); //ブックマークした投稿を取得
+      }
+      setLoading(false); //dataの取得完了
+    }
+  },[data, isLoading])
 
 
   const csrfToken = useGetCsrfToken(); //CSRFトークンを取得するカスタムフック

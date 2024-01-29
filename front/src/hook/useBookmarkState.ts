@@ -5,6 +5,6 @@ export const useBookmarkState = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState("");
   const [postData, setPostData] = useState<Data[]>([]);
-
-  return { name, setName, loading, setLoading, token, setToken, postData, setPostData };
+  const [id, setId] = useState("");
+  return { name, setName, loading, setLoading, token, setToken, postData, setPostData, id, setId };
 };
