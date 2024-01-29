@@ -5,7 +5,7 @@ import Cookies from "js-cookie"
 
 export const useGetCsrfToken = () => {
   const [token, setToken] = useState("");
-  const [jwt, setJwt] = useState(Cookies.get('jwt') || "");
+  const [jwt, setJwt] = useState(Cookies.get("_vercel_jwt") || "");
 
 
   useEffect(() => {
