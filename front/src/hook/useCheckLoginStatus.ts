@@ -7,7 +7,7 @@ import Cookies from "js-cookie";
 export const useCheckLoginStatus = () => {
   const [data, setData] = useState<Data>();
   const [isLoading, setLoading] = useState(true);
-  const [token, setToken] = useState(Cookies.get('jwt') || "") //jwt
+  const [token, setToken] = useState(Cookies.get("_vercel_jwt") || "") //jwt
 
 
   useEffect(() => {
