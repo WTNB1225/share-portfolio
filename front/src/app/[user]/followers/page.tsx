@@ -60,13 +60,13 @@ export default function Followings() {
     <Header />
     <div className="container">
       <h1 className="text-center" style={{marginTop:"32px"}}>フォロワー</h1>
-      <div className="row d-flex justify-content-center">
-        {data.map((d, index) => (
-          <div className="col-xs-12 col-md-6 col-lg-4 justify-content-center" key={index}>
+      {data.map((d, index) => (
+        <div className="row justify-content-center" key={index}>
+          <div className="col-xs-12 col-md-6 col-lg-4 justify-content-center">
             <FollowPage img={avatars[index]} name={d.name} />
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
     </>
   );

@@ -13,7 +13,10 @@ export default function App() {
           {data?.name ? (
             <h1 className="text-center" style={{marginTop:"32px"}}>Hello {data.name}</h1>
           ) : (
-            <h1 className="text-center" style={{marginTop:"32px"}}>ログインしてください</h1>
+            <>
+              <h1 className="text-center" style={{marginTop:"32px"}}>あなたはまだログインしていません</h1>
+              <h1 className="text-center" style={{marginTop:"16px"}}>ログインすると投稿,コメントなどの機能を使用できます</h1>
+            </>
           )}
         </div>
       )}

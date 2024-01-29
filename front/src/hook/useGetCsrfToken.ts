@@ -1,8 +1,16 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie"
+
 
 export const useGetCsrfToken = () => {
   const [token, setToken] = useState("");
+  const [jwt, setJwt] = useState(Cookies.get('jwt') || "");
+
+
+  useEffect(() => {
+    axios.defaults.headers.common["Authorization"] = `${jwt}`;
+  }, [jwt]);
 
   useEffect(() => {
     const fetchData = async() => {

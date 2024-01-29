@@ -22,6 +22,9 @@ export default function Home() {
               <Link href="/login" className="btn btn-primary mb-4">
                 ログイン
               </Link>
+              <Link href="/post" className="btn btn-primary mb-4">
+                ゲストログイン
+              </Link>
             </div>
           </div>
         </div>

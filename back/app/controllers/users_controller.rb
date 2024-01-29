@@ -4,6 +4,7 @@ class UsersController < ApplicationController
 
   protect_from_forgery with: :exception
   skip_before_action :verify_authenticity_token, only: [:create]
+  skip_before_action :authenticate_request, only: [:create]
 
   def show
     @user = User.find_by(name:params[:id])
@@ -28,6 +29,8 @@ class UsersController < ApplicationController
     @user = User.new(user_params)
     if @user.save
       reset_session
+      token = generate_jwt(@user)
+      cookies[:jwt] = {value: token, http_only: false, secure: true}
       log_in @user
       render json:@user, status: :created
     else

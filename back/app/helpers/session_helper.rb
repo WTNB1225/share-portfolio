@@ -28,6 +28,10 @@ module SessionHelper
     end
   end
 
+  def generate_jwt(user)
+    JWT.encode({ user_id: user.id }, Rails.application.secrets.secret_key_base)
+  end
+
   #ログイン確認
   def logged_in?
     !current_user.nil?
@@ -42,6 +46,7 @@ module SessionHelper
 
   # 現在のユーザーをログアウトする
   def log_out
+    cookies.delete(:jwt)
     forget(current_user)
     reset_session
     @current_user = nil   # 安全のため
