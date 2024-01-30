@@ -18,6 +18,7 @@ class ApplicationController < ActionController::API
   def authenticate_request
     auth_token = request.headers['Authorization']
     puts auth_token
+    puts User.all
     if auth_token
       begin
         decoded_token = JWT.decode(auth_token, Rails.application.secrets.secret_key_base)[0]
