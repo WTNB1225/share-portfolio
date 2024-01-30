@@ -29,7 +29,7 @@ module SessionHelper
   end
 
   def generate_jwt(user)
-    JWT.encode({ user_id: user.id }, Rails.application.secrets.secret_key_base)
+    JWT.encode({ user_id: user.id }, Rails.application.credentials.secret_key_base)
   end
 
   #ログイン確認
