@@ -83,18 +83,24 @@ export default function PostNew() {
       const files = Array.from(e.target.files);
       files.forEach(async (file) => {
         //画像を1つずつアップロード
-        await S3.send(
-          new PutObjectCommand({
-            Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
-            Key: file.name,
-            Body: file,
-            ContentType: file.type,
-          })
-        );
-        const encodedFileName = encodeURIComponent(file.name); //特殊文字が含まれないようにエンコード
-        //R2に保存した画像のURLを取得
-        const imageUrl = `![${file.name}](${process.env.NEXT_PUBLIC_STORAGE_ENDPOINT}/${encodedFileName})`;
-        setContent((prevContent) => prevContent + "\n" + imageUrl); //contentに反映
+        if (file.size > 5 * 1024 * 1024) {
+          setContent(
+            (prevContent) => prevContent + "\n" + "画像のサイズが大きすぎます"
+          );
+        } else {
+          await S3.send(
+            new PutObjectCommand({
+              Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
+              Key: file.name,
+              Body: file,
+              ContentType: file.type,
+            })
+          );
+          const encodedFileName = encodeURIComponent(file.name); //特殊文字が含まれないようにエンコード
+          //R2に保存した画像のURLを取得
+          const imageUrl = `![${file.name}](${process.env.NEXT_PUBLIC_STORAGE_ENDPOINT}/${encodedFileName})`;
+          setContent((prevContent) => prevContent + "\n" + imageUrl); //contentに反映
+        }
       });
     }
   };
@@ -244,7 +250,7 @@ export default function PostNew() {
           </>
         </div>
       </div>
-      {width >= 768 && name ?(
+      {width >= 768 && name ? (
         <div
           className="row text-center"
           style={{
@@ -331,7 +337,10 @@ export default function PostNew() {
               <Markdown content={content} />
             </div>
           </div>
-          <div className="d-flex justify-content-center" style={{marginTop:"32px"}}>
+          <div
+            className="d-flex justify-content-center"
+            style={{ marginTop: "32px" }}
+          >
             <button className="btn btn-primary" onClick={handleSubmit}>
               投稿
             </button>
