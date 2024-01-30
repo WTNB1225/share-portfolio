@@ -1,5 +1,6 @@
 class PostsController < ApplicationController
   protect_from_forgery with: :exception
+  skip_before_action :authenticate_request, only: [:index, :show, :show_by_id]
   
   def index
     @posts = Post.all.order(created_at: :desc)

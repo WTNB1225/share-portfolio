@@ -1,0 +1,46 @@
+.label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem; /* ラベル間のスペースを追加 */
+}
+
+.form {
+  display: flex;
+  flex-flow: column;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
+.borderPreview {
+  border: 1px solid #ced4da; /* 線の太さと色を設定 */
+  padding: 10px; /* 内側のスペースを設定 */
+  border-radius: 0.25rem;
+}
+
+.noMarginRight {
+  margin-right: 0 !important;
+}
+
+.file {
+  display: none;
+}
+
+.width {
+  width: 20em;
+}
+
+.height {
+  height: 30em;
+}
+.markdown_preview img {
+  width: 200px;
+  height: auto;
+}
+
+.whitespace {
+  white-space: pre-wrap !important;
+  word-break: break-all !important;
+  text-align: left !important;
+}
