@@ -8,6 +8,7 @@ export const useCheckLoginStatus = () => {
   const [data, setData] = useState<Data>();
   const [isLoading, setLoading] = useState(true);
   const [jwt, setJwt] = useState(localStorage.getItem("jwt") || "")//jwt
+  console.log(jwt)
 
 
   useEffect(() => {
