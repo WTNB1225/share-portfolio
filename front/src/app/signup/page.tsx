@@ -66,6 +66,8 @@ export default function Signup() {
           withCredentials: true,
         }
       );
+      const token = response.headers["Authorization"];
+      localStorage.setItem('jwt',token);
       router.push("/home");
     } catch (e: any) {
       setError(e.response.data);

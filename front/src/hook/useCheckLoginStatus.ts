@@ -7,12 +7,12 @@ import Cookies from "js-cookie";
 export const useCheckLoginStatus = () => {
   const [data, setData] = useState<Data>();
   const [isLoading, setLoading] = useState(true);
-  const [token, setToken] = useState(Cookies.get('jwt') || "") //jwt
+  const [jwt, setJwt] = useState(localStorage.getItem("jwt") || "")//jwt
 
 
   useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = `${token}`; //jwtをヘッダーに含める
-  }, [token]);
+    axios.defaults.headers.common["Authorization"] = `${jwt}`; //jwtをヘッダーに含める
+  }, [jwt]);
 
   useEffect(() => {
     //ログインしているユーザーの情報を取得する
