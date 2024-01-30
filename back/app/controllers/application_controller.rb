@@ -4,9 +4,9 @@ class ApplicationController < ActionController::API
   include ActionController::RequestForgeryProtection
   include SessionHelper
 
-  before_action :authenticate_request
+  #before_action :authenticate_request
 
-  attr_reader :current_user
+  #attr_reader :current_user
 
   def set_csrf_token_header
     response.set_header('X-CSRF-Token', form_authenticity_token)
