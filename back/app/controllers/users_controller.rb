@@ -30,9 +30,9 @@ class UsersController < ApplicationController
     if @user.save
       reset_session
       token = generate_jwt(@user)
-      cookies[:jwt] = {value: token, http_only: false, secure: true}
+      cookies[:jwt] = {value: token, http_only: true, secure: true}
       log_in @user
-      render json:@user, status: :created
+      render json:{user: @user, token: token}, status: :created
     else
       @user.save
       render json:@user.errors, status: :unprocessable_entity
