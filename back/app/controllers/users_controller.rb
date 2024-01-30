@@ -4,7 +4,7 @@ class UsersController < ApplicationController
 
   protect_from_forgery with: :exception
   skip_before_action :verify_authenticity_token, only: [:create]
-  skip_before_action :authenticate_request, only: [:create]
+  #skip_before_action :authenticate_request, only: [:create]
 
   def show
     @user = User.find_by(name:params[:id])
