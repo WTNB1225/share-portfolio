@@ -6,8 +6,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Header from "../../../components/Header";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import style from "./page.module.css";
-import { set } from "react-hook-form";
 
 type Data = {
   images_url: string;
@@ -19,15 +19,27 @@ type Data = {
 };
 
 export default function PostUser() {
-  const [data, setData] = useState<Data[]>([]);
+  const [datas, setData] = useState<Data[]>([]);
   const [avatar, setAvatar] = useState("");
   const [token, setToken] = useState<string>("");
   const [presence, setPresence] = useState<boolean>(); //ユーザーが存在するかどうか
   const [loadingPosts, setLoadingPosts] = useState(true); //投稿の取得中かどうか
   const [loadingAvatar, setLoadingAvatar] = useState(true); //ユーザーのアバターの取得中かどうか
-
+  const [loggedIn, setLoggedIn] = useState<boolean>(); //ログインしているかどうか
+  const [loading, setLoading] = useState(true); //ログインユーザーの情報を取得するまでtrue
+  
   const pathname = usePathname();
   const name = pathname.split("/").reverse()[0]; //URLからユーザー名を取得
+
+  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
+  useEffect(() => {
+    if(isLoading == false) {
+      if(!data) {
+        setLoggedIn(false)
+      }
+      setLoading(false)
+    }
+  },[data, isLoading])
 
   //CSRFトークンを取得するカスタムフック
   const csrfToken = useGetCsrfToken();
@@ -79,14 +91,29 @@ export default function PostUser() {
   }, [name]);
 
   //loadingの定義
-  const loading = loadingPosts || loadingAvatar;
+  const loadings = loadingPosts || loadingAvatar;
 
-  if (loading) {
+  if(loading) return;
+
+  if(loggedIn == false) {
+    return (
+      <>
+        <Header />
+        <div className="d-flex justify-content-center">
+          <h2 style={{ marginTop: "32px" }}>ログインしてください</h2>
+        </div>
+      </>
+    );
+  } 
+
+  if (loadings) {
     return;
   }
 
+
+
   //dataが空の場合かつpresenceがtrueの場合はユーザーは何も投稿していない
-  if (data.length === 0 && presence) {
+  if (datas.length === 0 && presence) {
     return (
       <>
         <Header />
@@ -95,7 +122,7 @@ export default function PostUser() {
         </div>
       </>
     );
-  } else if (data.length === 0 && !presence) {
+  } else if (datas.length === 0 && !presence) {
     //dataが空の場合かつpresenceがfalseの場合はユーザーが存在しない
     return (
       <>
@@ -111,7 +138,7 @@ export default function PostUser() {
       <Header />
       <div className="container">
         <div className="row">
-          {data.map((d, index) => {
+          {datas.map((d, index) => {
             const thumbnail = d.images_url[0];
             return (
               <div
