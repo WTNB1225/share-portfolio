@@ -11,7 +11,7 @@ export const useCheckLoginStatus = () => {
 
 
   useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = `${jwt}`; //jwtをヘッダーに含める
+    axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`; //jwtをヘッダーに含める
     console.log(axios.defaults.headers.common)
   }, [jwt]);
 
