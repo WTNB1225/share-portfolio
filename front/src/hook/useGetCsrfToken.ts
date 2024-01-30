@@ -9,7 +9,7 @@ export const useGetCsrfToken = () => {
 
 
   useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = `${jwt}`;
+    axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
   }, [jwt]);
 
   useEffect(() => {
