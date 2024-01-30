@@ -1,2 +1,1 @@
-# config/initializers/session_store.rb
-Rails.application.config.session_store :cookie_store, key: '_back_session', secure: Rails.env.production?, same_site: :none
+Rails.application.config.session_store :cookie_store, key: '_back_session', secure: Rails.env.production?, same_site: :none, domain: ".https://share-portfolio.vercel.app/"
