@@ -8,11 +8,10 @@ export const useCheckLoginStatus = () => {
   const [data, setData] = useState<Data>();
   const [isLoading, setLoading] = useState(true);
   const [jwt, setJwt] = useState(localStorage.getItem("jwt") || "")//jwt
-  console.log(jwt)
 
 
   useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = `${jwt}`; //jwtをヘッダーに含める
+    axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`; //jwtをヘッダーに含める
   }, [jwt]);
 
   useEffect(() => {
