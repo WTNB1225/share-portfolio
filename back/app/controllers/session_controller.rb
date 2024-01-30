@@ -1,7 +1,7 @@
 class SessionController < ApplicationController
   include SessionHelper
 
-  #skip_before_action :authenticate_request, only: [:create]
+  skip_before_action :authenticate_request, only: [:create]
   after_action :set_csrf_token_header
 
   def index
