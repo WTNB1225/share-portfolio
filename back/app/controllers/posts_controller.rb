@@ -1,6 +1,5 @@
 class PostsController < ApplicationController
   protect_from_forgery with: :exception
-  skip_before_action :authenticate_request, only: [:index, :show, :show_by_id]
   
   def index
     @posts = Post.all.order(created_at: :desc)
@@ -42,7 +41,6 @@ class PostsController < ApplicationController
   end
 
   def update
-    puts User.find_by(id: params[:id])
     @post = Post.find_by(username: params[:id])
     if @post.update(post_params)
       render json: @post, status: 200

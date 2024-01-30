@@ -29,6 +29,7 @@ export default function Header(){
         setTheme("#F8F9FA"); //ログインしていない場合はテーマを白にする
       }
     }catch(e) {
+      setIsLoggedIn(false);
       return;
     }
   }
@@ -54,7 +55,7 @@ export default function Header(){
 
   useEffect(() => {
     checkLoginStatus()
-  },[]);
+  },[isLoggedIn]);
 
   return(
     <nav className={`navbar navbar-expand-lg ${style.maxHeight} ${style.dropdownLargeScreen}`} style={{background:theme}}>
@@ -74,6 +75,11 @@ export default function Header(){
             <li className="nav-item">
               <a className="nav-link" href={`/post/new`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>新規投稿</a>
             </li>
+            {isLoggedIn == false && (
+              <li className="nav-item">
+                <a className="nav-link" href="/login" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログイン</a>
+              </li>
+            )}
           </ul>
           {isLoggedIn && (
             <div className={`dropdown ms-auto`}>

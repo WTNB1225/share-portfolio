@@ -25,34 +25,56 @@ type Data = {
 
 export default function PostId() {
   const {
-    title, setTitle,
-    content, setContent,
-    url, setUrl,
-    comment, setComment,
-    userId, setUserId,
-    token, setToken,
-    comments, setComments,
-    commentLoading, setCommentLoading,
-    userData, setUserData,
-    postAuthor, setPostAuthor,
-    currentUserName, setCurrentUserName,
-    loading, setLoading,
-    avatar, setAvatar,
-    authorId, setAuthorId,
-    isAdmin, setIsAdmin,
-    errorMessage, setErrorMessage
+    title,
+    setTitle,
+    content,
+    setContent,
+    url,
+    setUrl,
+    comment,
+    setComment,
+    userId,
+    setUserId,
+    token,
+    setToken,
+    comments,
+    setComments,
+    commentLoading,
+    setCommentLoading,
+    userData,
+    setUserData,
+    postAuthor,
+    setPostAuthor,
+    currentUserName,
+    setCurrentUserName,
+    loading,
+    setLoading,
+    avatar,
+    setAvatar,
+    authorId,
+    setAuthorId,
+    isAdmin,
+    setIsAdmin,
+    errorMessage,
+    setErrorMessage,
   } = usePageIdState();
 
   const pathname = usePathname();
   const id = pathname.split("/").reverse()[0]; //URLから投稿IDを取得
   const router = useRouter();
 
+  const [loggedIn, setLoggedIn] = useState<boolean>(); //ログインしているかどうか
+  const [userLoading, setUserLoading] = useState<boolean>(true); //ユーザー情報を取得中かどうか
+
   //投稿を取得する関数
   const getPostById = async (id: string) => {
     try {
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/post/${id}`, {
-        withCredentials: true,
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/post/${id}`,
+        {
+          withCredentials: true,
+        }
+      );
       setTitle(response.data.title);
       setContent(response.data.content);
       setUrl(response.data.images_url);
@@ -71,7 +93,9 @@ export default function PostId() {
       }
     } catch (e: any) {
       setCommentLoading(true);
-      setErrorMessage("エラーが発生しました。存在しない投稿です");
+      setErrorMessage(
+        "エラーが発生しました。あなたがログインしていないか, 投稿が存在しません。"
+      );
     } finally {
       setLoading(false); //投稿の取得完了 or エラー
     }
@@ -85,7 +109,8 @@ export default function PostId() {
       );
       if (response.data != null) {
         const tmpData = [];
-        for (let d of response.data) { //ループでコメントに対応したidのユーザーを取得
+        for (let d of response.data) {
+          //ループでコメントに対応したidのユーザーを取得
           const response = await axios.get(
             `${process.env.NEXT_PUBLIC_ENDPOINT}/user/${d.user_id}`
           );
@@ -105,12 +130,16 @@ export default function PostId() {
 
   useEffect(() => {
     if (isLoading == false) {
-      setUserId(data?.id!);
-      setCurrentUserName(data?.name!);
-      setAvatar(data?.avatar_url!);
-      setIsAdmin(data?.admin!);
-      setLoading(false);
+      if (data) {
+        setUserId(data?.id!);
+        setCurrentUserName(data?.name!);
+        setAvatar(data?.avatar_url!);
+        setIsAdmin(data?.admin!);
+      }
+    } else {
+      setLoggedIn(false);
     }
+    setUserLoading(false);
   }, [data, isLoading]);
 
   //CSRFトークンを取得するカスタムフック
@@ -127,12 +156,15 @@ export default function PostId() {
   //投稿を削除する関数
   const handleDelete = async () => {
     try {
-      const response = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${id}`, {
-        withCredentials: true,
-        headers: {
-          "X-CSRF-Token": token,
-        },
-      });
+      const response = await axios.delete(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${id}`,
+        {
+          withCredentials: true,
+          headers: {
+            "X-CSRF-Token": token,
+          },
+        }
+      );
       router.push(`/post`);
     } catch (e) {
       return;
@@ -177,6 +209,17 @@ export default function PostId() {
     };
     fetchData();
   }, []);
+
+  if (userLoading || isLoading) return;
+
+  if (loggedIn == false) {
+    <>
+      <Header />
+      <h1 className="text-center" style={{ marginTop: "32px" }}>
+        ログインしてください
+      </h1>
+    </>;
+  }
 
   if (errorMessage) {
     return (

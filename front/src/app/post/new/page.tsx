@@ -96,7 +96,7 @@ export default function PostNew() {
               ContentType: file.type,
             })
           );
-          
+
           const encodedFileName = encodeURIComponent(file.name); //特殊文字が含まれないようにエンコード
           //R2に保存した画像のURLを取得
           const imageUrl = `![${file.name}](${process.env.NEXT_PUBLIC_STORAGE_ENDPOINT}/${encodedFileName})`;
@@ -161,14 +161,10 @@ export default function PostNew() {
           className="container d-flex justify-content-center"
           style={{ marginTop: "32px" }}
         >
-          <div className="col-12 col-lg-8">
-            <div className="row">
               <div className="col-12 col-md-6">
-                <h2>ログインしてください</h2>
+                <h2 className="text-center">ログインしてください</h2>
               </div>
             </div>
-          </div>
-        </div>
       </>
     );
   }
