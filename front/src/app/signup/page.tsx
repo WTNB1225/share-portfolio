@@ -68,6 +68,7 @@ export default function Signup() {
       );
       router.push("/home");
     } catch (e: any) {
+      console.log(e)
       setError(e.response.data);
       return;
     }
