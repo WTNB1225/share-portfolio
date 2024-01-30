@@ -22,7 +22,7 @@ class ApplicationController < ActionController::API
     if auth_token
       begin
         decoded_token = JWT.decode(auth_token, Rails.application.secrets.secret_key_base)
-        @current_user = User.find_by(id:decoded_token['user_id'])
+        @current_user = User.find(decoded_token[0]['user_id'])
       rescue JWT::DecodeError
         render json: { error: 'Invalid token' }, status: :unauthorized
       end
