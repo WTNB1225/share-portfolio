@@ -22,7 +22,7 @@ export const useGetCsrfToken = () => {
       }
     }
     fetchData();
-  } ,[]);
+  } ,[jwt]);
 
   return token 
 }
