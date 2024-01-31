@@ -250,6 +250,7 @@ export default function PostId() {
               <h1>{title}</h1>
               <div
                 className={`${style["markdown-content"]} ${style.whitespace}`}
+                style={{marginTop:"32px"}}
               >
                 <Markdown content={content}></Markdown>
               </div>
