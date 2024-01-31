@@ -1,7 +1,7 @@
 class SessionController < ApplicationController
   include SessionHelper
 
-  skip_before_action :authenticate_request, only: [:create]
+  skip_before_action :authenticate_request, only: [:create, :get_token]
   after_action :set_csrf_token_header
 
   def index
@@ -25,9 +25,6 @@ class SessionController < ApplicationController
     log_out if logged_in?
   end
 
-  def guest_login
-    session[:guest] = true
-  end
 
   def get_current_user
     render json: current_user.as_json(only:[:name,:id]).merge(avatar_url: url_for(current_user.avatar))
