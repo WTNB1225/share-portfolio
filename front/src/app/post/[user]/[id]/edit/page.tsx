@@ -19,7 +19,6 @@ export default function PostEdit() {
   const [title, setTitle] = useState(""); //投稿のタイトル
   const [content, setContent] = useState(""); //投稿の内容
   const [url, setUrl] = useState<File[]>([]); //サムネイルのURL
-  const [thumbnail, setThunmbnail] = useState(""); //サムネイルの画像
   const [error, setError] = useState(""); //エラーメッセージ
   const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA"); //テーマの設定
 
@@ -28,7 +27,6 @@ export default function PostEdit() {
   const id = pathname.split("/").reverse()[1]; //URLから投稿IDを取得
 
   const router = useRouter();
-  console.log(url)
 
   const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
   useEffect(() =>{
@@ -53,7 +51,6 @@ export default function PostEdit() {
       if(response.data) {
         setTitle(response.data.title);
         setContent(response.data.content);
-        setThunmbnail(response.data.images_url);
       }
 
     } catch(e) {
@@ -91,8 +88,7 @@ export default function PostEdit() {
   const handleThumbnailChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = e.target.files;
-      setThunmbnail(""); //元の画像を削除 条件分岐のため
-      setUrl([files[0]]);
+      setUrl(Array.from(files));
     }
   };
 
@@ -146,8 +142,8 @@ export default function PostEdit() {
         }
       );
       router.push(`/post/${username}/${id}`);
-    } catch(e) {
-      setError("投稿に失敗しました");
+    } catch(e:any) {
+      setError(e.response.data)
       return;
     }
   }
@@ -229,14 +225,7 @@ export default function PostEdit() {
               </div>
             </form>
             <div className="row mt-2 d-flex justify-content-center">
-              {thumbnail ? (
-                <div className="col-12 col-sm-6 col-md-3">
-                  <Preview
-                    src={thumbnail}  
-                    icon={false}
-                  />
-                </div>
-              ) : (
+              {url[0] && (
                 <div className="col-12 col-sm-6 col-md-3">
                   <Preview
                     src={window.URL.createObjectURL(url[0])}
