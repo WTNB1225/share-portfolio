@@ -20,7 +20,7 @@ export default function RootLayout({
   const cookieStore = cookies();
   const theme = cookieStore.get("theme")?.value || "#F8F9FA";
   const jwt = cookieStore.get("jwt")?.value || "";
-  axios.defaults.headers.common["Authorization"] = `${jwt}`; //axiosのデフォルトヘッダーにjwtを設定 
+  axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`; //axiosのデフォルトヘッダーにjwtを設定 
   return (
     <html lang="ja">
       <head>

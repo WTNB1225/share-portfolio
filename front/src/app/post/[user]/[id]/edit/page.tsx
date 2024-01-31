@@ -1,52 +1,67 @@
-"use client";
+"use client"
 import axios from "axios";
-import { useState, ChangeEvent, FormEvent, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Header from "../../../components/Header";
-import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
-import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
-import Preview from "@/components/Preview";
-import Markdown from "@/components/Markdown";
-import style from "./page.module.css";
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { useEffect, useState, ChangeEvent, FormEvent } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Header from "@/components/Header";
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
+import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import { useWindowWidth } from "@/hook/useWindowWidth";
 import Cookies from "js-cookie";
-import dotenv from "dotenv";
+import Preview from "@/components/Preview";
+import Markdown from "@/components/Markdown";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import style from "./page.module.css";
 
-export default function PostNew() {
+export default function PostEdit() {
+  const [loading, setLoading] = useState(true); //ログイン状態の確認中かどうか
+  const [token, setToken] = useState(""); //CSRFトークン
+  const [name ,setName] = useState(""); //ログインしたユーザー名
+  const [title, setTitle] = useState(""); //投稿のタイトル
+  const [content, setContent] = useState(""); //投稿の内容
+  const [url, setUrl] = useState<File[]>([]); //サムネイルのURL
+  const [error, setError] = useState(""); //エラーメッセージ
+  const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA"); //テーマの設定
+
+  const pathname = usePathname();
+  const username = pathname.split("/").reverse()[2]; //URLからユーザー名を取得
+  const id = pathname.split("/").reverse()[1]; //URLから投稿IDを取得
+
   const router = useRouter();
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [image, setImage] = useState<File>();
-  const [id, setId] = useState("");
-  const [name, setName] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [userLoading, setUserLoading] = useState(true);
-  const [token, setToken] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const [error, setError] = useState("");
-  const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA");
-  dotenv.config();
 
-  const { data, isLoading } = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
-  useEffect(() => {
-    if (isLoading == false) {
-      setId(data?.id!);
-      setName(data?.name!);
-      setAvatar(data?.avatar_url!);
-      setUserLoading(false);
+  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
+  useEffect(() =>{
+    if(isLoading == false) {
+      if(data) {
+        setName(data.name!);
+      }
+      setLoading(false); //dataの取得完了
     }
-  }, [data, isLoading]);
+  }, [data, isLoading])
 
-  //画面サイズ取得
-  const width = useWindowWidth();
-
-  //CSRFトークンを取得する関数
-  const csrfToken = useGetCsrfToken();
+  const csrfToken = useGetCsrfToken(); //CSRFトークンを取得するカスタムフック
   useEffect(() => {
     setToken(csrfToken);
-    setLoading(false);
   }, [csrfToken]);
+
+  const width = useWindowWidth(); //画面の幅を取得するカスタムフック
+
+  const getPost = async (id: string) => { //投稿の情報を取得する関数
+    try{
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/post/${id}`);
+      if(response.data) {
+        setTitle(response.data.title);
+        setContent(response.data.content);
+      }
+
+    } catch(e) {
+      setError("投稿が存在しません"); //エラーメッセージ
+      return;
+    }
+  }
+
+  useEffect(() => {
+    getPost(id)
+  },[id])
 
   //CloudFlareR2のためにS3Clientを作成(互換性がある)
   const S3 = new S3Client({
@@ -73,7 +88,7 @@ export default function PostNew() {
   const handleThumbnailChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = e.target.files;
-      setImage(files[0]);
+      setUrl(Array.from(files));
     }
   };
 
@@ -96,7 +111,7 @@ export default function PostNew() {
               ContentType: file.type,
             })
           );
-
+          
           const encodedFileName = encodeURIComponent(file.name); //特殊文字が含まれないようにエンコード
           //R2に保存した画像のURLを取得
           const imageUrl = `![${file.name}](${process.env.NEXT_PUBLIC_STORAGE_ENDPOINT}/${encodedFileName})`;
@@ -106,77 +121,51 @@ export default function PostNew() {
     }
   };
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!csrfToken) {
-      return;
-    }
+  
 
+  const handleSubmit = async (e:FormEvent) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append("post[title]", title);
     formData.append("post[content]", content);
-    formData.append("post[user_id]", id);
-    formData.append("post[username]", name);
-    formData.append("post[avatar_url]", avatar);
-    formData.append("post[like]", "0");
-    formData.append("post[userid]", String(id));
-    if (image) {
-      formData.append("post[images][]", image);
-    }
-
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_ENDPOINT}/posts`,
+    url.forEach((file) => formData.append("post[images][]", file))
+    try{
+      const response = axios.patch(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${username}`,
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            "X-CSRF-Token": token, // ヘッダーにCSRFトークンを追加
+            "X-CSRF-Token": token,
           },
           withCredentials: true,
         }
       );
-      router.push("/post");
-    } catch (e: any) {
-      setError(e.response.data); //Railsのvalidationを設定
+      router.push(`/post/${username}/${id}`);
+    } catch(e:any) {
+      setError(e.response.data)
       return;
     }
-  };
-
-  //loading中は何も表示しない
-  if (loading || userLoading) {
-    return;
   }
 
-  //ログインしていない場合
-  if (
-    loading == false &&
-    userLoading == false &&
-    (name == "" || name == undefined)
-  ) {
+  if(loading) return;
+
+  if(username !== name) {
     return (
-      <>
+      <div>
         <Header />
-        <div
-          className="container d-flex justify-content-center"
-          style={{ marginTop: "32px" }}
-        >
-              <div className="col-12 col-md-6">
-                <h2 className="text-center">ログインしてください</h2>
-              </div>
-            </div>
-      </>
-    );
+        <h1 className="text-center" style={{marginTop:"32px"}}>あなたはこのページを見ることはできません</h1>
+      </div>
+    )
   }
+
 
   return (
     <>
       <Header />
       {error && (
         <div className="alert alert-danger" role="alert">
-          {Object.entries(error).map(([key, value]) => (
-            <div key={key}>{`${key}: ${value}`}</div>
-          ))}
+            <div>{error}</div>
         </div>
       )}
       <div
@@ -197,6 +186,7 @@ export default function PostNew() {
                     className="form-control"
                     type="text"
                     onChange={handleTitleChange}
+                    value={title}
                   />
                 </label>
               </div>
@@ -235,10 +225,10 @@ export default function PostNew() {
               </div>
             </form>
             <div className="row mt-2 d-flex justify-content-center">
-              {image && (
+              {url[0] && (
                 <div className="col-12 col-sm-6 col-md-3">
                   <Preview
-                    src={window.URL.createObjectURL(image)}
+                    src={window.URL.createObjectURL(url[0])}
                     icon={false}
                   />
                 </div>

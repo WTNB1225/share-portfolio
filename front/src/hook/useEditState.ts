@@ -7,6 +7,7 @@ export const useEditState = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
+  const [avatar, setAvatar] = useState<File[]>([])
   const [loginUser, setLoginUser] = useState("");
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState("");
@@ -21,6 +22,7 @@ export const useEditState = () => {
     email, setEmail,
     password, setPassword,
     passwordConfirmation, setPasswordConfirmation,
+    avatar, setAvatar,
     loginUser, setLoginUser,
     loading, setLoading,
     token, setToken,

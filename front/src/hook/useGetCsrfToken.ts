@@ -5,11 +5,11 @@ import Cookies from "js-cookie"
 
 export const useGetCsrfToken = () => {
   const [token, setToken] = useState("");
-  const [jwt, setJwt] = useState(Cookies.get('jwt') || "");
+  const [jwt, setJwt] = useState(localStorage.getItem("jwt") || "")
 
 
   useEffect(() => {
-    axios.defaults.headers.common["Authorization"] = `${jwt}`;
+    axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`;
   }, [jwt]);
 
   useEffect(() => {

@@ -45,6 +45,8 @@ export default function Login() {
           withCredentials: true,
         }
       );
+      const token = response.data.token;
+      localStorage.setItem("jwt", token);
       router.push("/home");
     } catch (e) {
       return;

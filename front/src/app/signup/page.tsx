@@ -66,6 +66,8 @@ export default function Signup() {
           withCredentials: true,
         }
       );
+      const token = response.data.token;
+      localStorage.setItem('jwt',token);
       router.push("/home");
     } catch (e: any) {
       console.log(e)
