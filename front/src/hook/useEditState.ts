@@ -13,11 +13,12 @@ export const useEditState = () => {
   const [token, setToken] = useState("");
   const [userLoading, setUserLoading] = useState(true);
   const [postDatas, setPostDatas] = useState<Data[]>([]);
-  const [error, setError] = useState();
+  const [error, setError] = useState<any>();
   const [editData, setEditData] = useState<Data[]>([]);
   const [profile, setProfile] = useState("");
   const [postData, setPostData] = useState<Data[]>([]);
   const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA");
+  const [error2, setError2] = useState("");
 
   return {
     name, setName,
@@ -34,5 +35,6 @@ export const useEditState = () => {
     theme, setTheme,
     editData, setEditData,
     profile, setProfile,
+    error2, setError2,
   };
 };

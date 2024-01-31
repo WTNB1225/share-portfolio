@@ -22,7 +22,8 @@ export default function Edit() {
     postDatas, setPostDatas,
     error, setError,
     theme, setTheme,
-    profile, setProfile
+    profile, setProfile,
+    error2, setError2,
   } = useEditState(); 
 
   const router = useRouter();
@@ -136,8 +137,6 @@ export default function Edit() {
         setError(e.response.data);
         return;
       }
-    } else {
-      router.push("/401");
     }
   };
 
@@ -163,8 +162,6 @@ export default function Edit() {
         setError(e.response.data);
         return;
       }
-    } else {
-      router.push("/401");
     }
   };
 
@@ -186,13 +183,11 @@ export default function Edit() {
             withCredentials: true,
           }
         );
-        //router.push(`/${username}`);
+        router.push(`/${username}`);
       } catch (e:any) {
         setError(e.response.data);
         return;
       }
-    } else {
-      router.push("/401");
     }
   };
 
@@ -216,8 +211,9 @@ export default function Edit() {
         }
       )
       router.push(`/${username}`);
-    } catch(e) {
-      console.log(e)
+    } catch(e:any) {
+      setError2("変更する場合は画像を選択してください");
+      return;
     }
   }
 
@@ -268,6 +264,11 @@ export default function Edit() {
           ))}
         </div>
       )}
+    {error2 && (
+        <div className="alert alert-danger" role="alert">
+          {error2}
+        </div>
+    )}
     <div className="container d-flex justify-content-center vh-100 " style={{marginTop:"32px"}}>
       <div className="row">
         <div className="col-12 col-lg-8">

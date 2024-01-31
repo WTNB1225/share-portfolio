@@ -2,7 +2,7 @@
 const path = require("path")
 const nextConfig = {
   images:{
-    domains:["share-portfolio-api.onrender.com", "share-portfolio-wut1.vercel.app"]
+    domains:["share-portfolio-api.onrender.com", "share-portfolio-wut1.vercel.app", "localhost"]
   },
   sassOptions: {
     includePaths: [path.join(__dirname, 'styles')],
