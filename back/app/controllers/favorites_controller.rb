@@ -38,7 +38,7 @@ class FavoritesController < ApplicationController
   end
 
   def users_favorite
-    @favorite = Favorite.where(user_id: params[:id])
+    @favorite = Favorite.where(user_id: params[:id]).order(created_at: :desc)
     render json:@favorite
   end
 

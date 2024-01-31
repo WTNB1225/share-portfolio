@@ -38,7 +38,7 @@ class BookmarksController < ApplicationController
   end
 
   def users_bookmark
-    @bookmark = Bookmark.where(user_id: params[:id])
+    @bookmark = Bookmark.where(user_id: params[:id]).order(created_at: :desc)
     if @bookmark
       render json:@bookmark, status: :ok
     else

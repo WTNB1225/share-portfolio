@@ -13,7 +13,7 @@ class PostsController < ApplicationController
   end
 
   def show
-    @post = Post.where(username: params[:id])
+    @post = Post.where(username: params[:id]).order(created_at: :desc)
     post_with_images = @post.map do |post|
       post_data = post.as_json(include: :images)
       post_data.merge(

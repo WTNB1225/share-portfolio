@@ -9,8 +9,9 @@ export default function Home() {
       <div className="container" style={{marginTop:"32px"}}>
         <div className="row justify-content-center">
           <div className="col-xs-12 col-md-8 text-center">
-            <h1>share portfolioへようこそ</h1>
-            <p>このサイトではプログラミングの作品を共有することができます</p>
+            <h1>Share Portfolioへようこそ</h1>
+            <p style={{marginTop:"32px"}}>このサイトではプログラミングの作品を公開,共有することができます</p>
+            <p>Cookieを使用できない環境では投稿やいいね、コメントができません</p>
           </div>
         </div>
         <div className="row justify-content-center" style={{marginTop:"32px"}}>
