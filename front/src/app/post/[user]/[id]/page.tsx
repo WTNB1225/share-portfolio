@@ -10,6 +10,7 @@ import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import Comment from "@/components/Comment";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
+import {faEdit} from "@fortawesome/free-regular-svg-icons"
 import Markdown from "@/components/Markdown";
 import { usePageIdState } from "@/hook/usePostIdState";
 
@@ -60,6 +61,7 @@ export default function PostId() {
   } = usePageIdState();
 
   const pathname = usePathname();
+  const username = pathname.split("/").reverse()[1]; //URLからユーザー名を取得
   const id = pathname.split("/").reverse()[0]; //URLから投稿IDを取得
   const router = useRouter();
 
@@ -252,13 +254,20 @@ export default function PostId() {
                 <Markdown content={content}></Markdown>
               </div>
               {(authorId == userId || isAdmin == 1) && loading == false && (
-                <div className="delete">
-                  <button
-                    className={`btn btn-danger ${style.icon}`}
-                    onClick={handleDelete}
-                  >
-                    <FontAwesomeIcon icon={faTrash} />
-                  </button>
+                <div>
+                  <div className="delete">
+                    <button
+                      className={`btn btn-danger ${style.icon}`}
+                      onClick={handleDelete}
+                    >
+                      <FontAwesomeIcon  icon={faTrash} />
+                    </button>
+                  </div>
+                  <div className="edit">
+                    <a href={`/post/${username}/${id}/edit`}>
+                      <FontAwesomeIcon size="2xl" icon={faEdit}/>
+                    </a>
+                  </div>
                 </div>
               )}
             </div>
