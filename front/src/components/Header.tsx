@@ -26,7 +26,6 @@ export default function Header(){
         setAvatar(response.data.avatar_url);
       } else {
         setIsLoggedIn(false);
-        setTheme("#F8F9FA"); //ログインしていない場合はテーマを白にする
       }
     }catch(e) {
       setIsLoggedIn(false);
@@ -76,11 +75,17 @@ export default function Header(){
               <a className="nav-link" href={`/post/new`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>新規投稿</a>
             </li>
             {isLoggedIn == false && (
-              <li className="nav-item">
-                <a className="nav-link" href="/login" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログイン</a>
-              </li>
+              <>
+                <li className="nav-item">
+                  <a className="nav-link" href="/login" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログイン</a>
+                </li>
+                <li className="nav-item" onClick={handleThemeChange}>
+                  <a className="nav-link" href="/" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>背景色の変更</a>
+                </li>
+              </> 
             )}
           </ul>
+          
           {isLoggedIn && (
             <div className={`dropdown ms-auto`}>
             {width < 1024 && (
@@ -103,7 +108,7 @@ export default function Header(){
                 <ul className={`dropdown-menu dropdown-memu-end ${style.hover}`} aria-labelledby="dropdownMenuButton" style={{background:theme,transform: "translateX(-60%)"}}>
                   <li><a className="dropdown-item" href={`/${name}`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>プロフィール</a></li>
                   <li><a className="dropdown-item" href={`/logout`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログアウト</a></li>
-                  <li onClick={handleThemeChange}><a href={`/${name}`} className="dropdown-item" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>色の変更</a></li>
+                  <li onClick={handleThemeChange}><a href={`/${name}`} className="dropdown-item" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>背景色の変更</a></li>
                 </ul>
               </>  
             )}
