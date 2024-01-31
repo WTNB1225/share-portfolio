@@ -14,6 +14,8 @@ import { FaUserMinus } from "react-icons/fa";
 import { FaUserCheck } from "react-icons/fa";
 import { FaUserEdit } from "react-icons/fa";
 import { FaUserFriends } from "react-icons/fa";
+import { FaHeart } from "react-icons/fa";
+import { FaBookmark } from "react-icons/fa";
 import { useWindowWidth } from "@/hook/useWindowWidth";
 
 type Data = {
@@ -202,10 +204,21 @@ export default function User() {
           >
             {windowWidth <= 768 ? <FaUserFriends /> : "フォロワー"}
           </a>
+          <a href={`/${username}/`}
+            className={style.a}
+            style={{marginRight:"8px"}}
+          >
+            {windowWidth <= 768 ? <FaHeart /> : "いいねした投稿"}
+          </a>
           {isCurrentUser && (
-            <a className={style.a} href={`/${username}/edit`}>
-              {windowWidth <= 768 ? <FaUserEdit /> : "プロフィールを編集"}
-            </a>
+            <>
+              <a className={style.a} href={`/${username}/edit`}>
+                {windowWidth <= 768 ? <FaUserEdit /> : "プロフィールを編集"}
+              </a>
+              <a className={style.a} href={`/${username}/bookmark`}>
+                {windowWidth <= 768 ? <FaBookmark /> : "ブックマーク"}
+              </a>
+            </>
           )}
           {isFollowedUser && (
             <button
