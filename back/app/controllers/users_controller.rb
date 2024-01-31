@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find_by(name:params[:id])
     if @user
-      user = @user.as_json(only: [:name, :id, :admin]).merge(avatar_url: url_for(@user.avatar))
+      user = @user.as_json(only: [:name, :id, :admin, :introduction]).merge(avatar_url: url_for(@user.avatar))
       render json: user
     end
   end
@@ -58,6 +58,6 @@ class UsersController < ApplicationController
   private
 
     def user_params
-      params.require(:user).permit(:name, :email, :password, :password_confirmation, :avatar)
+      params.require(:user).permit(:name, :email, :password, :password_confirmation, :avatar, :introduction)
     end
 end

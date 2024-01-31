@@ -60,7 +60,7 @@ export default function Header(){
   return(
     <nav className={`navbar navbar-expand-lg ${style.maxHeight} ${style.dropdownLargeScreen}`} style={{background:theme}}>
       <div className="container-fluid">
-        <a className="navbar-brand" href="/" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>Portfolio</a>
+        <a className="navbar-brand" href="/" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>Share Portfolio</a>
         <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation" style={{backgroundColor: theme == "#F8F9FA" ? "F8F9FA" : "#2F3232"}}>
           <span className="navbar-toggler-icon"></span>
         </button>
