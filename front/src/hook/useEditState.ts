@@ -14,6 +14,8 @@ export const useEditState = () => {
   const [userLoading, setUserLoading] = useState(true);
   const [postDatas, setPostDatas] = useState<Data[]>([]);
   const [error, setError] = useState();
+  const [editData, setEditData] = useState<Data[]>([]);
+  const [profile, setProfile] = useState("");
   const [postData, setPostData] = useState<Data[]>([]);
   const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA");
 
@@ -29,6 +31,8 @@ export const useEditState = () => {
     userLoading, setUserLoading,
     postDatas, setPostDatas,
     error, setError,
-    theme, setTheme
+    theme, setTheme,
+    editData, setEditData,
+    profile, setProfile,
   };
 };

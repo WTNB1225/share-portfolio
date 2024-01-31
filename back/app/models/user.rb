@@ -34,6 +34,8 @@ class User < ApplicationRecord
   size:         { less_than: 10.megabytes,
   message:   "should be less than 10MB" }
 
+  validates :introduction, length: { maximum: 200 }, presence: true
+
   # 渡された文字列のハッシュ値を返す
   def User.digest(string)
     cost = ActiveModel::SecurePassword.min_cost ? BCrypt::Engine::MIN_COST :
@@ -91,5 +93,4 @@ class User < ApplicationRecord
     def password_required?
       !password.nil? || !password_confirmation.nil?
     end
-    
 end

@@ -22,6 +22,7 @@ export default function Edit() {
     postDatas, setPostDatas,
     error, setError,
     theme, setTheme,
+    profile, setProfile
   } = useEditState(); 
 
   const router = useRouter();
@@ -88,7 +89,11 @@ export default function Edit() {
     }
   }
 
-  //submit時の処理
+  const handleProfileChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setProfile(e.target.value);
+  }
+
+  //submit時の処理 まとめて送信すると空文字が送信されてしまうため、それぞれのsubmitを分けている
   const handleNameSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
@@ -216,6 +221,28 @@ export default function Edit() {
     }
   }
 
+  const handleProfileSubmit = async(e:FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("user[introduction]", profile);
+    try{
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/users/${decodeURIComponent(username)}`,
+        formData,
+        {
+          headers: {
+            "X-CSRF-Token": token,
+          },
+          withCredentials: true,
+        }
+      )
+      router.push(`/${username}`)
+    } catch(e:any) {
+      setError(e.response.data);
+      return;
+    }
+  }
+
   //どちらかがloading中の場合は何も表示しない
   if (loading || userLoading) {
     return;
@@ -270,7 +297,7 @@ export default function Edit() {
           <form className="mb-3">
             <label style={{width:"300px"}}>
               avatar
-              <input type="file" onChange={handleAvatarChange} className="form-control"style={{background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA"}}/>
+              <input type="file" onChange={handleAvatarChange} className="form-control" accept="image/jpeg,image/gif,image/png" style={{background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA"}}/>
               <button onClick={handleAvatarSubmit} className="btn btn-primary mt-2">変更</button>
             </label>
           </form>
@@ -279,9 +306,20 @@ export default function Edit() {
                 <Preview src={URL.createObjectURL(avatar[0])} icon={true} />
               </div>
             )}
+          <form className="mb-3">
+            <label style={{width:"300px"}}>
+              プロフィール
+              <textarea 
+                className="form-control" 
+                rows={15}
+                onChange={handleProfileChange}
+                style={{background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA"}}>   
+              </textarea>
+              <button className="btn btn-primary mt-2" onClick={handleProfileSubmit}>変更</button>
+            </label>
+          </form>
         </div>
       </div>
-
     </div>
   </>
   );

@@ -52,6 +52,7 @@ export default function Signup() {
     formData.append("user[email]", email);
     formData.append("user[password]", password);
     formData.append("user[password_confirmation]", passwordConfirmation);
+    formData.append("user[introduction]", "よろしくお願いします。")
     avatar.forEach((img) => {
       formData.append("user[avatar]", img);
     });
@@ -117,6 +118,7 @@ export default function Signup() {
                   avatar
                   <input
                     className="form-control"
+                    accept="image/jpeg,image/gif,image/png"
                     type="file"
                     onChange={handleAvatarChange}
                   />

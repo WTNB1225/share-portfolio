@@ -204,15 +204,18 @@ export default function UserWork({
           <h3 style={{color: theme == "#F8F9FA" ? "black" : "white", textDecoration:"none" }}>{name}</h3>
         </Link>
         <Link href={`/post/${name}/${id}`} style={{textDecoration:"none"}}>
+        <div style={{ position: 'relative', height: '250px' }}>
           <Image
-            alt=""
+            alt="image"
             src={image}
             height={250}
             width={250}
+            objectFit="cover"
             layout="responsive"
             style={{marginTop:"8px"}}
             className={style.workImage}
           />
+          </div>
           <h2 className={style.overflow} style={{color: theme == "#F8F9FA" ? "black" : "white", textDecoration:"none"}}>{title}</h2>
         </Link>
         {isLiked ? (
@@ -233,7 +236,7 @@ export default function UserWork({
             <FontAwesomeIcon icon={faBookmarkRegular} size="xl"/>
           </button>
         )}
-        <h3 style={{color: theme == "#F8F9FA" ? "black" : "white" }}>{amountOfLikes} likes</h3>
+        <h3 style={{color: theme == "#F8F9FA" ? "black" : "white" }}>{amountOfLikes} いいね</h3>
       </div>
     )
 }

@@ -57,6 +57,7 @@ export default function User() {
   const [presence, setPresence] = useState(true); //存在しないユーザーの場合はfalseになる
   const [token, setToken] = useState<string>(""); 
   const [loggedIn, setLoggedIn] = useState<boolean>(); //ログインしているかどうか
+  const [introduction, setIntroduction] = useState("")
 
   const pathname = usePathname();
   const splitpath = pathname.split("/");
@@ -104,6 +105,7 @@ export default function User() {
       } else {
         setPresence(true);
         setAvatar(response.data.avatar_url);
+        setIntroduction(response.data.introduction);
       }
     } catch (e) {
       return;
@@ -189,9 +191,11 @@ export default function User() {
           />
           <h1>{decodeURIComponent(username)}</h1>
         </div>
-        <div>
-          
-        </div>
+        {introduction && (
+          <div>
+            <p className={`text-center ${style.whitespace}`}>{introduction}</p>
+          </div>
+        )}
         <div className="align-items-center text-center">
           <a
             style={{ marginRight: "8px" }}
@@ -215,12 +219,13 @@ export default function User() {
           </a>
           {isCurrentUser && (
             <>
-              <a className={style.a} href={`/${username}/edit`} style={{marginRight:"8px"}}>
-                {windowWidth <= 768 ? <FaUserEdit /> : "プロフィールを編集"}
-              </a>
-              <a className={style.a} href={`/${username}/bookmark`}>
+              <a className={style.a} href={`/${username}/bookmark`} style={{marginRight:"8px"}}>
                 {windowWidth <= 768 ? <FaBookmark /> : "ブックマーク"}
               </a>
+              <a className={style.a} href={`/${username}/edit`}>
+                {windowWidth <= 768 ? <FaUserEdit /> : "プロフィールを編集"}
+              </a>
+
             </>
           )}
           {isFollowedUser && (
