@@ -183,9 +183,9 @@ export default function PostNew() {
         className="container d-flex justify-content-center"
         style={{ marginTop: "32px" }}
       >
-        <p className="text-center">本文は1000文字以内</p>
         <div className="col-12 col-lg-8">
           <>
+            <p className="justify-content-center">本文は1000文字以内</p>
             <form className="row g-3 justify-content-center">
               <div className="col-12 col-md-6 text-center">
                 <label className="form-label" style={{ width: "90%" }}>
