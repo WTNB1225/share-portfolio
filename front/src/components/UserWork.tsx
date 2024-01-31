@@ -216,7 +216,7 @@ export default function UserWork({
             className={style.workImage}
           />
           </div>
-          <h2 className={style.overflow} style={{color: theme == "#F8F9FA" ? "black" : "white", textDecoration:"none"}}>{title}</h2>
+          <h2 className={style.overflow} style={{marginTop:"50px", color: theme == "#F8F9FA" ? "black" : "white", textDecoration:"none"}}>{title}</h2>
         </Link>
         {isLiked ? (
           <button onClick={handleUnLike} className={style.icon} style={{background:"none"}}>
