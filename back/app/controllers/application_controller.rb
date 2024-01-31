@@ -17,7 +17,7 @@ class ApplicationController < ActionController::API
   #apiの認証 外部からのアクセスを制限する
   def authenticate_request
     auth_header = request.headers['Authorization']
-    auth_token = auth_header&.gsub(/Bearer /i,'')
+    auth_token = auth_header&.sub(/Bearer /i,'')
     puts auth_token
     if auth_token
       begin
