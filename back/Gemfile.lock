@@ -225,6 +225,7 @@ DEPENDENCIES
   debug
   image_processing (= 1.12.2)
   jwt
+  mini_magick
   pg
   puma (>= 5.0)
   rack-cors
