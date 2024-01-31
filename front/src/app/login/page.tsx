@@ -12,7 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(-1);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(); //バリデーションエラーを設定
+  const [error, setError] = useState(""); 
   const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA"); //テーマの設定
   
   const { data, isLoading } = useCheckLoginStatus();//ログイン状態を管理
@@ -49,6 +49,7 @@ export default function Login() {
       localStorage.setItem("jwt", token);
       router.push("/home");
     } catch (e) {
+      setError("メールアドレスかパスワードが間違っています");
       return;
     }
   };
@@ -70,6 +71,11 @@ export default function Login() {
 
     <>
       <Header />
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
       <div className="container d-flex justify-content-center" style={{marginTop:"32px"}}>
         <div className="row">
           <div className="col-12 col-lg-8">

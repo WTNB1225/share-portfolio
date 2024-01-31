@@ -13,7 +13,7 @@ export default function Logout() {
 
   useEffect(() => {
     if(!isLoading && !data) {
-      router.replace("/");
+      router.push("/");
     } else if(!isLoading && data) {
       setLoading(false);
     }
