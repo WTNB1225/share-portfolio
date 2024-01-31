@@ -189,6 +189,9 @@ export default function User() {
           />
           <h1>{decodeURIComponent(username)}</h1>
         </div>
+        <div>
+          
+        </div>
         <div className="align-items-center text-center">
           <a
             style={{ marginRight: "8px" }}
