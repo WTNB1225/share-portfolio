@@ -42,29 +42,29 @@ class PostTest < ActiveSupport::TestCase
   end
 
   test "One image should be posted" do
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
     assert @post.images.attached?
   end
 
   test "images should be posted up to 4" do
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
     assert @post.valid?
   end
 
   test "images should not be posted more than 5" do
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/test.jpg"), filename: "test.jpg", content_type: "image/jpg")
     assert_not @post.valid?
   end
 
   test "images should not be too large" do
-    @post.images.attach(io: File.open("/Users/watanabeyuki/portfolio-service/back/test/images/100MB.jpg"), filename: "100MB.jpg", content_type: "image/jpg")
+    @post.images.attach(io: File.open("./back/test/images/100MB.jpg"), filename: "100MB.jpg", content_type: "image/jpg")
     assert_not @post.valid?
   end
 
