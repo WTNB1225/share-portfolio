@@ -27,7 +27,7 @@ class SessionController < ApplicationController
 
 
   def get_current_user
-    render json: current_user.as_json(only:[:name,:id]).merge(avatar_url: url_for(current_user.avatar))
+    render json: current_user.as_json(only:[:name,:id, :admin]).merge(avatar_url: url_for(current_user.avatar))
   end
 
   def get_token
