@@ -2,7 +2,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Data } from "../type";
-import Cookies from "js-cookie";
 
 export const useCheckLoginStatus = () => {
   const [data, setData] = useState<Data>();
