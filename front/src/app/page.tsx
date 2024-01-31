@@ -9,7 +9,7 @@ export default function Home() {
       <div className="container" style={{marginTop:"32px"}}>
         <div className="row justify-content-center">
           <div className="col-xs-12 col-md-8 text-center">
-            <h1>作品共有サービスへようこそ</h1>
+            <h1>share portfolioへようこそ</h1>
             <p>このサイトではプログラミングの作品を共有することができます</p>
           </div>
         </div>

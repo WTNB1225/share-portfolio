@@ -17,9 +17,8 @@ class ApplicationController < ActionController::API
   #apiの認証 外部からのアクセスを制限する
   def authenticate_request
     auth_header = request.headers['Authorization']
-    auth_token = auth_header&.gsub(/Bearer /,'')
+    auth_token = auth_header&.gsub(/Bearer /i,'')
     puts auth_token
-    puts User.find_by(id:JWT.decode(auth_token, Rails.application.credentials.secret_key_base)[0]['user_id']) if auth_token
     if auth_token
       begin
         decoded_token = JWT.decode(auth_token, Rails.application.credentials.secret_key_base)
