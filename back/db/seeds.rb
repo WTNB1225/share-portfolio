@@ -1,4 +1,8 @@
 require 'open-uri'
+if User.first
+  User.first.destroy
+end
+
 user = User.new(
   name: "admin",
   email:"admin@email.com",
