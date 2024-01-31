@@ -204,7 +204,7 @@ export default function User() {
           >
             {windowWidth <= 768 ? <FaUserFriends /> : "フォロワー"}
           </a>
-          <a href={`/${username}/`}
+          <a href={`/${username}/favorite`}
             className={style.a}
             style={{marginRight:"8px"}}
           >
@@ -212,7 +212,7 @@ export default function User() {
           </a>
           {isCurrentUser && (
             <>
-              <a className={style.a} href={`/${username}/edit`}>
+              <a className={style.a} href={`/${username}/edit`} style={{marginRight:"8px"}}>
                 {windowWidth <= 768 ? <FaUserEdit /> : "プロフィールを編集"}
               </a>
               <a className={style.a} href={`/${username}/bookmark`}>

@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find_by(name:params[:id])
     if @user
-      user = @user.as_json(only: [:name, :id]).merge(avatar_url: url_for(@user.avatar))
+      user = @user.as_json(only: [:name, :id, :admin]).merge(avatar_url: url_for(@user.avatar))
       render json: user
     end
   end
@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   def show_by_id
     @user = User.find_by(id:params[:user_id])
     if @user
-      user = @user.as_json(only: [:name, :id]).merge(avatar_url: url_for(@user.avatar))
+      user = @user.as_json(only: [:name, :id, :admin]).merge(avatar_url: url_for(@user.avatar))
       render json: user
     else
       render json: @user.errors, status: :unprocessable_entity
