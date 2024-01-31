@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
 import { useEditState } from "@/hook/useEditState"; //editのstateを纏めたカスタムフック
+import Preview from "@/components/Preview";
 
 export default function Edit() {
   const {
@@ -13,6 +14,7 @@ export default function Edit() {
     email, setEmail,
     password, setPassword,
     passwordConfirmation, setPasswordConfirmation,
+    avatar, setAvatar,
     loginUser, setLoginUser,
     loading, setLoading,
     token, setToken,
@@ -79,6 +81,12 @@ export default function Edit() {
   ) => {
     setPasswordConfirmation(e.target.value);
   };
+
+  const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files) {
+      setAvatar(Array.from(e.target.files) as File[]);
+    }
+  }
 
   //submit時の処理
   const handleNameSubmit = async (e: FormEvent) => {
@@ -183,6 +191,31 @@ export default function Edit() {
     }
   };
 
+  //avatarのsubmit時の処理x
+  const handleAvatarSubmit = async(e:FormEvent) => {
+    e.preventDefault();
+    const formData = new FormData();
+    avatar.forEach((blob: Blob) => {
+      formData.append("user[avatar]", blob);
+    });
+    try{
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/users/${decodeURIComponent(username)}`,
+        formData,
+        {
+          headers: {
+            "X-CSRF-Token": token,
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true,
+        }
+      )
+      router.push(`/${username}`);
+    } catch(e) {
+      console.log(e)
+    }
+  }
+
   //どちらかがloading中の場合は何も表示しない
   if (loading || userLoading) {
     return;
@@ -234,8 +267,21 @@ export default function Edit() {
               <button onClick={handlePasswordSubmit} className="btn btn-primary mt-2">変更</button>
             </label>
           </form>
+          <form className="mb-3">
+            <label style={{width:"300px"}}>
+              avatar
+              <input type="file" onChange={handleAvatarChange} className="form-control"style={{background: theme == "#F8F9FA" ? "#F8F9FA" : "#1E1E1E",color: theme == "#F8F9FA" ? "#1E1E1E" : "#F8F9FA"}}/>
+              <button onClick={handleAvatarSubmit} className="btn btn-primary mt-2">変更</button>
+            </label>
+          </form>
+          {avatar[0] && (
+              <div>
+                <Preview src={URL.createObjectURL(avatar[0])} icon={true} />
+              </div>
+            )}
         </div>
       </div>
+
     </div>
   </>
   );

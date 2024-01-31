@@ -26,6 +26,7 @@ export default function Logout() {
       const response = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/logout`, {
         withCredentials: true,
       });
+      localStorage.removeItem("jwt");
       router.push("/");
     } catch (e) {
       return;

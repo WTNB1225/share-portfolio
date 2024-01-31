@@ -13,8 +13,8 @@ export default function Header(){
   const [avatar, setAvatar] = useState<string>("");
   const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA"); //cookieに保存されていなければデフォルトは白
   const [width, setWidth] = useState(0);
-  const [jwt, setJwt] = useState(Cookies.get("jwt") || ""); //jwtトークンを保存
-  axios.defaults.headers.common["Authorization"] = `${jwt}`; //axiosのデフォルトヘッダーにjwtを設定
+  const [jwt, setJwt] = useState(localStorage.getItem("jwt") || ""); //jwtトークンを保存
+  axios.defaults.headers.common["Authorization"] = `Bearer ${jwt}`; //axiosのデフォルトヘッダーにjwtを設定
   //ログイン状態を確認する関数
   const checkLoginStatus = async() => {
     try{
@@ -29,6 +29,7 @@ export default function Header(){
         setTheme("#F8F9FA"); //ログインしていない場合はテーマを白にする
       }
     }catch(e) {
+      setIsLoggedIn(false);
       return;
     }
   }
@@ -54,7 +55,7 @@ export default function Header(){
 
   useEffect(() => {
     checkLoginStatus()
-  },[]);
+  },[isLoggedIn]);
 
   return(
     <nav className={`navbar navbar-expand-lg ${style.maxHeight} ${style.dropdownLargeScreen}`} style={{background:theme}}>
@@ -74,6 +75,11 @@ export default function Header(){
             <li className="nav-item">
               <a className="nav-link" href={`/post/new`} style={{color: theme === "#F8F9FA" ? "black" : "white"}}>新規投稿</a>
             </li>
+            {isLoggedIn == false && (
+              <li className="nav-item">
+                <a className="nav-link" href="/login" style={{color: theme === "#F8F9FA" ? "black" : "white"}}>ログイン</a>
+              </li>
+            )}
           </ul>
           {isLoggedIn && (
             <div className={`dropdown ms-auto`}>

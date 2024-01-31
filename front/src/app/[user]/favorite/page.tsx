@@ -25,6 +25,7 @@ export default function UsersFavorite() {
 
   const pathname = usePathname();
   const username = pathname.split("/").reverse()[1]; //URLからユーザー名を取得
+  const [loggedIn, setLoggedIn] = useState<boolean>(); //ログインしているかどうか
 
   const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
   useEffect(() => {
@@ -32,6 +33,8 @@ export default function UsersFavorite() {
       if(data) {
         setUserId(data?.id!);
         setName(data?.name!);
+      } else {
+        setLoggedIn(false)
       }
       setUserLoading(false) //dataの取得完了
     }
@@ -47,9 +50,10 @@ export default function UsersFavorite() {
         if (response.data) {
           setUsernameId(response.data.id);
         }
-        setUsernameLoading(false);//ユーザーIDの取得完了
       } catch (e) {
         return;
+      } finally {
+        setUsernameLoading(false);//ユーザーIDの取得完了
       }
     }
     getUserId(username);
@@ -90,6 +94,15 @@ export default function UsersFavorite() {
   //全てのデータを読み込んでからレンダリングする
   if (loading || userLoading || usernameLoading) {
     return;
+  }
+
+  if(loggedIn == false) {
+    return(
+      <>
+        <Header />
+        <h1 className="text-center" style={{marginTop:"32px"}}>ログインしてください</h1>
+      </>
+    )
   }
 
   if(loading == false &&  userLoading == false && usernameLoading == false && usernameId == ""){ 

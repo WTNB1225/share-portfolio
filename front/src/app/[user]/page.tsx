@@ -54,6 +54,7 @@ export default function User() {
   const [loading2, setLoading2] = useState(true); //ログインユーザーの情報を取得するまでtrue
   const [presence, setPresence] = useState(true); //存在しないユーザーの場合はfalseになる
   const [token, setToken] = useState<string>(""); 
+  const [loggedIn, setLoggedIn] = useState<boolean>(); //ログインしているかどうか
 
   const pathname = usePathname();
   const splitpath = pathname.split("/");
@@ -68,6 +69,8 @@ export default function User() {
       if(data) {
         setParamName(data.name);
         setUserData(data)
+      } else {
+        setLoggedIn(false)
       }
       setLoading2(false)
     }
@@ -242,8 +245,18 @@ export default function User() {
     );
   };
 
+
   if (loading || loading2) {
     return;
+  }
+
+  if(loggedIn == false) {
+    return(
+      <>
+        <Header />
+        <h1 className="text-center" style={{marginTop:"32px"}}>ログインしてください</h1>
+      </>
+    )
   }
 
   if((loading == false && loading2 == false ) && (presence == false)){

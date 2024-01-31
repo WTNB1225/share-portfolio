@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import Header from "../../components/Header";
 import { useGetCsrfToken } from "@/hook/useGetCsrfToken";
 import style from "./page.module.css";
+import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 
 type Data = {
   id: string;
@@ -20,6 +21,17 @@ type Data = {
 export default function Post() {
   const [postData, setPostData] = useState<Data[]>([]);
   const [token, setToken] = useState<string>("");
+  const [loggedIn, setLoggedIn] = useState<boolean>(); //ログインしているかどうか
+  const [loading, setLoading] = useState(true); //ログインユーザーの情報を取得するまでtrue
+  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
+  useEffect(() => {
+    if(isLoading == false) {
+      if(!data) {
+        setLoggedIn(false)
+      }
+      setLoading(false);
+    }
+  },[data, isLoading])
 
   //CSRFトークンを取得するカスタムフック(いいね,ブックマークに使用)
   const csrfToken = useGetCsrfToken();
@@ -40,6 +52,16 @@ export default function Post() {
     getPosts();
   }, []);
 
+  if(loading) return;
+
+  if(loggedIn == false) {
+    return(
+      <>
+        <Header />
+        <h1 className="text-center" style={{marginTop:"32px"}}>ログインしてください</h1>
+      </>
+    )
+  }
   return (
     <div>
       <Header />

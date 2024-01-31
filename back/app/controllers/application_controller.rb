@@ -16,12 +16,14 @@ class ApplicationController < ActionController::API
 
   #apiの認証 外部からのアクセスを制限する
   def authenticate_request
-    auth_token = request.headers['Authorization']
-
+    auth_header = request.headers['Authorization']
+    auth_token = auth_header&.gsub(/Bearer /,'')
+    puts auth_token
+    puts User.find_by(id:JWT.decode(auth_token, Rails.application.credentials.secret_key_base)[0]['user_id']) if auth_token
     if auth_token
       begin
-        decoded_token = JWT.decode(auth_token, Rails.application.secrets.secret_key_base)[0]
-        @current_user = User.find(decoded_token['user_id'])
+        decoded_token = JWT.decode(auth_token, Rails.application.credentials.secret_key_base)
+        @current_user = User.find(decoded_token[0]['user_id'])
       rescue JWT::DecodeError
         render json: { error: 'Invalid token' }, status: :unauthorized
       end

@@ -41,7 +41,6 @@ class PostsController < ApplicationController
   end
 
   def update
-    puts User.find_by(id: params[:id])
     @post = Post.find_by(username: params[:id])
     if @post.update(post_params)
       render json: @post, status: 200
