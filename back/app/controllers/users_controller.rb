@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   def update
     @user = User.find_by(name: params[:id])
     if @user.update(user_params)
-      render json:@user
+      render json:@user.as_json(only: [:name, :id, :admin]).merge(avatar_url: url_for(@user.avatar))
     else
       @user.update(user_params)
       render json:@user.errors, status: :unprocessable_entity

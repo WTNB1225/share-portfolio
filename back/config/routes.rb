@@ -3,6 +3,7 @@ Rails.application.routes.draw do
   get 'relationships/followers'
   post "/login",   to: 'session#create'
   delete "/logout",to: "session#destroy"
+  patch "/post_update/:id", to: "posts#update_by_id"
   get "/logged_in_user", to: "session#get_current_user"
   resources :users
   resources :posts

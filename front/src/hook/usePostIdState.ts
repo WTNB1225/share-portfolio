@@ -16,25 +16,41 @@ export const usePageIdState = () => {
   const [loading, setLoading] = useState(true);
   const [avatar, setAvatar] = useState("");
   const [authorId, setAuthorId] = useState("");
-  const [isAdmin, setIsAdmin] = useState<number>(0);
+  const [isAdmin, setIsAdmin] = useState<boolean>();
   const [errorMessage, setErrorMessage] = useState("");
 
   return {
-    title, setTitle,
-    content, setContent,
-    url, setUrl,
-    comment, setComment,
-    userId, setUserId,
-    token, setToken,
-    comments, setComments,
-    commentLoading, setCommentLoading,
-    userData, setUserData,
-    postAuthor, setPostAuthor,
-    currentUserName, setCurrentUserName,
-    loading, setLoading,
-    avatar, setAvatar,
-    authorId, setAuthorId,
-    isAdmin, setIsAdmin,
-    errorMessage, setErrorMessage
+    title,
+    setTitle,
+    content,
+    setContent,
+    url,
+    setUrl,
+    comment,
+    setComment,
+    userId,
+    setUserId,
+    token,
+    setToken,
+    comments,
+    setComments,
+    commentLoading,
+    setCommentLoading,
+    userData,
+    setUserData,
+    postAuthor,
+    setPostAuthor,
+    currentUserName,
+    setCurrentUserName,
+    loading,
+    setLoading,
+    avatar,
+    setAvatar,
+    authorId,
+    setAuthorId,
+    isAdmin,
+    setIsAdmin,
+    errorMessage,
+    setErrorMessage,
   };
 };
