@@ -28,7 +28,7 @@ export default function Comment({
   postAuthor: string;
   currentUser: string;
   onDelete: (id: string) => void;
-  admin: number;
+  admin: boolean;
 }) {
   const theme = Cookies.get("theme") || "#F8F9FA";
 
@@ -41,7 +41,7 @@ export default function Comment({
 
   //コメントを削除する関数 admin or 投稿者のみ
   const handleDelete = async () => {
-    if (postAuthor === currentUser || admin === 1) {
+    if (postAuthor === currentUser || admin == true) {
       try {
         const response = await axios.delete(
           `${process.env.NEXT_PUBLIC_ENDPOINT}/comments/${id}`,
@@ -79,7 +79,7 @@ export default function Comment({
       </div>
       <div className={`${style.inline} ${style.whitespace}`}>
         <Markdown content={content}></Markdown>
-        {(postAuthor == currentUser || admin == 1) && (
+        {(postAuthor == currentUser || admin == true) && (
           <button
             onClick={handleDelete}
             className={style.icon}

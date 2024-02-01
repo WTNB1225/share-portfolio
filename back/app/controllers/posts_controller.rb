@@ -40,6 +40,15 @@ class PostsController < ApplicationController
     end
   end
 
+  def update_by_id
+    @post = Post.find_by(id: params[:id])
+    if @post.update(post_params)
+      render json: @post, status: 200
+    else
+      render json: @post.errors, status: :unprocessable_entity
+    end
+  end
+
   def update
     @post = Post.find_by(username: params[:id])
     if @post.update(post_params)
