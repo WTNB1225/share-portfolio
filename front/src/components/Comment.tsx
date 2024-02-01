@@ -49,6 +49,7 @@ export default function Comment({
             headers: {
               "X-CSRF-TOKEN": token,
             },
+            withCredentials: true,
           }
         );
         if (response.status == 200) {
