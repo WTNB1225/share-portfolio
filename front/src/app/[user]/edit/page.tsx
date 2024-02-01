@@ -147,11 +147,11 @@ export default function Edit() {
                 }
               );
             }
-            router.push(`/${name}`); //プロフィールへ遷移
           }
         } catch (e) {
           return;
         }
+        router.push(`/${name}`); //プロフィールへ遷移
       } catch (e: any) {
         //エラーメッセージを取得
         setError(e.response.data);

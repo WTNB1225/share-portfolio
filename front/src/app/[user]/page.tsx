@@ -102,9 +102,13 @@ export default function User() {
       const response = await axios.get(
         `${process.env.NEXT_PUBLIC_ENDPOINT}/users/${username}`
       );
-      setPresence(true);
-      setAvatar(response.data.avatar_url);
-      setIntroduction(response.data.introduction);
+      if (!response.data) {
+        setPresence(false);
+      } else {
+        setPresence(true);
+        setAvatar(response.data.avatar_url);
+        setIntroduction(response.data.introduction);
+      }
     } catch (e) {
       setPresence(false);
       return;
@@ -299,7 +303,7 @@ export default function User() {
         <Header />
         <div className="container" style={{ marginTop: "32px" }}>
           <div className="row">
-            <p className="col-12">ユーザーが存在しません</p>
+            <h1 className="text-center">ユーザーが存在しません</h1>
           </div>
         </div>
       </>
