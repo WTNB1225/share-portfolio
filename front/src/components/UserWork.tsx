@@ -7,10 +7,10 @@ import axios from "axios";
 import { useCheckLoginStatus } from "@/hook/useCheckLoginStatus";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBookmark as faBookmarkRegular } from "@fortawesome/free-regular-svg-icons";
-import {faBookmark as faBookmarkSolid} from "@fortawesome/free-solid-svg-icons"
-import {faHeart as faHartRegular} from "@fortawesome/free-regular-svg-icons"
-import {faHeart as faHeartSolid} from "@fortawesome/free-solid-svg-icons"
-import Cookies from "js-cookie"; 
+import { faBookmark as faBookmarkSolid } from "@fortawesome/free-solid-svg-icons";
+import { faHeart as faHartRegular } from "@fortawesome/free-regular-svg-icons";
+import { faHeart as faHeartSolid } from "@fortawesome/free-solid-svg-icons";
+import Cookies from "js-cookie";
 
 export default function UserWork({
   id,
@@ -38,9 +38,9 @@ export default function UserWork({
   useEffect(() => {
     const cookieTheme = Cookies.get("theme");
     setTheme(cookieTheme || "#F8F9FA");
-  },[theme])
+  }, [theme]);
 
-  const {data, isLoading} = useCheckLoginStatus(); //ログイン状態を確認するカスタムフック
+  const { data, isLoading } = useCheckLoginStatus(); //ログイン状態を確認するカスタムフック
   useEffect(() => {
     if (isLoading == false) {
       setCurrentUserId(data?.id!); //ログインしているユーザーのidを取得
@@ -49,43 +49,45 @@ export default function UserWork({
 
   //ブックマークをすでにしているかを確認
   const checkBookmark = async () => {
-    try{
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/isBookmarked/${currentUserId}/${id}`);
-      if(response.data == true){
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/isBookmarked/${currentUserId}/${id}`
+      );
+      if (response.data == true) {
         setIsBookmarked(true);
       } else {
         setIsBookmarked(false);
       }
-    } catch(e){
+    } catch (e) {
       return;
     }
-  }
+  };
 
   //ブックマーク登録
   const handleBookmark = async () => {
-    if(!currentUserId) { 
-      alert("ログインしてください")
+    if (!currentUserId) {
+      alert("ログインしてください");
     }
     const formData = new FormData();
     formData.append("bookmark[user_id]", currentUserId);
     formData.append("bookmark[post_id]", id);
-    try{
+    try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_ENDPOINT}/bookmarks`,
         formData,
         {
-          headers:{
+          headers: {
             "X-CSRF-Token": token,
           },
           withCredentials: true,
         }
-      )
+      );
       setIsBookmarked(true);
       checkBookmark();
-    } catch(e){
+    } catch (e) {
       return;
     }
-  }
+  };
 
   //ブックマーク解除
   const handleUnBookmark = async () => {
@@ -99,13 +101,12 @@ export default function UserWork({
         }
       );
       setIsBookmarked(false);
-      checkBookmark()
+      checkBookmark();
     } catch (e) {
       return;
     }
   };
 
-  
   //いいねの数を取得
   const getAmountOfLikes = async () => {
     try {
@@ -113,30 +114,31 @@ export default function UserWork({
         `${process.env.NEXT_PUBLIC_ENDPOINT}/favorites_count/${id}`
       );
       setAmountOfLikes(response.data);
-      setLoading(false)
+      setLoading(false);
     } catch (e) {
       return;
     }
   };
 
-
   //いいねをすでにしているかを確認
   const isFavorite = async () => {
-    try{
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/isFavorites/${currentUserId}/${id}`);
-      if(response.data == true){
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/isFavorites/${currentUserId}/${id}`
+      );
+      if (response.data == true) {
         setIsLiked(true);
       } else {
         setIsLiked(false);
       }
-    } catch(e){
+    } catch (e) {
       return;
     }
-  }
+  };
 
   useEffect(() => {
     getAmountOfLikes();
-    if(currentUserId) {
+    if (currentUserId) {
       isFavorite();
       checkBookmark();
     }
@@ -144,8 +146,8 @@ export default function UserWork({
 
   //いいね登録
   const handleLike = async () => {
-    if(!currentUserId) {
-      alert("ログインしてください")
+    if (!currentUserId) {
+      alert("ログインしてください");
     }
     const formData = new FormData();
     formData.append("favorite[user_id]", currentUserId);
@@ -186,14 +188,14 @@ export default function UserWork({
     }
   };
 
-  if(loading) {
+  if (loading) {
     return;
   }
 
   return (
-    loading == false &&
+    loading == false && (
       <div className={`${style.workContainer}`}>
-        <Link className={`${style.user} ${style.center}`} href={`/${name}`} >
+        <Link className={`${style.user} ${style.center}`} href={`/${name}`}>
           <Image
             className={style.img}
             src={avatar}
@@ -201,42 +203,77 @@ export default function UserWork({
             height={40}
             alt="avatar"
           />
-          <h3 style={{color: theme == "#F8F9FA" ? "black" : "white", textDecoration:"none" }}>{name}</h3>
+          <h3
+            style={{
+              color: theme == "#F8F9FA" ? "black" : "white",
+              textDecoration: "none",
+            }}
+          >
+            {name}
+          </h3>
         </Link>
-        <Link href={`/post/${name}/${id}`} style={{textDecoration:"none"}}>
-        <div style={{ position: 'relative', height: '250px' }}>
-          <Image
-            alt="image"
-            src={image}
-            height={250}
-            width={250}
-            objectFit="cover"
-            layout="responsive"
-            style={{marginTop:"8px"}}
-            className={style.workImage}
-          />
+        <Link href={`/post/${name}/${id}`} style={{ textDecoration: "none" }}>
+          <div style={{ position: "relative", height: "250px" }}>
+            <Image
+              alt="image"
+              src={image}
+              height={250}
+              width={250}
+              objectFit="cover"
+              layout="responsive"
+              style={{ marginTop: "8px", maxHeight: "250px" }}
+              className={style.workImage}
+            />
           </div>
-          <h4 className={style.overflow} style={{marginTop:"50px", color: theme == "#F8F9FA" ? "black" : "white", textDecoration:"none"}}>{title}</h4>
+          <h4
+            className={style.overflow}
+            style={{
+              marginTop: "50px",
+              color: theme == "#F8F9FA" ? "black" : "white",
+              textDecoration: "none",
+            }}
+          >
+            {title}
+          </h4>
         </Link>
         {isLiked ? (
-          <button onClick={handleUnLike} className={style.icon} style={{background:"none"}}>
-            <FontAwesomeIcon icon={faHeartSolid} color="red" size="xl"/>
+          <button
+            onClick={handleUnLike}
+            className={style.icon}
+            style={{ background: "none" }}
+          >
+            <FontAwesomeIcon icon={faHeartSolid} color="red" size="xl" />
           </button>
         ) : (
-          <button className={style.icon} onClick={handleLike} style={{background:"none"}}>
-            <FontAwesomeIcon icon={faHartRegular} size="xl"/>
+          <button
+            className={style.icon}
+            onClick={handleLike}
+            style={{ background: "none" }}
+          >
+            <FontAwesomeIcon icon={faHartRegular} size="xl" />
           </button>
         )}
         {isBookmarked ? (
-          <button onClick={handleUnBookmark} className={style.bookmark} style={{background:"none"}}>
-            <FontAwesomeIcon icon={faBookmarkSolid} color="skyblue" size="xl"/>
+          <button
+            onClick={handleUnBookmark}
+            className={style.bookmark}
+            style={{ background: "none" }}
+          >
+            <FontAwesomeIcon icon={faBookmarkSolid} color="skyblue" size="xl" />
           </button>
         ) : (
-          <button className={style.icon} onClick={handleBookmark} style={{background:"none"}}>
-            <FontAwesomeIcon icon={faBookmarkRegular} size="xl"/>
+          <button
+            className={style.icon}
+            onClick={handleBookmark}
+            style={{ background: "none" }}
+          >
+            <FontAwesomeIcon icon={faBookmarkRegular} size="xl" />
           </button>
         )}
-        <h3 style={{color: theme == "#F8F9FA" ? "black" : "white" }}>{amountOfLikes} いいね</h3>
+        <h3 style={{ color: theme == "#F8F9FA" ? "black" : "white" }}>
+          {amountOfLikes} いいね
+        </h3>
       </div>
     )
+  );
 }
