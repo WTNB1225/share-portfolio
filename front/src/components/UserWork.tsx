@@ -221,7 +221,7 @@ export default function UserWork({
               width={250}
               objectFit="cover"
               layout="responsive"
-              style={{ marginTop: "8px", maxHeight: "250px" }}
+              style={{ marginTop: "8px", maxHeight: "286px" }}
               className={style.workImage}
             />
           </div>
