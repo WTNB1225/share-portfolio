@@ -161,10 +161,10 @@ export default function PostNew() {
           className="container d-flex justify-content-center"
           style={{ marginTop: "32px" }}
         >
-              <div className="col-12 col-md-6">
-                <h2 className="text-center">ログインしてください</h2>
-              </div>
-            </div>
+          <div className="col-12 col-md-6">
+            <h2 className="text-center">ログインしてください</h2>
+          </div>
+        </div>
       </>
     );
   }
@@ -185,7 +185,12 @@ export default function PostNew() {
       >
         <div className="col-12 col-lg-8">
           <>
-            <p className="justify-content-center" style={{textAlign:"center"}}>本文は1000文字以内</p>
+            <p
+              className="justify-content-center"
+              style={{ textAlign: "center" }}
+            >
+              本文は3000文字以内
+            </p>
             <form className="row g-3 justify-content-center">
               <div className="col-12 col-md-6 text-center">
                 <label className="form-label" style={{ width: "90%" }}>

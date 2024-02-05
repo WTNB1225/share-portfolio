@@ -9,7 +9,7 @@ class Post < ApplicationRecord
   has_many :comments, dependent: :destroy
   validates :title, presence:true, length: {maximum: 50}
   validates :user_id, presence:true
-  validates :content, presence:true, length: {maximum: 1000}
+  validates :content, presence:true, length: {maximum: 3000}
   validates :username, presence:true
   validates :userid, presence:true
   #サムネイルのバリデーション
