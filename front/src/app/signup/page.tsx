@@ -22,6 +22,7 @@ export default function Signup() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [avatar, setAvatar] = useState<File[]>([]);
   const [error, setError] = useState(); //バリデーションエラーを設定
+  const [error2, setError2] = useState(""); //バリデーションエラーを設定
 
   const S3 = new S3Client({
     region: "auto",
@@ -55,7 +56,9 @@ export default function Signup() {
       files.forEach(async (file) => {
         //画像を1つずつアップロード
         if (file.size > 5 * 1024 * 1024) {
+          setError2("5MB以下の画像を選択してください");
         } else {
+          setError2("");
           await S3.send(
             new PutObjectCommand({
               Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
@@ -109,6 +112,11 @@ export default function Signup() {
           {Object.entries(error).map(([key, value]) => (
             <div key={key}>{`${key}: ${value}`}</div>
           ))}
+        </div>
+      )}
+      {error2 && (
+        <div className="alert alert-danger" role="alert">
+          {error2}
         </div>
       )}
       <div
