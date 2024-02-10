@@ -6,6 +6,14 @@ local:
   service: Disk
   root: <%= Rails.root.join("storage") %>
 
+cloudflare:
+  service: S3
+  access_key_id: <%= ENV['cloudflare_key_id'] %>
+  secret_access_key: <%= ENV['secret_access_key'] %>
+  endpoint: <%= ENV['endpoint'] %>
+  bucket: <%= ENV['bucket'] %>
+  region: auto
+  force_path_style: true
 # Use bin/rails credentials:edit to set the AWS secrets (as aws:access_key_id|secret_access_key)
 # amazon:
 #   service: S3

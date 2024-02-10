@@ -9,7 +9,7 @@ class UsersController < ApplicationController
   def show
     @user = User.find_by(name:params[:id])
     if @user
-      user = @user.as_json(only: [:name, :id, :admin, :introduction]).merge(avatar_url: url_for(@user.avatar))
+      user = @user.as_json(only: [:name, :id, :admin, :introduction]).merge(avatar_url: "https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/" + @user.avatar.blob.filename.to_s)
       render json: user
     end
   end
@@ -17,7 +17,7 @@ class UsersController < ApplicationController
   def show_by_id
     @user = User.find_by(id:params[:user_id])
     if @user
-      user = @user.as_json(only: [:name, :id, :admin]).merge(avatar_url: url_for(@user.avatar))
+      user = @user.as_json(only: [:name, :id, :admin]).merge(avatar_url: "https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/" + @user.avatar.blob.filename.to_s)
       render json: user
     else
       render json: @user.errors, status: :unprocessable_entity
@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   def update
     @user = User.find_by(name: params[:id])
     if @user.update(user_params)
-      render json:@user.as_json(only: [:name, :id, :admin]).merge(avatar_url: url_for(@user.avatar))
+      render json:@user.as_json(only: [:name, :id, :admin]).merge(avatar_url: "https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/" + @user.avatar.blob.filename.to_s)
     else
       @user.update(user_params)
       render json:@user.errors, status: :unprocessable_entity
