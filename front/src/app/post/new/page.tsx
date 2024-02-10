@@ -12,6 +12,7 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { useWindowWidth } from "@/hook/useWindowWidth";
 import Cookies from "js-cookie";
 import dotenv from "dotenv";
+import { set } from "react-hook-form";
 
 export default function PostNew() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function PostNew() {
   const [token, setToken] = useState("");
   const [avatar, setAvatar] = useState("");
   const [error, setError] = useState("");
+  const [erorr2, setError2] = useState("");
   const [theme, setTheme] = useState(Cookies.get("theme") || "#F8F9FA");
   dotenv.config();
 
@@ -76,8 +78,9 @@ export default function PostNew() {
       files.forEach(async (file) => {
         //画像を1つずつアップロード
         if (file.size > 5 * 1024 * 1024) {
+          setError2("5MB以下の画像を選択してください");
         } else {
-          setError("");
+          setError2("");
           await S3.send(
             new PutObjectCommand({
               Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
@@ -192,6 +195,11 @@ export default function PostNew() {
           {Object.entries(error).map(([key, value]) => (
             <div key={key}>{`${key}: ${value}`}</div>
           ))}
+        </div>
+      )}
+      {erorr2 && (
+        <div className="alert alert-danger" role="alert">
+          <div>{erorr2}</div>
         </div>
       )}
       <div

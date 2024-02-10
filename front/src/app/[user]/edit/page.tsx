@@ -114,7 +114,9 @@ export default function Edit() {
       files.forEach(async (file) => {
         //画像を1つずつアップロード
         if (file.size > 5 * 1024 * 1024) {
+          setError2("5MB以下の画像を選択してください");
         } else {
+          setError2("");
           await S3.send(
             new PutObjectCommand({
               Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
@@ -284,7 +286,7 @@ export default function Edit() {
       }
       router.push(`/${username}`);
     } catch (e: any) {
-      setError2("変更する場合は画像を選択してください");
+      setError2("変更に失敗しました");
       return;
     }
   };

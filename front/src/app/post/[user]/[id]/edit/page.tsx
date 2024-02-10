@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import axios from "axios";
 import { useEffect, useState, ChangeEvent, FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,7 +15,7 @@ import style from "./page.module.css";
 export default function PostEdit() {
   const [loading, setLoading] = useState(true); //ログイン状態の確認中かどうか
   const [token, setToken] = useState(""); //CSRFトークン
-  const [name ,setName] = useState(""); //ログインしたユーザー名
+  const [name, setName] = useState(""); //ログインしたユーザー名
   const [title, setTitle] = useState(""); //投稿のタイトル
   const [content, setContent] = useState(""); //投稿の内容
   const [url, setUrl] = useState<File[]>([]); //サムネイルのURL
@@ -28,15 +28,15 @@ export default function PostEdit() {
 
   const router = useRouter();
 
-  const {data, isLoading} = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
-  useEffect(() =>{
-    if(isLoading == false) {
-      if(data) {
+  const { data, isLoading } = useCheckLoginStatus(); //{data: ログインしたユーザーの情報, isLoading: data取得中かどうか}
+  useEffect(() => {
+    if (isLoading == false) {
+      if (data) {
         setName(data.name!);
       }
       setLoading(false); //dataの取得完了
     }
-  }, [data, isLoading])
+  }, [data, isLoading]);
 
   const csrfToken = useGetCsrfToken(); //CSRFトークンを取得するカスタムフック
   useEffect(() => {
@@ -45,23 +45,25 @@ export default function PostEdit() {
 
   const width = useWindowWidth(); //画面の幅を取得するカスタムフック
 
-  const getPost = async (id: string) => { //投稿の情報を取得する関数
-    try{
-      const response = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/post/${id}`);
-      if(response.data) {
+  const getPost = async (id: string) => {
+    //投稿の情報を取得する関数
+    try {
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/post/${id}`
+      );
+      if (response.data) {
         setTitle(response.data.title);
         setContent(response.data.content);
       }
-
-    } catch(e) {
+    } catch (e) {
       setError("投稿が存在しません"); //エラーメッセージ
       return;
     }
-  }
+  };
 
   useEffect(() => {
-    getPost(id)
-  },[id])
+    getPost(id);
+  }, [id]);
 
   //CloudFlareR2のためにS3Clientを作成(互換性がある)
   const S3 = new S3Client({
@@ -87,8 +89,23 @@ export default function PostEdit() {
   //サムネイルの画像をstateに保存する関数
   const handleThumbnailChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = e.target.files;
-      setUrl(Array.from(files));
+      const files = Array.from(e.target.files);
+      files.forEach(async (file) => {
+        //画像を1つずつアップロード
+        if (file.size > 5 * 1024 * 1024) {
+          setError("5MB以下の画像を選択してください");
+        } else {
+          setError("");
+          await S3.send(
+            new PutObjectCommand({
+              Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
+              Key: file.name,
+              Body: file,
+              ContentType: file.type,
+            })
+          );
+        }
+      });
     }
   };
 
@@ -111,7 +128,7 @@ export default function PostEdit() {
               ContentType: file.type,
             })
           );
-          
+
           const encodedFileName = encodeURIComponent(file.name); //特殊文字が含まれないようにエンコード
           //R2に保存した画像のURLを取得
           const imageUrl = `![${file.name}](${process.env.NEXT_PUBLIC_STORAGE_ENDPOINT}/${encodedFileName})`;
@@ -121,15 +138,13 @@ export default function PostEdit() {
     }
   };
 
-  
-
-  const handleSubmit = async (e:FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("post[title]", title);
     formData.append("post[content]", content);
-    url.forEach((file) => formData.append("post[images][]", file))
-    try{
+    url.forEach((file) => formData.append("post[images][]", file));
+    try {
       const response = axios.patch(
         `${process.env.NEXT_PUBLIC_ENDPOINT}/posts/${username}`,
         formData,
@@ -142,30 +157,31 @@ export default function PostEdit() {
         }
       );
       router.push(`/post/${username}/${id}`);
-    } catch(e:any) {
-      setError(e.response.data)
+    } catch (e: any) {
+      setError(e.response.data);
       return;
     }
-  }
+  };
 
-  if(loading) return;
+  if (loading) return;
 
-  if(username !== name) {
+  if (username !== name) {
     return (
       <div>
         <Header />
-        <h1 className="text-center" style={{marginTop:"32px"}}>あなたはこのページを見ることはできません</h1>
+        <h1 className="text-center" style={{ marginTop: "32px" }}>
+          あなたはこのページを見ることはできません
+        </h1>
       </div>
-    )
+    );
   }
-
 
   return (
     <>
       <Header />
       {error && (
         <div className="alert alert-danger" role="alert">
-            <div>{error}</div>
+          <div>{error}</div>
         </div>
       )}
       <div
