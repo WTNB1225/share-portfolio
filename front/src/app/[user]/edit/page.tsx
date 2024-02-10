@@ -7,6 +7,7 @@ import { useCheckLoginStatus } from "../../../hook/useCheckLoginStatus";
 import { useGetCsrfToken } from "../../../hook/useGetCsrfToken";
 import { useEditState } from "@/hook/useEditState"; //editのstateを纏めたカスタムフック
 import Preview from "@/components/Preview";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export default function Edit() {
   const {
@@ -58,6 +59,15 @@ export default function Edit() {
     setLoading(false); //CSRFトークンの取得完了
   }, [csrfToken]);
 
+  const S3 = new S3Client({
+    region: "auto",
+    endpoint: process.env.NEXT_PUBLIC_CLOUDFLARE_ENDPOINT as string,
+    credentials: {
+      accessKeyId: process.env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY as string,
+    },
+  });
+
   useEffect(() => {
     //ユーザーの投稿を取得する関数, postのusernameを変更するため
     async function fetchPosts(username: string) {
@@ -100,7 +110,24 @@ export default function Edit() {
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setAvatar(Array.from(e.target.files) as File[]);
+      const files = Array.from(e.target.files);
+      files.forEach(async (file) => {
+        //画像を1つずつアップロード
+        if (file.size > 5 * 1024 * 1024) {
+          setError({ サムネイル: "画像のサイズが大きすぎます" });
+        } else {
+          setError("");
+          await S3.send(
+            new PutObjectCommand({
+              Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
+              Key: file.name,
+              Body: file,
+              ContentType: file.type,
+            })
+          );
+          setAvatar(files);
+        }
+      });
     }
   };
 

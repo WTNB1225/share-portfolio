@@ -4,6 +4,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "../../components/Header";
 import Preview from "../../components/Preview";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 type Signup = {
   name: string;
@@ -21,6 +22,15 @@ export default function Signup() {
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
   const [avatar, setAvatar] = useState<File[]>([]);
   const [error, setError] = useState(); //バリデーションエラーを設定
+
+  const S3 = new S3Client({
+    region: "auto",
+    endpoint: process.env.NEXT_PUBLIC_CLOUDFLARE_ENDPOINT as string,
+    credentials: {
+      accessKeyId: process.env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY_ID as string,
+      secretAccessKey: process.env.NEXT_PUBLIC_CLOUDFLARE_ACCESS_KEY as string,
+    },
+  });
 
   //inputの値をstateに格納
   const handleNameChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -41,7 +51,24 @@ export default function Signup() {
 
   const handleAvatarChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setAvatar(Array.from(e.target.files));
+      const files = Array.from(e.target.files);
+      files.forEach(async (file) => {
+        //画像を1つずつアップロード
+        if (file.size > 5 * 1024 * 1024) {
+          setError({ サムネイル: "画像のサイズが大きすぎます" });
+        } else {
+          setError("");
+          await S3.send(
+            new PutObjectCommand({
+              Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
+              Key: file.name,
+              Body: file,
+              ContentType: file.type,
+            })
+          );
+          setAvatar(files);
+        }
+      });
     }
   };
 
@@ -52,7 +79,7 @@ export default function Signup() {
     formData.append("user[email]", email);
     formData.append("user[password]", password);
     formData.append("user[password_confirmation]", passwordConfirmation);
-    formData.append("user[introduction]", "よろしくお願いします。")
+    formData.append("user[introduction]", "よろしくお願いします。");
     avatar.forEach((img) => {
       formData.append("user[avatar]", img);
     });
@@ -68,10 +95,10 @@ export default function Signup() {
         }
       );
       const token = response.data.token;
-      localStorage.setItem('jwt',token);
+      localStorage.setItem("jwt", token);
       router.push("/home");
     } catch (e: any) {
-      console.log(e)
+      console.log(e);
       setError(e.response.data);
       return;
     }

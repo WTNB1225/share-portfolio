@@ -6,7 +6,7 @@ class PostsController < ApplicationController
     posts_with_images = @posts.map do |post|
       post_data = post.as_json(include: :images)
       post_data.merge(
-        images_url: post.images.map { |image| url_for(image) },
+        images_url: post.images.map { |image| "https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/" + image.blob.filename.to_s },
       )
     end
     render json: posts_with_images, status: :ok
@@ -17,7 +17,7 @@ class PostsController < ApplicationController
     post_with_images = @post.map do |post|
       post_data = post.as_json(include: :images)
       post_data.merge(
-        images_url: post.images.map { |image| url_for(image)},
+        images_url: post.images.map { |image| "https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/" + image.blob.filename.to_s},
       )
     end
     render json: post_with_images, status: :ok
@@ -26,7 +26,7 @@ class PostsController < ApplicationController
   def show_by_id
     @post = Post.find_by(id: params[:id])
     if @post
-      post = @post.as_json(include: :images).merge(images_url: @post.images.map { |image| url_for(image) })
+      post = @post.as_json(include: :images).merge(images_url: @post.images.map { |image| "https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/" + image.blob.filename.to_s})
     end
     render json: post, status: :ok
   end

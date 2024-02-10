@@ -72,8 +72,24 @@ export default function PostNew() {
   //サムネイルの画像をstateに保存する関数
   const handleThumbnailChange = async (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files = e.target.files;
-      setImage(files[0]);
+      const files = Array.from(e.target.files);
+      files.forEach(async (file) => {
+        //画像を1つずつアップロード
+        if (file.size > 5 * 1024 * 1024) {
+          setError({ サムネイル: "画像のサイズが大きすぎます" });
+        } else {
+          setError("");
+          await S3.send(
+            new PutObjectCommand({
+              Bucket: process.env.NEXT_PUBLIC_CLOUDFLARE_BUCKET as string,
+              Key: file.name,
+              Body: file,
+              ContentType: file.type,
+            })
+          );
+          setImage(file);
+        }
+      });
     }
   };
 

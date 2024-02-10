@@ -12,3 +12,33 @@
   word-break: break-all !important;
   text-align: left !important;
 }
+
+@media (max-width: 320px) {
+  .width {
+    width: 300px !important;
+  }
+}
+
+@media (min-width: 321px) and (max-width: 375px) {
+  .width {
+    width: 310px !important;
+  }
+}
+
+@media (min-width: 376px) and (max-width: 425px) {
+  .width {
+    width: 360px !important;
+  }
+}
+
+@media (min-width: 426px) and (max-width: 576px) {
+  .width {
+    width: 400px !important;
+  }
+}
+
+@media (min-width: 577px) and (max-width: 768px) {
+  .width {
+    width: 500px !important;
+  }
+}

@@ -15,7 +15,7 @@ class SessionController < ApplicationController
       token = generate_jwt(@user)
       cookies[:jwt] = {value: token, http_only: true, secure: true}
       log_in @user
-      render json: {user: @user.as_json(only:[:name,:id]).merge(avatar_url: url_for(@user.avatar)), token: token}, status: :created
+      render json: {user: @user.as_json(only:[:name,:id]).merge(avatar_url: "https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/" + @user.avatar.blob.filename.to_s), token: token}, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity
     end
@@ -27,7 +27,7 @@ class SessionController < ApplicationController
 
 
   def get_current_user
-    render json: current_user.as_json(only:[:name,:id, :admin]).merge(avatar_url: url_for(current_user.avatar))
+    render json: current_user.as_json(only:[:name,:id, :admin]).merge(avatar_url: "https://pub-a05d828609984db8b2239cd099a20aac.r2.dev/" + current_user.avatar.blob.filename.to_s)
   end
 
   def get_token
