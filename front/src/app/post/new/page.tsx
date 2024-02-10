@@ -76,7 +76,6 @@ export default function PostNew() {
       files.forEach(async (file) => {
         //画像を1つずつアップロード
         if (file.size > 5 * 1024 * 1024) {
-          setError({ サムネイル: "画像のサイズが大きすぎます" });
         } else {
           setError("");
           await S3.send(
