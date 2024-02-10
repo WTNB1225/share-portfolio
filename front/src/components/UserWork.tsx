@@ -216,7 +216,7 @@ export default function UserWork({
           <div style={{ position: "relative", height: "250px" }}>
             <Image
               alt="image"
-              src={image}
+              src={encodeURIComponent(image)}
               height={250}
               width={250}
               objectFit="cover"
